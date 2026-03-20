@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agente de Investimentos</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #060d1a;
+      --bg2:       #0d1b2a;
+      --bg3:       #111e33;
+      --border:    #1a2744;
+      --blue:      #4a9eff;
+      --green:     #2ed573;
+      --red:       #ff4757;
+      --yellow:    #f9ca24;
+      --muted:     #64748b;
+      --text:      #fff;
+      --mono:      'IBM Plex Mono', monospace;
+      --serif:     'Playfair Display', Georgia, serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--serif); min-height: 100vh; }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* animations */
+    @keyframes ticker   { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes pulse    { 0%,100% { opacity:1; } 50% { opacity:.4; } }
+    @keyframes slideIn  { from { opacity:0; transform:scale(.95) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+    @keyframes fadeUp   { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes glow     { 0%,100% { box-shadow:0 0 8px rgba(255,71,87,.3); } 50% { box-shadow:0 0 24px rgba(255,71,87,.6); } }
+
+    /* ticker bar */
+    #ticker-wrap { overflow:hidden; background:var(--bg2); border-bottom:1px solid var(--border); padding:7px 0; }
+    #ticker-inner { display:inline-flex; gap:56px; white-space:nowrap; animation:ticker 28s linear infinite; font-family:var(--mono); font-size:11px; }
+
+    /* layout */
+    .container { max-width:1120px; margin:0 auto; padding:28px 18px; }
+
+    /* header */
+    .header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:32px; flex-wrap:wrap; gap:16px; }
+    .header-label { color:var(--blue); font-family:var(--mono); font-size:10px; letter-spacing:4px; margin-bottom:6px; }
+    .header h1 { font-size:30px; font-weight:700; background:linear-gradient(135deg,#fff 0%,var(--blue) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .header-sub { color:var(--muted); font-size:13px; margin-top:4px; font-family:var(--mono); }
+    .status-badge { display:flex; align-items:center; gap:8px; border-radius:8px; padding:9px 16px; border:1px solid; font-family:var(--mono); font-size:12px; }
+    .dot { width:8px; height:8px; border-radius:50%; }
+    .btn { padding:9px 18px; border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; font-family:var(--mono); font-size:12px; transition:all .2s; }
+    .btn:hover { border-color:var(--blue); color:var(--blue); }
+
+    /* summary cards */
+    .summary-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:28px; }
+    .summary-card { background:linear-gradient(135deg,var(--bg2),var(--bg3)); border:1px solid var(--border); border-radius:12px; padding:20px; display:flex; justify-content:space-between; align-items:flex-start; animation:fadeUp .5s ease both; }
+    .summary-card:nth-child(1){animation-delay:.05s} .summary-card:nth-child(2){animation-delay:.1s}
+    .summary-card:nth-child(3){animation-delay:.15s} .summary-card:nth-child(4){animation-delay:.2s}
+    .card-label { color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; font-family:var(--mono); }
+    .card-value { font-family:var(--mono); font-size:18px; font-weight:700; }
+    .card-icon  { font-size:22px; }
+
+    /* section title */
+    .section-title { color:var(--blue); font-family:var(--mono); font-size:10px; letter-spacing:3px; margin-bottom:16px; }
+
+    /* stock grid */
+    .stocks-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(285px,1fr)); gap:16px; margin-bottom:28px; }
+    .stock-card { background:linear-gradient(135deg,var(--bg2),var(--bg3)); border:1px solid var(--border); border-radius:12px; padding:20px; transition:all .3s; animation:fadeUp .5s ease both; }
+    .stock-card.alert-active { border-color:var(--red); animation:glow 1.5s infinite; }
+    .stock-head  { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; }
+    .stock-ticker { color:var(--blue); font-family:var(--mono); font-weight:700; font-size:18px; }
+    .stock-name   { color:var(--muted); font-size:11px; margin-top:3px; }
+    .stock-price  { color:var(--text); font-family:var(--mono); font-size:16px; font-weight:700; text-align:right; }
+    .stock-var    { font-size:13px; font-weight:700; text-align:right; margin-top:2px; }
+    .stats-grid   { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+    .stat-box     { background:rgba(255,255,255,.03); border-radius:6px; padding:8px; }
+    .stat-label   { color:var(--muted); font-size:9px; text-transform:uppercase; letter-spacing:1px; font-family:var(--mono); }
+    .stat-value   { font-family:var(--mono); font-size:12px; font-weight:700; margin-top:3px; }
+    .trigger-row  { display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-bottom:5px; font-family:var(--mono); }
+    .progress-bar { height:3px; background:var(--border); border-radius:2px; margin-bottom:12px; }
+    .progress-fill { height:100%; border-radius:2px; transition:width .4s; }
+    .sim-btn { width:100%; padding:9px; border-radius:6px; border:1px dashed var(--border); background:transparent; color:var(--blue); cursor:pointer; font-size:11px; font-family:var(--mono); letter-spacing:1px; transition:all .2s; }
+    .sim-btn:hover { border-color:var(--blue); background:rgba(74,158,255,.08); }
+
+    /* fundos */
+    .fundos-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(285px,1fr)); gap:16px; margin-bottom:28px; }
+    .fundo-card  { background:linear-gradient(135deg,var(--bg2),var(--bg3)); border:1px solid var(--border); border-radius:12px; padding:20px; animation:fadeUp .5s .3s ease both; }
+    .fundo-head  { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; }
+    .fundo-nome  { color:var(--text); font-weight:700; font-size:15px; }
+    .fundo-tipo  { color:var(--muted); font-size:11px; margin-top:3px; font-family:var(--mono); }
+    .fundo-var   { font-family:var(--mono); font-size:13px; color:var(--green); }
+    .fundo-stats { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+    .fundo-info  { padding:9px 11px; background:rgba(74,158,255,.06); border-radius:6px; border:1px solid rgba(74,158,255,.15); color:var(--blue); font-size:10px; font-family:var(--mono); }
+
+    /* terminal */
+    .terminal { background:var(--bg); border:1px solid var(--border); border-radius:12px; overflow:hidden; animation:fadeUp .5s .4s ease both; }
+    .terminal-bar { background:var(--bg2); padding:10px 16px; display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--border); }
+    .mac-dot { width:10px; height:10px; border-radius:50%; }
+    .terminal-title { color:var(--muted); font-family:var(--mono); font-size:11px; margin-left:8px; }
+    .terminal-body  { padding:14px 16px; height:170px; overflow-y:auto; font-family:var(--mono); font-size:12px; line-height:1.9; }
+    .log-line { animation:fadeUp .25s ease both; }
+    .log-time { color:#1e3a5f; }
+
+    /* modal */
+    #modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.88); backdrop-filter:blur(10px); align-items:center; justify-content:center; z-index:999; }
+    #modal-overlay.active { display:flex; }
+    #modal-box { background:linear-gradient(135deg,var(--bg2),#1a2744); border:1px solid var(--red); border-radius:16px; padding:32px; max-width:480px; width:90%; box-shadow:0 0 70px rgba(255,71,87,.35); animation:slideIn .3s ease; }
+    .modal-head { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+    .modal-icon { width:42px; height:42px; border-radius:50%; background:rgba(255,71,87,.18); display:flex; align-items:center; justify-content:center; font-size:20px; border:2px solid var(--red); animation:pulse 1s infinite; }
+    .modal-tag  { color:var(--red); font-family:var(--mono); font-size:10px; letter-spacing:3px; }
+    .modal-title { color:var(--text); font-size:20px; font-weight:700; }
+    .modal-body { background:rgba(255,71,87,.07); border:1px solid rgba(255,71,87,.28); border-radius:10px; padding:16px; margin-bottom:20px; }
+    .modal-ativo-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+    .modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .modal-cell { background:rgba(255,255,255,.03); border-radius:8px; padding:10px; }
+    .modal-cell-label { color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:1px; font-family:var(--mono); margin-bottom:4px; }
+    .modal-cell-val   { font-family:var(--mono); font-weight:700; font-size:15px; }
+    .modal-desc { color:var(--muted); font-size:12px; margin-bottom:20px; line-height:1.7; font-style:italic; }
+    .timer-row  { display:flex; justify-content:space-between; margin-bottom:6px; font-size:12px; }
+    .timer-bar  { height:4px; background:var(--border); border-radius:2px; margin-bottom:20px; }
+    .timer-fill { height:100%; border-radius:2px; transition:width 1s linear; }
+    .modal-btns { display:flex; gap:12px; }
+    .btn-cancel  { flex:1; padding:12px; border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; font-family:var(--mono); font-size:13px; transition:all .2s; }
+    .btn-cancel:hover { border-color:var(--red); color:var(--red); }
+    .btn-confirm { flex:2; padding:12px; border-radius:8px; border:none; background:linear-gradient(135deg,var(--green),#17a84b); color:#fff; cursor:pointer; font-weight:700; font-family:var(--mono); font-size:13px; box-shadow:0 4px 20px rgba(46,213,115,.3); transition:all .2s; }
+    .btn-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(46,213,115,.4); }
+  </style>
+</head>
+<body>
+
+<!-- Ticker -->
+<div id="ticker-wrap">
+  <div id="ticker-inner"></div>
+</div>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="header-label">SISTEMA DE AUTOMAÇÃO</div>
+      <h1>Agente de Investimentos</h1>
+      <div class="header-sub">Gatilho automático em quedas ≥ 5%</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div class="status-badge" id="status-badge" style="background:rgba(46,213,115,.1);border-color:var(--green);color:var(--green);">
+        <div class="dot" id="status-dot" style="background:var(--green);animation:pulse 1.5s infinite;"></div>
+        <span id="status-text">AGENTE ATIVO</span>
+      </div>
+      <button class="btn" id="toggle-btn" onclick="toggleAgent()">Pausar</button>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-grid" id="summary-grid"></div>
+
+  <!-- Ações -->
+  <div class="section-title">▸ AÇÕES MONITORADAS</div>
+  <div class="stocks-grid" id="stocks-grid"></div>
+
+  <!-- Fundos -->
+  <div class="section-title">▸ FUNDOS DE INVESTIMENTO</div>
+  <div class="fundos-grid" id="fundos-grid"></div>
+
+  <!-- Terminal -->
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div style="display:flex;gap:6px;">
+        <div class="mac-dot" style="background:#ff5f57;"></div>
+        <div class="mac-dot" style="background:#ffbd2e;"></div>
+        <div class="mac-dot" style="background:#28c840;"></div>
+      </div>
+      <span class="terminal-title" id="terminal-title">agente.log — ● ao vivo</span>
+    </div>
+    <div class="terminal-body" id="terminal-body"></div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="modal-overlay">
+  <div id="modal-box">
+    <div class="modal-head">
+      <div class="modal-icon">⚠️</div>
+      <div>
+        <div class="modal-tag">ALERTA DE OPORTUNIDADE</div>
+        <div class="modal-title">Confirmar Compra</div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-ativo-row">
+        <span style="color:var(--muted);font-size:13px;">Ativo</span>
+        <span id="m-ticker" style="color:var(--text);font-family:var(--mono);font-size:18px;font-weight:700;"></span>
+      </div>
+      <div class="modal-grid">
+        <div class="modal-cell">
+          <div class="modal-cell-label">Queda detectada</div>
+          <div class="modal-cell-val" id="m-queda" style="color:var(--red);"></div>
+        </div>
+        <div class="modal-cell">
+          <div class="modal-cell-label">Preço atual</div>
+          <div class="modal-cell-val" id="m-preco" style="color:var(--text);"></div>
+        </div>
+        <div class="modal-cell">
+          <div class="modal-cell-label">Cotas sugeridas</div>
+          <div class="modal-cell-val" id="m-cotas" style="color:var(--yellow);"></div>
+        </div>
+        <div class="modal-cell">
+          <div class="modal-cell-label">Custo estimado</div>
+          <div class="modal-cell-val" id="m-custo" style="color:var(--green);"></div>
+        </div>
+      </div>
+    </div>
+    <p class="modal-desc" id="m-desc"></p>
+    <div class="timer-row">
+      <span style="color:var(--muted);">Expiração automática</span>
+      <span id="m-timer" style="font-family:var(--mono);font-weight:700;color:var(--yellow);"></span>
+    </div>
+    <div class="timer-bar">
+      <div class="timer-fill" id="m-timer-fill" style="background:linear-gradient(90deg,var(--blue),var(--yellow));width:100%;"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="cancelAlert()">✕ Cancelar</button>
+      <button class="btn-confirm" onclick="confirmAlert()">✓ CONFIRMAR COMPRA</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Carteira ─────────────────────────────────────────────
+  const CARTEIRA = [
+    { ticker:"CXSE3", nome:"Caixa Seguridade", cotas:15, valorAplicado:214.13,  precoAtual:14.28, variacao:-2.1 },
+    { ticker:"TAEE4", nome:"Taesa",            cotas:33, valorAplicado:410.86,  precoAtual:12.45, variacao:-1.3 },
+    { ticker:"BBAS3", nome:"Banco do Brasil",  cotas:31, valorAplicado:709.96,  precoAtual:22.90, variacao:0.8  },
+  ];
+  const FUNDOS = [
+    { nome:"Trend DI",        valorAplicado:2357.21, variacao:0.04, tipo:"Renda Fixa" },
+    { nome:"Absolute Atenas", valorAplicado:3248.38, variacao:0.12, tipo:"Multimercado" },
+  ];
+  const THRESHOLD = -5.0;
+
+  // ── Estado ───────────────────────────────────────────────
+  let agentActive  = true;
+  let activeAlert  = null;
+  let timerCount   = 30;
+  let timerInterval = null;
+  let blinkInterval = null;
+  let blinkState   = true;
+
+  // ── Helpers ──────────────────────────────────────────────
+  const brl = v => v.toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
+  const now  = () => new Date().toTimeString().slice(0,8);
+
+  // ── Ticker ───────────────────────────────────────────────
+  function buildTicker() {
+    const items = [...CARTEIRA, ...CARTEIRA];
+    document.getElementById("ticker-inner").innerHTML = items.map(s =>
+      `<span style="color:${s.variacao<0?"var(--red)":"var(--green)"}">
+        ${s.ticker} ${s.precoAtual.toFixed(2)} (${s.variacao>0?"+":""}${s.variacao}%)
+      </span>`
+    ).join("");
+  }
+
+  // ── Terminal log ─────────────────────────────────────────
+  function log(msg, type="info") {
+    const body = document.getElementById("terminal-body");
+    const colors = { info:"var(--blue)", alert:"var(--red)", success:"var(--green)", cancel:"var(--yellow)", neutral:"var(--muted)" };
+    const line = document.createElement("div");
+    line.className = "log-line";
+    line.style.color = colors[type] || "var(--blue)";
+    line.innerHTML = `<span class="log-time">[${now()}]</span> ${msg}`;
+    body.appendChild(line);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  // ── Summary cards ────────────────────────────────────────
+  function buildSummary() {
+    const totalAplicado = [...CARTEIRA, ...FUNDOS].reduce((s,a) => s + a.valorAplicado, 0);
+    const totalAtual    = CARTEIRA.reduce((s,a) => s + a.precoAtual * a.cotas, 0)
+                        + FUNDOS.reduce((s,f) => s + f.valorAplicado, 0);
+    const pnl = totalAtual - totalAplicado;
+    const cards = [
+      { label:"Total Aplicado", value:brl(totalAplicado), color:"var(--blue)",   icon:"💼" },
+      { label:"Valor Atual",    value:brl(totalAtual),    color:"var(--text)",   icon:"📊" },
+      { label:"Resultado",      value:(pnl>=0?"+":"")+brl(pnl), color:pnl>=0?"var(--green)":"var(--red)", icon:"📈" },
+      { label:"Ativos Monit.",  value:`${CARTEIRA.length} ações`, color:"var(--yellow)", icon:"🔍" },
+    ];
+    document.getElementById("summary-grid").innerHTML = cards.map(c => `
+      <div class="summary-card">
+        <div>
+          <div class="card-label">${c.label}</div>
+          <div class="card-value" style="color:${c.color}">${c.value}</div>
+        </div>
+        <span class="card-icon">${c.icon}</span>
+      </div>`).join("");
+  }
+
+  // ── Stock cards ──────────────────────────────────────────
+  function buildStocks() {
+    document.getElementById("stocks-grid").innerHTML = CARTEIRA.map((s,i) => {
+      const precoMedio = s.valorAplicado / s.cotas;
+      const valorAtual = s.precoAtual * s.cotas;
+      const pnl = valorAtual - s.valorAplicado;
+      const precoAlerta = precoMedio * (1 + THRESHOLD / 100);
+      const isAlert = s.variacao <= THRESHOLD;
+      const pct = Math.min(100, Math.max(0, (Math.abs(s.variacao) / 10) * 100));
+      return `
+      <div class="stock-card ${isAlert?"alert-active":""}" style="animation-delay:${i*.1}s">
+        <div class="stock-head">
+          <div>
+            <div class="stock-ticker">${s.ticker}</div>
+            <div class="stock-name">${s.nome}</div>
+          </div>
+          <div>
+            <div class="stock-price">${brl(s.precoAtual)}</div>
+            <div class="stock-var" style="color:${s.variacao<0?"var(--red)":"var(--green)"}">
+              ${s.variacao>0?"▲":"▼"} ${Math.abs(s.variacao)}%
+            </div>
+          </div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-box"><div class="stat-label">Cotas</div><div class="stat-value" style="color:var(--text)">${s.cotas}</div></div>
+          <div class="stat-box"><div class="stat-label">Aplicado</div><div class="stat-value" style="color:var(--muted)">${brl(s.valorAplicado)}</div></div>
+          <div class="stat-box"><div class="stat-label">P&L</div><div class="stat-value" style="color:${pnl>=0?"var(--green)":"var(--red)"}">${pnl>=0?"+":""}${brl(pnl)}</div></div>
+        </div>
+        <div class="trigger-row">
+          <span>Gatilho: ${brl(precoAlerta)}</span>
+          <span style="color:${isAlert?"var(--red)":"var(--muted)"}">${isAlert?"🔴 ATIVO":"⚪ Aguardando"}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:${pct}%;background:${isAlert?"linear-gradient(90deg,var(--red),#ff6b7a)":"linear-gradient(90deg,var(--blue),#7b8ff7)"}"></div>
+        </div>
+        <button class="sim-btn" onclick="simulateAlert(${i})">▶ SIMULAR ALERTA -5%</button>
+      </div>`;
+    }).join("");
+  }
+
+  // ── Fundo cards ──────────────────────────────────────────
+  function buildFundos() {
+    document.getElementById("fundos-grid").innerHTML = FUNDOS.map(f => `
+      <div class="fundo-card">
+        <div class="fundo-head">
+          <div>
+            <div class="fundo-nome">${f.nome}</div>
+            <div class="fundo-tipo">${f.tipo}</div>
+          </div>
+          <div class="fundo-var">▲ ${f.variacao}%</div>
+        </div>
+        <div class="fundo-stats">
+          <div class="stat-box"><div class="stat-label">Aplicado</div><div class="stat-value" style="color:var(--text)">${brl(f.valorAplicado)}</div></div>
+          <div class="stat-box"><div class="stat-label">Rendimento</div><div class="stat-value" style="color:var(--green)">${brl(f.valorAplicado*f.variacao/100)}</div></div>
+        </div>
+        <div class="fundo-info">ℹ️ Fundos não têm gatilho de -5% (sem variação intraday)</div>
+      </div>`).join("");
+  }
+
+  // ── Toggle agent ─────────────────────────────────────────
+  function toggleAgent() {
+    agentActive = !agentActive;
+    const badge = document.getElementById("status-badge");
+    const dot   = document.getElementById("status-dot");
+    const text  = document.getElementById("status-text");
+    const btn   = document.getElementById("toggle-btn");
+    if (agentActive) {
+      badge.style.cssText = "background:rgba(46,213,115,.1);border-color:var(--green);color:var(--green);display:flex;align-items:center;gap:8px;border-radius:8px;padding:9px 16px;border:1px solid;font-family:var(--mono);font-size:12px;";
+      dot.style.cssText = "width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;";
+      text.textContent = "AGENTE ATIVO";
+      btn.textContent  = "Pausar";
+      log("▶ Agente reativado.", "info");
+    } else {
+      badge.style.cssText = "background:rgba(255,71,87,.1);border-color:var(--red);color:var(--red);display:flex;align-items:center;gap:8px;border-radius:8px;padding:9px 16px;border:1px solid;font-family:var(--mono);font-size:12px;";
+      dot.style.cssText = "width:8px;height:8px;border-radius:50%;background:var(--red);";
+      text.textContent = "PAUSADO";
+      btn.textContent  = "Ativar";
+      log("⏸ Agente pausado pelo usuário.", "cancel");
+    }
+  }
+
+  // ── Simulate alert ───────────────────────────────────────
+  function simulateAlert(idx) {
+    if (!agentActive) { log("⚠️ Agente pausado. Reative para simular alertas.", "cancel"); return; }
+    const stock = CARTEIRA[idx];
+    const queda = -(5 + Math.random() * 2);
+    const preco = stock.precoAtual * (1 + queda / 100);
+    const precoMedio = stock.valorAplicado / stock.cotas;
+    const precoAlerta = precoMedio * (1 + THRESHOLD / 100);
+    const cotasSug = Math.max(1, Math.floor(stock.valorAplicado / preco / 2));
+
+    activeAlert = { ...stock, quedaAtual: queda, precoAtual: preco, cotasSugeridas: cotasSug };
+    log(`🔴 ALERTA: ${stock.ticker} atingiu ${queda.toFixed(2)}% de queda. Aguardando confirmação...`, "alert");
+
+    // fill modal
+    document.getElementById("m-ticker").textContent = stock.ticker;
+    document.getElementById("m-queda").textContent  = queda.toFixed(2) + "%";
+    document.getElementById("m-preco").textContent  = brl(preco);
+    document.getElementById("m-cotas").textContent  = cotasSug;
+    document.getElementById("m-custo").textContent  = brl(cotasSug * preco);
+    document.getElementById("m-desc").innerHTML     =
+      `📊 O agente detectou uma queda de <strong>${queda.toFixed(2)}%</strong> em <strong>${stock.ticker}</strong>, atingindo o limiar de ${THRESHOLD}%. Recomendo a compra de <strong style="color:var(--yellow)">${cotasSug} cotas</strong> para aproveitar o movimento.`;
+
+    openModal();
+  }
+
+  // ── Modal timer ──────────────────────────────────────────
+  function openModal() {
+    timerCount = 30;
+    document.getElementById("modal-overlay").classList.add("active");
+    updateTimer();
+    timerInterval = setInterval(() => {
+      timerCount--;
+      updateTimer();
+      if (timerCount <= 0) { clearInterval(timerInterval); cancelAlert(true); }
+    }, 1000);
+  }
+
+  function updateTimer() {
+    const el   = document.getElementById("m-timer");
+    const fill = document.getElementById("m-timer-fill");
+    el.textContent = timerCount + "s";
+    el.style.color = timerCount <= 10 ? "var(--red)" : "var(--yellow)";
+    fill.style.width = ((timerCount / 30) * 100) + "%";
+    fill.style.background = timerCount <= 10
+      ? "var(--red)"
+      : "linear-gradient(90deg,var(--blue),var(--yellow))";
+  }
+
+  function cancelAlert(expired = false) {
+    clearInterval(timerInterval);
+    document.getElementById("modal-overlay").classList.remove("active");
+    if (activeAlert) {
+      log(expired
+        ? `⏱ Tempo expirado. Compra de ${activeAlert.ticker} cancelada automaticamente.`
+        : `❌ Compra de ${activeAlert.ticker} cancelada pelo usuário.`, "cancel");
+    }
+    activeAlert = null;
+  }
+
+  function confirmAlert() {
+    clearInterval(timerInterval);
+    document.getElementById("modal-overlay").classList.remove("active");
+    if (activeAlert) {
+      const { ticker, precoAtual, cotasSugeridas } = activeAlert;
+      log(`✅ ORDEM EXECUTADA: Compra de ${cotasSugeridas} cotas de ${ticker} a ${brl(precoAtual)}.`, "success");
+      log(`💰 Investimento adicional: ${brl(cotasSugeridas * precoAtual)}`, "success");
+    }
+    activeAlert = null;
+  }
+
+  // ── Blink terminal dot ───────────────────────────────────
+  blinkInterval = setInterval(() => {
+    blinkState = !blinkState;
+    document.getElementById("terminal-title").textContent =
+      `agente.log — ${blinkState?"●":"○"} ao vivo`;
+  }, 800);
+
+  // ── Init ─────────────────────────────────────────────────
+  buildTicker();
+  buildSummary();
+  buildStocks();
+  buildFundos();
+  log("Agente iniciado. Monitorando 3 ativos: CXSE3, TAEE4, BBAS3.", "info");
+  log("Limiar configurado: -5.0% sobre o preço médio de compra.", "info");
+  log("Fundos registrados: Trend DI, Absolute Atenas.", "neutral");
+  log("BBAS3: variação de +0.8% — dentro do normal.", "neutral");
+</script>
+</body>
+</html>
