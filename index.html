@@ -819,12 +819,121 @@ body { padding-bottom: 30px; }
   background: rgba(255,204,0,.07);
 }
 .priv-mask {
-  color: var(--body3);
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: .18em;
-  font-weight: 400;
+  display: inline-block;
+  height: .6em;
+  background: linear-gradient(90deg, var(--wire2) 0%, var(--dim) 60%, var(--wire2) 100%);
+  border-radius: 3px;
+  vertical-align: middle;
   pointer-events: none;
+  opacity: .85;
+  min-width: 32px;
+}
+
+/* ── BUSCA DE ATIVOS ─────────────────────────────────── */
+.op-search-wrap {
+  display: flex; gap: 8px; align-items: stretch;
+}
+.op-search-in {
+  flex: 1;
+  background: var(--ink2); border: 1px solid var(--wire2);
+  color: var(--head); font-family: var(--mono);
+  font-size: 15px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; padding: 11px 14px;
+  border-radius: 5px; transition: border-color .15s;
+}
+.op-search-in::placeholder { text-transform: none; font-weight: 400; font-size: 13px; color: var(--body3); letter-spacing: 0; }
+.op-search-in:focus { outline: none; border-color: var(--lime); box-shadow: 0 0 0 2px rgba(184,255,69,.1); }
+.op-search-btn {
+  background: var(--lime); color: var(--ink);
+  font-family: var(--sans); font-size: 12px; font-weight: 800;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 0 18px; border: none; border-radius: 5px; cursor: pointer;
+  transition: all .15s; white-space: nowrap;
+}
+.op-search-btn:hover { background: var(--lime2); box-shadow: 0 0 16px rgba(184,255,69,.25); }
+.op-search-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+.op-search-hint {
+  font-family: var(--mono); font-size: 10px; color: var(--body3);
+  margin-top: 5px; line-height: 1.7;
+}
+
+/* Resultado da busca */
+.op-result-card {
+  background: var(--ink2); border: 1px solid var(--lime);
+  border-radius: 6px; padding: 12px 14px;
+  cursor: pointer; transition: all .14s;
+  position: relative; overflow: hidden;
+  animation: slideIn .2s ease both;
+}
+.op-result-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: var(--lime);
+}
+.op-result-card:hover { background: rgba(184,255,69,.06); }
+.op-result-card.not-found {
+  border-color: var(--red); cursor: default;
+}
+.op-result-card.not-found::before { background: var(--red); }
+@keyframes slideIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:none} }
+
+.op-result-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+.op-result-tk  { font-family: var(--sans); font-size: 16px; font-weight: 800; letter-spacing: .04em; color: var(--head); }
+.op-result-price { font-family: var(--mono); font-size: 16px; font-weight: 700; color: var(--lime); }
+.op-result-nm    { font-family: var(--sans); font-size: 12px; color: var(--body2); font-weight: 500; }
+.op-result-var   { font-family: var(--mono); font-size: 11px; margin-top: 4px; }
+.op-result-cta   { font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: .1em;
+                   text-transform: uppercase; color: var(--lime); margin-top: 8px; }
+.op-result-err   { font-family: var(--mono); font-size: 11px; color: var(--red2); }
+
+.op-search-loading {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--mono); font-size: 11px; color: var(--body3);
+  padding: 10px 0;
+}
+
+/* Separador de seção */
+.op-section-sep {
+  display: flex; align-items: center; gap: 10px;
+  margin: 4px 0;
+}
+.op-section-label {
+  font-family: var(--sans); font-size: 9px; font-weight: 800;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--body3);
+  white-space: nowrap;
+}
+.op-section-line { flex: 1; height: 1px; background: var(--wire); }
+
+/* Fundo form */
+.op-fundo-card {
+  background: var(--ink2); border: 1px dashed var(--wire2);
+  border-radius: 6px; padding: 12px 14px;
+  cursor: pointer; transition: all .14s;
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--sans); font-size: 13px; font-weight: 600;
+  color: var(--body);
+}
+.op-fundo-card:hover { border-color: var(--blue); color: var(--blue); background: rgba(79,172,254,.04); }
+.op-fundo-icon { font-size: 18px; flex-shrink: 0; }
+
+/* Fundo step 2 */
+.op-fund-form { display: flex; flex-direction: column; gap: 14px; }
+.op-fund-tipos { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.op-fund-tipo-btn {
+  font-family: var(--sans); font-size: 11px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: 8px; border-radius: 4px; border: 1px solid var(--wire);
+  background: transparent; color: var(--body2); cursor: pointer;
+  transition: all .14s; text-align: center;
+}
+.op-fund-tipo-btn:hover { border-color: var(--blue); color: var(--blue); }
+.op-fund-tipo-btn.sel { border-color: var(--blue); background: rgba(79,172,254,.08); color: var(--blue); }
+
+.spin {
+  display: inline-block; width: 13px; height: 13px;
+  border: 2px solid var(--border); border-top-color: var(--cyan);
+  border-radius: 50%; animation: rot .6s linear infinite;
+  vertical-align: middle;
 }
 </style>
 </head>
@@ -1042,8 +1151,85 @@ body { padding-bottom: 30px; }
 
     <!-- STEP 1: escolha do ativo -->
     <div id="op-step1">
-      <div class="op-asset-label">Escolha o ativo</div>
-      <div class="op-asset-grid" id="op-asset-grid"><!-- gerado por JS --></div>
+
+      <!-- Busca qualquer ação da B3 -->
+      <div id="op-buy-search">
+        <div class="op-asset-label" style="margin-bottom:8px">Buscar ação na B3</div>
+        <div class="op-search-wrap">
+          <input class="op-search-in" id="op-search-in" maxlength="8"
+            placeholder="Ex: VALE3, PETR4, ITUB4…"
+            oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')"
+            onkeydown="if(event.key==='Enter') buscarAtivo()">
+          <button class="op-search-btn" id="op-search-btn" onclick="buscarAtivo()">🔍 Buscar</button>
+        </div>
+        <div class="op-search-hint">Digite o código do ativo (ticker) e pressione Buscar ou Enter</div>
+        <div id="op-search-result" style="margin-top:10px"></div>
+      </div>
+
+      <!-- Carteira atual -->
+      <div id="op-carteira-section">
+        <div class="op-section-sep"><div class="op-section-line"></div><div class="op-section-label">Em carteira</div><div class="op-section-line"></div></div>
+        <div class="op-asset-grid" id="op-asset-grid"><!-- gerado por JS --></div>
+      </div>
+
+      <!-- Fundo de Investimento (só compra) -->
+      <div id="op-fundo-section">
+        <div class="op-section-sep"><div class="op-section-line"></div><div class="op-section-label">Fundo de Investimento</div><div class="op-section-line"></div></div>
+        <div class="op-fundo-card" onclick="abrirFormFundo()">
+          <span class="op-fundo-icon">💼</span>
+          <div>
+            <div>Registrar aporte em fundo</div>
+            <div style="font-size:11px;color:var(--body3);font-weight:400;margin-top:2px">Renda Fixa, Multimercado, FII e outros</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- STEP FUNDO: formulário de fundo -->
+    <div id="op-step-fundo" style="display:none">
+      <div class="op-fund-form">
+        <div class="op-form-head" style="cursor:default">
+          <span class="op-form-tk">💼</span>
+          <div class="op-form-info">
+            <span class="op-form-nm">Fundo de Investimento</span>
+            <span class="op-form-pr" style="color:var(--body3)">Registre aportes e resgates</span>
+          </div>
+          <button class="btn btn-wire" style="margin-left:auto;padding:5px 10px;font-size:10px" onclick="voltarStep1()">Trocar</button>
+        </div>
+
+        <div class="op-field">
+          <div class="op-flbl">Nome do Fundo</div>
+          <input class="op-fin buy" id="fundo-nome" style="font-size:14px;font-family:var(--sans)"
+            placeholder="Ex: Trend DI, Absolute Atenas…">
+        </div>
+
+        <div>
+          <div class="op-flbl" style="margin-bottom:8px">Tipo</div>
+          <div class="op-fund-tipos" id="fund-tipos">
+            <button class="op-fund-tipo-btn sel" data-tipo="Renda Fixa"    onclick="selTipo(this)">Renda Fixa</button>
+            <button class="op-fund-tipo-btn"     data-tipo="Multimercado"  onclick="selTipo(this)">Multimercado</button>
+            <button class="op-fund-tipo-btn"     data-tipo="FII"           onclick="selTipo(this)">FII</button>
+            <button class="op-fund-tipo-btn"     data-tipo="Internacional" onclick="selTipo(this)">Internacional</button>
+          </div>
+        </div>
+
+        <div class="op-field">
+          <div class="op-flbl">Valor do Aporte / Resgate (R$)</div>
+          <input class="op-fin buy" id="fundo-valor" type="number" min="0.01" step="0.01"
+            placeholder="0,00" oninput="recalcFundo()">
+        </div>
+
+        <div class="op-summary" id="fundo-summary" style="display:none">
+          <div class="op-summary-main">
+            <div class="op-summary-desc" id="fundo-summary-desc">Valor do aporte</div>
+            <div class="op-summary-val priv" id="fundo-summary-val">—</div>
+          </div>
+        </div>
+
+        <button class="op-btn-confirm buy" id="fundo-confirm"
+          onclick="executarFundo()" disabled>Preencha os campos</button>
+      </div>
     </div>
 
     <!-- STEP 2: form (oculto até selecionar ativo) -->
@@ -1055,7 +1241,7 @@ body { padding-bottom: 30px; }
           <span class="op-form-tk" id="op-form-tk">—</span>
           <div class="op-form-info">
             <span class="op-form-nm" id="op-form-nm">—</span>
-            <span class="op-form-pr priv" id="op-form-pr">—</span>
+            <span class="op-form-pr" id="op-form-pr">—</span>
           </div>
           <button class="btn btn-wire" style="margin-left:auto;padding:5px 10px;font-size:10px" onclick="voltarStep1()">Trocar</button>
         </div>
@@ -1387,8 +1573,8 @@ function renderTape(rows) {
     const cls = vd == null ? "" : vd >= 0 ? "tape-pos" : "tape-neg";
     return `<div class="tape-item">
       <span class="tape-tk">${r.ativo.ticker}</span>
-      <span>${p != null ? "R$\u00a0"+p.toFixed(2) : "—"}</span>
-      <span class="${cls}">${pct(vd != null ? +vd.toFixed(2) : null)}</span>
+      <span class="priv">${p != null ? "R$\u00a0"+p.toFixed(2) : "—"}</span>
+      <span class="priv ${cls}">${pct(vd != null ? +vd.toFixed(2) : null)}</span>
     </div>`;
   }).join("");
   // Duplicate for seamless loop
@@ -1433,17 +1619,17 @@ function renderAlertas() {
       <div class="alerta-top">
         <div>
           <div class="alerta-tkr ${isConf ? "ok" : ""}">
-            ${isConf ? "✅" : a.status==="cancelado" ? "❌" : "⚠"} ${a.ticker} ${pct(a.quedaPct)}
+            ${isConf ? "✅" : a.status==="cancelado" ? "❌" : "⚠"} ${a.ticker} <span class="priv">${pct(a.quedaPct)}</span>
           </div>
           <div class="alerta-nm">${a.nome}</div>
         </div>
         <div class="alerta-hr">${hora}</div>
       </div>
-      <div class="alerta-grid priv">
-        <div>Preço médio <b>R$&nbsp;${a.precoMedio.toFixed(2)}</b></div>
-        <div>Preço atual <b>R$&nbsp;${a.precoAtual.toFixed(2)}</b></div>
-        <div>Cotas sug. <b>${a.cotasSug}</b></div>
-        <div>Custo est. <b>${brl(a.custoEst)}</b></div>
+      <div class="alerta-grid">
+        <div>Preço médio <b class="priv">R$&nbsp;${a.precoMedio.toFixed(2)}</b></div>
+        <div>Preço atual <b class="priv">R$&nbsp;${a.precoAtual.toFixed(2)}</b></div>
+        <div>Cotas sug. <b class="priv">${a.cotasSug}</b></div>
+        <div>Custo est. <b class="priv">${brl(a.custoEst)}</b></div>
       </div>
       ${isPend
         ? `<div class="alerta-btns">
@@ -1660,17 +1846,22 @@ const BRL = v => "R$\u00a0" + Math.abs(v).toLocaleString("pt-BR", {minimumFracti
 let OP = {
   tipo:         "C",   // "C" | "V"
   tickerAtual:  null,
+  buscado:      null,  // { ticker, nome, preco, varPct }
   historico:    [],
 };
 
 /* ── Abrir / fechar ─────────────────────────────────── */
 function abrirOperar() {
   carregarDadosSalvos();
-  OP.tickerAtual = null;
-  $("op-step1").style.display  = "block";
-  $("op-step2").style.display  = "none";
+  OP.tickerAtual  = null;
+  OP.buscado      = null;
+  $("op-step1").style.display      = "block";
+  $("op-step2").style.display      = "none";
+  $("op-step-fundo").style.display = "none";
   $("op-success").classList.remove("show");
-  $("op-body").style.display   = "flex";
+  $("op-body").style.display       = "flex";
+  $("op-search-in").value          = "";
+  $("op-search-result").innerHTML  = "";
   renderAssetGrid();
   renderHistOp();
   syncTabs();
@@ -1712,6 +1903,10 @@ function syncTabs() {
   // Atualiza título do header
   $("op-ph-title").textContent = isBuy ? "Compra de Ativo" : "Venda de Ativo";
 
+  // Mostra/oculta seções só disponíveis em compra
+  const isBuyNow = OP.tipo === "C";
+  if ($("op-buy-search"))    $("op-buy-search").style.display    = isBuyNow ? "block" : "none";
+  if ($("op-fundo-section")) $("op-fundo-section").style.display = isBuyNow ? "block" : "none";
   // Re-renderiza grid com classes corretas
   if ($("op-asset-grid").children.length) renderAssetGrid();
 }
@@ -1731,7 +1926,7 @@ function renderAssetGrid() {
       <span class="op-asset-tk">${a.ticker}</span>
       <span class="op-asset-nm">${a.nome}</span>
       <span class="op-asset-price priv">${preco ? BRL(preco) : "cotação pendente"}</span>
-      <span class="op-asset-pm priv">PM R$\u00a0${pm} · ${a.cotas} cotas</span>
+      <span class="op-asset-pm">PM <span class="priv">R$\u00a0${pm}</span> · <span class="priv">${a.cotas}</span> cotas</span>
     </div>`;
   }).join("");
 
@@ -1740,6 +1935,199 @@ function renderAssetGrid() {
     : "";
 
   grid.innerHTML = cards + novoCard;
+}
+
+/* ── Busca de ativo na B3 ──────────────────────────── */
+async function buscarAtivo() {
+  const raw    = ($("op-search-in").value || "").trim().toUpperCase();
+  const ticker = raw.replace(/[^A-Z0-9]/g, "");
+  if (!ticker) { toast("Digite um ticker para buscar.", "err"); return; }
+
+  const btn = $("op-search-btn");
+  const res = $("op-search-result");
+  btn.disabled = true;
+  btn.textContent = "…";
+  res.innerHTML = `<div class="op-search-loading"><span class="spin" style="border-top-color:var(--lime)"></span> Buscando ${ticker} na B3…</div>`;
+
+  try {
+    const symbol = ticker.includes(".") ? ticker : ticker + ".SA";
+    const url    = `${CFG.YF_BASE}/${symbol}?interval=1d&range=1d`;
+    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error("Timeout")), 12000));
+    const req     = fetch(url).then(r => { if (!r.ok) throw new Error("not_found"); return r.json(); });
+    const data    = await Promise.race([req, timeout]);
+
+    const meta = data?.chart?.result?.[0]?.meta;
+    if (!meta || !meta.regularMarketPrice) throw new Error("not_found");
+
+    const prev   = meta.chartPreviousClose ?? meta.previousClose ?? meta.regularMarketPrice;
+    const preco  = meta.regularMarketPrice;
+    const varPct = prev ? ((preco - prev) / prev) * 100 : 0;
+    const nome   = meta.shortName || meta.longName || ticker;
+    const varCls = varPct >= 0 ? "num-pos" : "num-neg";
+
+    // Armazena resultado buscado
+    OP.buscado = { ticker, nome, preco, varPct };
+
+    res.innerHTML = `
+      <div class="op-result-card" onclick="selecionarAtivoBuscado()">
+        <div class="op-result-top">
+          <div>
+            <div class="op-result-tk">${ticker}</div>
+            <div class="op-result-nm">${nome}</div>
+          </div>
+          <div class="op-result-price">${BRL(preco)}</div>
+        </div>
+        <div class="op-result-var">
+          Variação hoje: <span class="${varCls}">${varPct >= 0 ? "+" : ""}${varPct.toFixed(2)}%</span>
+          &nbsp;·&nbsp; Fonte: Yahoo Finance / B3
+        </div>
+        <div class="op-result-cta">← Clique para comprar este ativo</div>
+      </div>`;
+
+    _log(`Cotação: ${ticker} = ${BRL(preco)} (${varPct >= 0 ? "+" : ""}${varPct.toFixed(2)}%)`, "OK");
+  } catch(e) {
+    OP.buscado = null;
+    res.innerHTML = `
+      <div class="op-result-card not-found">
+        <div class="op-result-tk" style="color:var(--red2)">${ticker}</div>
+        <div class="op-result-err" style="margin-top:6px">
+          Ativo não encontrado na B3.<br>
+          Verifique o ticker e tente novamente.
+        </div>
+      </div>`;
+    _log(`Ticker não encontrado: ${ticker}`, "AVISO");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "🔍 Buscar";
+  }
+}
+
+function selecionarAtivoBuscado() {
+  if (!OP.buscado) return;
+  const { ticker, nome, preco } = OP.buscado;
+
+  // Guarda preço no mapa de cotações para uso em selecionarAtivo
+  ST.cotacoes[ticker] = { regularMarketPrice: preco };
+
+  // Se já está na carteira, usa fluxo normal
+  const emCarteira = CARTEIRA.find(a => a.ticker === ticker);
+  if (emCarteira) {
+    selecionarAtivo(ticker);
+    return;
+  }
+
+  // Novo ativo — pré-popula step 2
+  OP.tickerAtual = ticker;
+  $("op-form-tk").textContent = ticker;
+  $("op-form-nm").textContent = nome;
+  $("op-form-pr").innerHTML = `Novo ativo · Preço atual: <span class="priv">${BRL(preco)}</span>`;
+  $("op-novo-wrap").style.display  = "none";
+  $("op-qtd").value                = "";
+  $("op-preco").value              = preco.toFixed(2);
+  $("op-summary").style.display    = "none";
+  $("op-btn-confirm").disabled     = true;
+  $("op-btn-confirm").textContent  = "Preencha os campos";
+  syncTabs();
+  $("op-step2").style.display = "block";
+  $("op-step2").scrollIntoView({ behavior: "smooth", block: "start" });
+  setTimeout(() => $("op-qtd").focus(), 150);
+}
+
+/* ── Fundo de Investimento ──────────────────────────── */
+function abrirFormFundo() {
+  OP.tickerAtual = "__FUNDO__";
+  $("op-step-fundo").style.display = "block";
+  $("fundo-nome").value  = "";
+  $("fundo-valor").value = "";
+  $("fundo-summary").style.display = "none";
+  $("fundo-confirm").disabled = true;
+  $("fundo-confirm").textContent = "Preencha os campos";
+  // Reset tipo
+  document.querySelectorAll(".op-fund-tipo-btn").forEach((b, i) => b.classList.toggle("sel", i === 0));
+  $("op-step-fundo").scrollIntoView({ behavior: "smooth" });
+  setTimeout(() => $("fundo-nome").focus(), 120);
+}
+
+function selTipo(btn) {
+  document.querySelectorAll(".op-fund-tipo-btn").forEach(b => b.classList.remove("sel"));
+  btn.classList.add("sel");
+}
+
+function recalcFundo() {
+  const valor = parseFloat($("fundo-valor").value) || 0;
+  const nome  = ($("fundo-nome").value || "").trim();
+  const btn   = $("fundo-confirm");
+  if (valor > 0 && nome) {
+    $("fundo-summary").style.display = "block";
+    $("fundo-summary-val").textContent = BRL(valor);
+    const isBuy = OP.tipo === "C";
+    $("fundo-summary-desc").textContent = isBuy ? "Valor do aporte" : "Valor do resgate";
+    btn.disabled    = false;
+    btn.textContent = isBuy ? "✅ Confirmar Aporte" : "💸 Confirmar Resgate";
+    btn.className   = "op-btn-confirm " + (isBuy ? "buy" : "sell");
+  } else {
+    $("fundo-summary").style.display = "none";
+    btn.disabled    = true;
+    btn.textContent = "Preencha os campos";
+  }
+}
+
+function executarFundo() {
+  const nome  = ($("fundo-nome").value || "").trim();
+  const valor = parseFloat($("fundo-valor").value) || 0;
+  const tipo  = document.querySelector(".op-fund-tipo-btn.sel")?.dataset.tipo || "Renda Fixa";
+  const isBuy = OP.tipo === "C";
+
+  if (!nome)    { toast("Informe o nome do fundo.", "err"); return; }
+  if (valor <= 0) { toast("Informe um valor válido.", "err"); return; }
+
+  const idx = FUNDOS.findIndex(f => f.nome.toLowerCase() === nome.toLowerCase());
+
+  let msgSucesso = "";
+  if (isBuy) {
+    if (idx >= 0) {
+      FUNDOS[idx].valorAplicado += valor;
+      msgSucesso = `Aporte em ${nome}
+${BRL(valor)} · Total: ${BRL(FUNDOS[idx].valorAplicado)}`;
+      _log(`APORTE: ${nome} +${BRL(valor)} · Saldo: ${BRL(FUNDOS[idx].valorAplicado)}`, "OK");
+    } else {
+      FUNDOS.push({ nome, valorAplicado: valor, tipo });
+      msgSucesso = `${nome} adicionado
+${BRL(valor)} aplicados`;
+      _log(`FUNDO NOVO: ${nome} (${tipo}) ${BRL(valor)}`, "OK");
+    }
+  } else {
+    if (idx < 0) { toast(`Fundo "${nome}" não encontrado.`, "err"); return; }
+    if (valor > FUNDOS[idx].valorAplicado) { toast("Valor maior que o saldo disponível.", "err"); return; }
+    FUNDOS[idx].valorAplicado -= valor;
+    msgSucesso = `Resgate de ${nome}
+${BRL(valor)} resgatados · Saldo: ${BRL(FUNDOS[idx].valorAplicado)}`;
+    _log(`RESGATE: ${nome} -${BRL(valor)} · Saldo: ${BRL(FUNDOS[idx].valorAplicado)}`, "AVISO");
+    if (FUNDOS[idx].valorAplicado <= 0) {
+      FUNDOS.splice(idx, 1);
+      msgSucesso = `Resgate total de ${nome}
+${BRL(valor)} resgatados · Fundo removido`;
+    }
+  }
+
+  OP.historico.unshift({
+    tipo: isBuy ? "C" : "V",
+    ticker: `FUNDO:${nome}`,
+    qtd: 1, preco: valor, total: valor,
+    hora: new Date().toLocaleTimeString("pt-BR"),
+    data: new Date().toLocaleDateString("pt-BR"),
+  });
+  if (OP.historico.length > 60) OP.historico.length = 60;
+
+  persistirDados();
+  $("op-body").style.display       = "none";
+  $("op-success-icon").textContent  = isBuy ? "✅" : "💸";
+  $("op-success-title").textContent = isBuy ? "Aporte registrado!" : "Resgate registrado!";
+  $("op-success-sub").style.whiteSpace = "pre-line";
+  $("op-success-sub").textContent   = msgSucesso;
+  $("op-success").classList.add("show");
+  renderFundos();
+  renderHistOp();
 }
 
 /* ── Step 2: formulário ─────────────────────────────── */
@@ -1753,12 +2141,13 @@ function selecionarAtivo(ticker) {
   if (!isNovo && a) {
     $("op-form-tk").textContent = a.ticker;
     $("op-form-nm").textContent = a.nome;
-    $("op-form-pr").textContent = `${a.cotas} cotas · PM R$\u00a0${(a.valorAplicado / a.cotas).toFixed(2)}` +
-      (preco ? ` · Atual R$\u00a0${preco.toFixed(2)}` : "");
+    $("op-form-pr").innerHTML =
+      `<span class="priv">${a.cotas}</span> cotas · PM <span class="priv">R$\u00a0${(a.valorAplicado / a.cotas).toFixed(2)}</span>` +
+      (preco ? ` · Atual <span class="priv">R$\u00a0${preco.toFixed(2)}</span>` : "");
   } else {
     $("op-form-tk").textContent = "Novo ativo";
     $("op-form-nm").textContent = "Preencha o ticker abaixo";
-    $("op-form-pr").textContent = "Será adicionado à carteira após confirmação";
+    $("op-form-pr").innerHTML = "Será adicionado à carteira após confirmação";
   }
 
   $("op-novo-wrap").style.display = isNovo ? "block" : "none";
@@ -1786,8 +2175,11 @@ function preencherPreco(ticker) {
 
 function voltarStep1() {
   OP.tickerAtual = null;
-  $("op-step2").style.display  = "none";
-  $("op-summary").style.display = "none";
+  $("op-step2").style.display      = "none";
+  $("op-step-fundo").style.display = "none";
+  $("op-summary").style.display    = "none";
+  $("op-search-result").innerHTML  = "";
+  $("op-search-in").value          = "";
   renderAssetGrid();
 }
 
@@ -1935,11 +2327,15 @@ function executarOp() {
 
 /* Nova operação (após sucesso) */
 function novaOp() {
-  OP.tickerAtual = null;
+  OP.tickerAtual  = null;
+  OP.buscado      = null;
   $("op-success").classList.remove("show");
-  $("op-body").style.display  = "flex";
-  $("op-step2").style.display = "none";
-  $("op-summary").style.display = "none";
+  $("op-body").style.display       = "flex";
+  $("op-step2").style.display      = "none";
+  $("op-step-fundo").style.display = "none";
+  $("op-summary").style.display    = "none";
+  $("op-search-in").value          = "";
+  $("op-search-result").innerHTML  = "";
   $("op-qtd").value   = "";
   $("op-preco").value = "";
   renderAssetGrid();
@@ -1956,7 +2352,7 @@ function renderHistOp() {
     <div class="op-hist-row">
       <span class="op-hist-badge ${h.tipo}">${h.tipo}</span>
       <span class="op-hist-tk">${h.ticker}</span>
-      <span class="op-hist-det priv">${h.qtd}× ${BRL(h.preco)} = ${BRL(h.total)}</span>
+      <span class="op-hist-det"><span class="priv">${h.qtd}</span>× <span class="priv">${BRL(h.preco)}</span> = <span class="priv">${BRL(h.total)}</span></span>
       <span class="op-hist-time">${h.hora}</span>
     </div>`).join("");
   setTimeout(aplicarMascara, 0);
@@ -1990,11 +2386,10 @@ function aplicarMascara() {
   document.querySelectorAll(".priv").forEach(el => {
     if (el.querySelector(".priv-mask")) return; // já mascarado
     if (!el.dataset.orig) el.dataset.orig = el.innerHTML;
-    const size = el.classList.contains("r-num") ? "18px"
-               : el.classList.contains("info-val") ? "13px"
-               : el.classList.contains("fundo-val") ? "14px"
-               : "12px";
-    el.innerHTML = `<span class="priv-mask" style="font-size:${size}">— — — —</span>`;
+    // Largura da barra baseada no tamanho natural do elemento
+    const w = Math.max(el.scrollWidth || el.offsetWidth || 56, 32);
+    const barW = Math.min(Math.round(w * .9), 140);
+    el.innerHTML = `<span class="priv-mask" style="width:${barW}px"></span>`;
   });
 }
 
