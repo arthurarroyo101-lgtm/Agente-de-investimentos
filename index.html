@@ -935,6 +935,395 @@ body { padding-bottom: 30px; }
   border-radius: 50%; animation: rot .6s linear infinite;
   vertical-align: middle;
 }
+
+/* ── LINHAS CLICÁVEIS ────────────────────────────────── */
+tbody tr {
+  cursor: pointer;
+  position: relative;
+}
+tbody tr::after {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  transition: background .12s;
+}
+tbody tr:hover td   { background: rgba(79,172,254,.055) !important; }
+tbody tr:active td  { background: rgba(79,172,254,.12)  !important; }
+tbody tr td:first-child { border-left: 2px solid transparent; transition: border-color .15s; }
+tbody tr:hover td:first-child { border-left-color: var(--blue); }
+tbody tr.alert-row:hover td:first-child { border-left-color: var(--red); }
+
+/* Hint de clique na última coluna */
+tbody tr td:last-child::after {
+  content: '›';
+  color: var(--body3);
+  font-size: 16px;
+  margin-left: 8px;
+  opacity: 0;
+  transition: opacity .15s, transform .15s;
+  display: inline-block;
+  transform: translateX(-4px);
+}
+tbody tr:hover td:last-child::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ── PAINEL DETALHE DO ATIVO ─────────────────────────── */
+.op-detail-card {
+  background: var(--ink3);
+  border: 1px solid var(--wire);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+.op-detail-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--wire);
+}
+.op-detail-left { display: flex; flex-direction: column; gap: 2px; }
+.op-detail-tk {
+  font-family: var(--sans); font-size: 22px; font-weight: 800;
+  letter-spacing: .04em; color: var(--head); line-height: 1;
+}
+.op-detail-nm {
+  font-family: var(--sans); font-size: 12px; color: var(--body2);
+  font-weight: 500;
+}
+.op-detail-price-now {
+  text-align: right;
+}
+.op-detail-price-val {
+  font-family: var(--mono); font-size: 20px; font-weight: 700;
+  color: var(--head);
+}
+.op-detail-price-var {
+  font-family: var(--mono); font-size: 11px; margin-top: 2px;
+}
+
+.op-detail-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--wire);
+}
+.op-detail-cell {
+  background: var(--ink3);
+  padding: 10px 14px;
+}
+.od-lbl {
+  font-family: var(--sans); font-size: 9px; font-weight: 800;
+  letter-spacing: .13em; text-transform: uppercase; color: var(--body3);
+  margin-bottom: 4px;
+}
+.od-val {
+  font-family: var(--mono); font-size: 13px; font-weight: 600;
+  color: var(--head);
+}
+
+.op-detail-pnl {
+  padding: 10px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid var(--wire);
+  font-family: var(--sans); font-size: 11px; font-weight: 600;
+  color: var(--body2);
+}
+.op-detail-pnl-val {
+  font-family: var(--mono); font-size: 14px; font-weight: 700;
+}
+
+/* Botão trocar dentro do detalhe */
+.op-detail-trocar {
+  background: transparent; border: 1px solid var(--wire);
+  color: var(--body3); font-family: var(--sans); font-size: 10px;
+  font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  padding: 5px 10px; border-radius: 3px; cursor: pointer;
+  transition: all .14s;
+}
+.op-detail-trocar:hover { border-color: var(--body); color: var(--body); }
+
+
+/* ── ABAS DO PAINEL (Negociar / Notícias) ───────────── */
+.op-panel-nav {
+  display: none;            /* só aparece em modoDetalhe */
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--wire);
+  background: var(--ink2);
+}
+.op-panel-nav.show { display: flex; }
+
+.op-nav-tab {
+  flex: 1; padding: 12px 8px;
+  font-family: var(--sans); font-size: 12px; font-weight: 800;
+  letter-spacing: .1em; text-transform: uppercase;
+  cursor: pointer; border: none; background: transparent;
+  color: var(--body2); border-bottom: 2px solid transparent;
+  transition: all .15s; display: flex; align-items: center;
+  justify-content: center; gap: 6px;
+}
+.op-nav-tab:hover { color: var(--head); }
+.op-nav-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+/* ── NOTÍCIAS ────────────────────────────────────────── */
+.op-news-body {
+  display: none;
+  flex: 1; overflow-y: auto;
+  flex-direction: column;
+}
+.op-news-body.show { display: flex; }
+
+.news-loading {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 12px; padding: 40px 20px;
+  color: var(--body3); font-family: var(--mono); font-size: 11px;
+}
+
+.news-empty {
+  text-align: center; padding: 36px 20px;
+  color: var(--body3); font-family: var(--sans);
+  font-size: 13px; font-weight: 600; letter-spacing: .06em;
+}
+
+.news-list { padding: 6px 0; }
+
+.news-card {
+  display: block; padding: 14px 20px;
+  border-bottom: 1px solid rgba(27,37,64,.6);
+  text-decoration: none;
+  transition: background .12s;
+  cursor: pointer;
+}
+.news-card:last-child { border-bottom: none; }
+.news-card:hover { background: rgba(79,172,254,.04); }
+
+.news-meta {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 6px;
+}
+.news-source {
+  font-family: var(--sans); font-size: 10px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--blue);
+}
+.news-time {
+  font-family: var(--mono); font-size: 10px; color: var(--body3);
+}
+.news-title {
+  font-family: var(--sans); font-size: 13px; font-weight: 600;
+  color: var(--head); line-height: 1.45;
+  display: -webkit-box; -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.news-card:hover .news-title { color: var(--cyan); }
+
+.news-footer {
+  padding: 12px 20px;
+  font-family: var(--mono); font-size: 10px; color: var(--body3);
+  text-align: center; border-top: 1px solid var(--wire);
+  flex-shrink: 0;
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   CHAT BOT FINANCEIRO
+═══════════════════════════════════════════════════════ */
+.chat-btn {
+  font-family: var(--sans); font-size: 12px; font-weight: 800;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: 7px 16px; border-radius: 3px; border: none;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+  background: linear-gradient(135deg, #7c3aed, #4facfe);
+  color: #fff; display: flex; align-items: center; gap: 7px;
+  position: relative; overflow: hidden;
+}
+.chat-btn::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(255,255,255,0); transition: background .12s;
+}
+.chat-btn:hover::after { background: rgba(255,255,255,.12); }
+
+/* Panel */
+.chat-panel {
+  position: fixed;
+  top: 54px; left: 0; bottom: 28px;
+  width: 440px;
+  background: var(--ink);
+  border-right: 1px solid var(--wire2);
+  display: flex; flex-direction: column;
+  z-index: 400;
+  transform: translateX(-100%);
+  transition: transform .28s cubic-bezier(.4,0,.2,1);
+  box-shadow: 24px 0 60px rgba(0,0,0,.5);
+  overflow: hidden;
+}
+.chat-panel.open { transform: translateX(0); }
+
+.chat-backdrop {
+  position: fixed; inset: 54px 0 28px 440px;
+  z-index: 399; pointer-events: none; opacity: 0;
+  background: rgba(6,8,15,.45); transition: opacity .28s;
+}
+.chat-backdrop.open { opacity: 1; pointer-events: auto; }
+
+/* Header */
+.chat-ph {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--wire);
+  flex-shrink: 0; background: var(--ink2);
+}
+.chat-avatar {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, #7c3aed, #4facfe);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.chat-ph-info { flex: 1; }
+.chat-ph-name {
+  font-family: var(--sans); font-size: 14px; font-weight: 800;
+  letter-spacing: .04em; color: var(--head);
+}
+.chat-ph-status {
+  font-family: var(--mono); font-size: 10px; color: var(--lime);
+  display: flex; align-items: center; gap: 5px; margin-top: 2px;
+}
+.chat-ph-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--lime); box-shadow: 0 0 6px rgba(184,255,69,.6);
+  animation: pls 2.4s infinite;
+}
+.chat-close {
+  background: transparent; border: 1px solid var(--wire);
+  color: var(--body2); font-family: var(--sans); font-size: 12px;
+  font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  padding: 6px 12px; border-radius: 3px; cursor: pointer;
+  transition: all .14s;
+}
+.chat-close:hover { border-color: var(--body); color: var(--head); }
+
+/* API Key screen */
+.chat-key-screen {
+  display: none; flex-direction: column; align-items: center;
+  justify-content: center; gap: 16px; padding: 32px 24px; flex: 1;
+}
+.chat-key-screen.show { display: flex; }
+.chat-key-icon { font-size: 40px; }
+.chat-key-title {
+  font-family: var(--sans); font-size: 16px; font-weight: 800;
+  color: var(--head); text-align: center; letter-spacing: .04em;
+}
+.chat-key-desc {
+  font-family: var(--mono); font-size: 11px; color: var(--body2);
+  text-align: center; line-height: 1.7; max-width: 320px;
+}
+.chat-key-in {
+  background: var(--ink3); border: 1px solid var(--wire);
+  color: var(--head); font-family: var(--mono); font-size: 12px;
+  padding: 10px 14px; border-radius: 5px; width: 100%;
+  transition: border-color .15s;
+}
+.chat-key-in:focus { outline: none; border-color: var(--blue); }
+.chat-key-link {
+  font-family: var(--mono); font-size: 10px; color: var(--blue);
+  text-decoration: none; text-align: center;
+}
+.chat-key-link:hover { color: var(--cyan); }
+
+/* Messages area */
+.chat-msgs {
+  flex: 1; overflow-y: auto;
+  padding: 16px 0; display: flex; flex-direction: column; gap: 4px;
+}
+.chat-msg {
+  display: flex; gap: 10px; padding: 4px 16px;
+  align-items: flex-end;
+}
+.chat-msg.user { flex-direction: row-reverse; }
+
+.chat-bubble {
+  max-width: 78%; padding: 10px 14px;
+  border-radius: 12px; font-size: 13px; line-height: 1.55;
+  font-family: var(--sans); font-weight: 500;
+  white-space: pre-wrap; word-break: break-word;
+}
+.chat-msg.bot  .chat-bubble {
+  background: var(--ink3); border: 1px solid var(--wire);
+  color: var(--text); border-bottom-left-radius: 4px;
+}
+.chat-msg.user .chat-bubble {
+  background: linear-gradient(135deg, #7c3aed88, #4facfe88);
+  border: 1px solid rgba(79,172,254,.3);
+  color: var(--head); border-bottom-right-radius: 4px;
+}
+
+.chat-msg-avatar {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, #7c3aed, #4facfe);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; margin-bottom: 2px;
+}
+
+/* Typing indicator */
+.chat-typing .chat-bubble {
+  display: flex; align-items: center; gap: 5px; padding: 14px 16px;
+}
+.typing-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--body3); animation: typingBounce 1.2s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: .2s; }
+.typing-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes typingBounce {
+  0%,60%,100% { transform: translateY(0); }
+  30%         { transform: translateY(-6px); background: var(--cyan); }
+}
+
+/* Sugestões */
+.chat-sugs {
+  padding: 10px 16px 4px;
+  display: flex; flex-wrap: wrap; gap: 7px;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(27,37,64,.5);
+}
+.sug-chip {
+  font-family: var(--sans); font-size: 11px; font-weight: 700;
+  letter-spacing: .04em; padding: 6px 12px; border-radius: 20px;
+  background: var(--ink3); border: 1px solid var(--wire2);
+  color: var(--body); cursor: pointer; transition: all .14s;
+  white-space: nowrap;
+}
+.sug-chip:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(79,172,254,.07); }
+
+/* Input bar */
+.chat-input-wrap {
+  display: flex; gap: 8px; padding: 12px 16px;
+  border-top: 1px solid var(--wire); flex-shrink: 0;
+  background: var(--ink2);
+}
+.chat-in {
+  flex: 1; background: var(--ink3); border: 1px solid var(--wire);
+  color: var(--head); font-family: var(--sans); font-size: 13px;
+  padding: 10px 14px; border-radius: 20px; resize: none;
+  max-height: 100px; overflow-y: auto; line-height: 1.4;
+  transition: border-color .15s;
+}
+.chat-in:focus { outline: none; border-color: var(--blue); }
+.chat-in::placeholder { color: var(--body3); }
+.chat-send {
+  background: linear-gradient(135deg, #7c3aed, #4facfe);
+  border: none; border-radius: 50%; width: 40px; height: 40px;
+  cursor: pointer; flex-shrink: 0; display: flex;
+  align-items: center; justify-content: center; font-size: 16px;
+  transition: all .15s; align-self: flex-end;
+}
+.chat-send:hover { transform: scale(1.08); box-shadow: 0 0 16px rgba(79,172,254,.4); }
+.chat-send:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+/* Disclaimer */
+.chat-disclaimer {
+  text-align: center; padding: 4px 16px 10px;
+  font-family: var(--mono); font-size: 9px; color: var(--body3);
+  line-height: 1.5; flex-shrink: 0;
+}
+
 </style>
 </head>
 <body>
@@ -975,10 +1364,11 @@ body { padding-bottom: 30px; }
   </div>
 
   <div class="topbar-actions">
+    <button class="chat-btn" id="btn-chat">🤖 Assistente</button>
     <button class="btn-privacy" id="btn-privacy"><span id="privacy-icon">👁</span><span id="privacy-lbl">Ocultar</span></button>
     <button class="btn btn-wire" id="btn-check">⚡ Verificar</button>
     <button class="btn btn-wire" id="btn-cfg-toggle">⚙</button>
-    <button class="btn btn-lime" id="btn-operar" style="letter-spacing:.06em">📈 Comprar / Vender</button>
+    <button class="btn btn-wire" id="btn-operar" style="letter-spacing:.06em">🔍 Buscar Ativo</button>
     <button class="btn btn-lime" id="btn-monitor" style="display:none">▶ Iniciar</button>
   </div>
 </header>
@@ -1140,10 +1530,27 @@ body { padding-bottom: 30px; }
     <div class="op-ph-title" id="op-ph-title">Operar</div>
   </div>
 
+  <!-- Abas do painel: Negociar | Notícias (só no modoDetalhe) -->
+  <div class="op-panel-nav" id="op-panel-nav">
+    <button class="op-nav-tab active" id="nav-negociar" onclick="setAbaPanel('negociar')">📊 Negociar</button>
+    <button class="op-nav-tab"        id="nav-noticias" onclick="setAbaPanel('noticias')">📰 Notícias</button>
+  </div>
+
   <!-- Compra / Venda tabs -->
-  <div class="op-tabs">
+  <div class="op-tabs" id="op-tabs-wrap">
     <button class="op-tab buy on" id="tab-buy"  onclick="setTipo('C')">▲ Compra</button>
     <button class="op-tab sell"   id="tab-sell" onclick="setTipo('V')">▼ Venda</button>
+  </div>
+
+  <!-- Notícias body -->
+  <div class="op-news-body" id="op-news-body">
+    <div class="news-loading" id="news-loading">
+      <span class="spin" style="width:18px;height:18px;border-width:2px;border-top-color:var(--cyan)"></span>
+      Buscando notícias…
+    </div>
+    <div class="news-list" id="news-list" style="display:none"></div>
+    <div class="news-empty" id="news-empty" style="display:none">Nenhuma notícia encontrada</div>
+    <div class="news-footer" id="news-footer" style="display:none">Fonte: Yahoo Finance · clique para abrir a matéria</div>
   </div>
 
   <!-- Corpo scrollável -->
@@ -1166,9 +1573,9 @@ body { padding-bottom: 30px; }
         <div id="op-search-result" style="margin-top:10px"></div>
       </div>
 
-      <!-- Carteira atual -->
+      <!-- Carteira atual (referência rápida) -->
       <div id="op-carteira-section">
-        <div class="op-section-sep"><div class="op-section-line"></div><div class="op-section-label">Em carteira</div><div class="op-section-line"></div></div>
+        <div class="op-section-sep"><div class="op-section-line"></div><div class="op-section-label">Em carteira — clique para operar</div><div class="op-section-line"></div></div>
         <div class="op-asset-grid" id="op-asset-grid"><!-- gerado por JS --></div>
       </div>
 
@@ -1236,17 +1643,50 @@ body { padding-bottom: 30px; }
     <div id="op-step2" style="display:none">
       <div class="op-form">
 
-        <!-- Ativo selecionado -->
-        <div class="op-form-head" id="op-form-head">
-          <span class="op-form-tk" id="op-form-tk">—</span>
-          <div class="op-form-info">
-            <span class="op-form-nm" id="op-form-nm">—</span>
-            <span class="op-form-pr" id="op-form-pr">—</span>
+        <!-- Detalhe rico do ativo selecionado -->
+        <div class="op-detail-card" id="op-detail-card">
+          <div class="op-detail-head">
+            <div class="op-detail-left">
+              <div class="op-detail-tk" id="op-form-tk">—</div>
+              <div class="op-detail-nm" id="op-form-nm">—</div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <div class="op-detail-price-now">
+                <div class="op-detail-price-val priv" id="od-preco-atual">—</div>
+                <div class="op-detail-price-var" id="od-var-dia">—</div>
+              </div>
+              <button class="op-detail-trocar" onclick="voltarStep1()">Trocar</button>
+            </div>
           </div>
-          <button class="btn btn-wire" style="margin-left:auto;padding:5px 10px;font-size:10px" onclick="voltarStep1()">Trocar</button>
+          <div class="op-detail-grid">
+            <div class="op-detail-cell">
+              <div class="od-lbl">Valor Investido</div>
+              <div class="od-val priv" id="od-investido">—</div>
+            </div>
+            <div class="op-detail-cell">
+              <div class="od-lbl">Cotas</div>
+              <div class="od-val priv" id="od-cotas">—</div>
+            </div>
+            <div class="op-detail-cell">
+              <div class="od-lbl">Preço Médio</div>
+              <div class="od-val priv" id="od-pm">—</div>
+            </div>
+            <div class="op-detail-cell">
+              <div class="od-lbl">Var. Compra</div>
+              <div class="od-val" id="od-var-compra">—</div>
+            </div>
+            <div class="op-detail-cell">
+              <div class="od-lbl">P&amp;L</div>
+              <div class="od-val priv" id="od-pnl">—</div>
+            </div>
+            <div class="op-detail-cell">
+              <div class="od-lbl">Valor Atual</div>
+              <div class="od-val priv" id="od-valor-atual">—</div>
+            </div>
+          </div>
         </div>
 
-        <!-- Novo ticker (só quando "Novo ativo") -->
+        <!-- Novo ticker (só quando "Novo ativo" via busca) -->
         <div id="op-novo-wrap" style="display:none">
           <div class="op-flbl" style="margin-bottom:6px">Ticker do novo ativo</div>
           <input class="op-novo-in" id="op-novo-in" placeholder="Ex: VALE3, ITUB4…"
@@ -1298,6 +1738,56 @@ body { padding-bottom: 30px; }
     <div class="op-hist-lbl">Histórico</div>
     <div class="op-hist-scroll" id="op-hist">
       <div class="op-hist-empty">Nenhuma operação ainda</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════ CHAT BOT FINANCEIRO ═══════ -->
+<div class="chat-backdrop" id="chat-backdrop" onclick="fecharChat()"></div>
+<div class="chat-panel" id="chat-panel">
+
+  <!-- Header -->
+  <div class="chat-ph">
+    <div class="chat-avatar">🤖</div>
+    <div class="chat-ph-info">
+      <div class="chat-ph-name">Assistente Financeiro</div>
+      <div class="chat-ph-status"><div class="chat-ph-dot"></div>Especialista B3 · Rico (XP)</div>
+    </div>
+    <button class="chat-close" onclick="fecharChat()">✕</button>
+  </div>
+
+  <!-- API Key screen -->
+  <div class="chat-key-screen" id="chat-key-screen">
+    <div class="chat-key-icon">🔑</div>
+    <div class="chat-key-title">Chave da API Anthropic</div>
+    <div class="chat-key-desc">
+      Para usar o assistente de IA, insira sua chave de API da Anthropic.<br>
+      Ela fica salva localmente no seu navegador.
+    </div>
+    <input class="chat-key-in" id="chat-key-in"
+      type="password" placeholder="sk-ant-api03-…"
+      onkeydown="if(event.key==='Enter') salvarChave()">
+    <button class="btn btn-lime" style="width:100%;padding:10px" onclick="salvarChave()">Conectar</button>
+    <a class="chat-key-link" href="https://console.anthropic.com/keys" target="_blank" rel="noopener">
+      → Obter chave gratuita em console.anthropic.com
+    </a>
+    <button class="btn btn-wire" style="font-size:10px;padding:5px 12px" onclick="limparChave()">Esqueceu a chave?</button>
+  </div>
+
+  <!-- Chat area (oculta até ter chave) -->
+  <div id="chat-main" style="display:none;flex-direction:column;flex:1;overflow:hidden;display:none">
+    <div class="chat-msgs" id="chat-msgs"></div>
+    <div class="chat-sugs" id="chat-sugs"></div>
+    <div class="chat-input-wrap">
+      <textarea class="chat-in" id="chat-in" rows="1"
+        placeholder="Pergunte sobre ações, fundos, estratégias…"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarMsg();}"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+      <button class="chat-send" id="chat-send" onclick="enviarMsg()">➤</button>
+    </div>
+    <div class="chat-disclaimer">
+      ⚠ Não é recomendação de investimento · Sempre consulte um assessor qualificado
     </div>
   </div>
 
@@ -1537,7 +2027,7 @@ function renderAcoes(rows) {
     return;
   }
   $("acoes-body").innerHTML = rows.map(({ativo, preco, pm, varCompra, varDia, valorAtu, pnl, isAlert}) => `
-    <tr class="${isAlert ? "alert-row" : ""}">
+    <tr class="${isAlert ? 'alert-row' : ''}" onclick="abrirAtivoDetalhe('${ativo.ticker}')" style="cursor:pointer">
       <td><span class="tkr-lbl">${isAlert ? "⚠ " : ""}${ativo.ticker}</span></td>
       <td><span class="nome-lbl">${ativo.nome}</span></td>
       <td class="priv" style="color:var(--head)">${ativo.cotas}</td>
@@ -1832,6 +2322,8 @@ $id("btn-monitor").addEventListener("click", () => {
   ST.monitorando ? pararMonitoramento() : iniciarMonitoramento();
 });
 $id("btn-operar").addEventListener("click", () => abrirOperar());
+$id("btn-chat").addEventListener("click", () => abrirChat());
+$id("chat-backdrop").addEventListener("click", () => fecharChat());
 
 /* ── HELPERS DOM ────────────────────────────────────── */
 function $(id)   { return document.getElementById(id); }
@@ -1847,6 +2339,7 @@ let OP = {
   tipo:         "C",   // "C" | "V"
   tickerAtual:  null,
   buscado:      null,  // { ticker, nome, preco, varPct }
+  modoDetalhe:  false, // true quando aberto via clique na linha da tabela
   historico:    [],
 };
 
@@ -1855,6 +2348,8 @@ function abrirOperar() {
   carregarDadosSalvos();
   OP.tickerAtual  = null;
   OP.buscado      = null;
+  OP.modoDetalhe  = false;
+  $("op-ph-title").textContent     = "Operar";
   $("op-step1").style.display      = "block";
   $("op-step2").style.display      = "none";
   $("op-step-fundo").style.display = "none";
@@ -1870,6 +2365,15 @@ function abrirOperar() {
 }
 
 function fecharOperar() {
+  OP.modoDetalhe = false;
+  $("op-ph-title").textContent = "Operar";
+  $("op-panel-nav").classList.remove("show");
+  // Restaura layout para próximo uso via "Buscar Ativo"
+  $("op-tabs-wrap").style.display   = "";
+  $("op-body").style.display        = "flex";
+  $("op-news-body").classList.remove("show");
+  $("nav-negociar").classList.add("active");
+  $("nav-noticias").classList.remove("active");
   $("op-panel").classList.remove("open");
   $("op-backdrop").classList.remove("open");
 }
@@ -1900,8 +2404,10 @@ function syncTabs() {
     btn.textContent = isBuy ? "✅ Confirmar Compra" : "💸 Confirmar Venda";
   }
 
-  // Atualiza título do header
-  $("op-ph-title").textContent = isBuy ? "Compra de Ativo" : "Venda de Ativo";
+  // Atualiza título do header (só quando não está em modo detalhe)
+  if (!OP.modoDetalhe) {
+    $("op-ph-title").textContent = isBuy ? "Compra de Ativo" : "Venda de Ativo";
+  }
 
   // Mostra/oculta seções só disponíveis em compra
   const isBuyNow = OP.tipo === "C";
@@ -2020,8 +2526,16 @@ function selecionarAtivoBuscado() {
   OP.tickerAtual = ticker;
   $("op-form-tk").textContent = ticker;
   $("op-form-nm").textContent = nome;
-  $("op-form-pr").innerHTML = `Novo ativo · Preço atual: <span class="priv">${BRL(preco)}</span>`;
-  $("op-novo-wrap").style.display  = "none";
+  $("od-preco-atual").textContent = BRL(preco);
+  $("od-investido").textContent   = "Novo ativo";
+  $("od-cotas").textContent       = "—";
+  $("od-pm").textContent          = "—";
+  $("od-var-compra").textContent  = "—";
+  $("od-pnl").textContent         = "—";
+  $("od-valor-atual").textContent = "—";
+  $("od-var-dia").textContent     = OP.buscado?.varPct != null ? (OP.buscado.varPct >= 0 ? "+" : "") + OP.buscado.varPct.toFixed(2) + "% hoje" : "";
+  $("op-detail-card").style.display = "block";
+  $("op-novo-wrap").style.display   = "none";
   $("op-qtd").value                = "";
   $("op-preco").value              = preco.toFixed(2);
   $("op-summary").style.display    = "none";
@@ -2130,42 +2644,179 @@ ${BRL(valor)} resgatados · Fundo removido`;
   renderHistOp();
 }
 
+/* ── ABAS DO PAINEL ────────────────────────────────── */
+
+function setAbaPanel(aba) {
+  const isNeg = aba === "negociar";
+  $("nav-negociar").classList.toggle("active", isNeg);
+  $("nav-noticias").classList.toggle("active", !isNeg);
+  // Negociar: mostra op-tabs + op-body | Notícias: mostra news-body
+  $("op-tabs-wrap").style.display  = isNeg ? ""     : "none";
+  $("op-body").style.display       = isNeg ? "flex"  : "none";
+  $("op-news-body").classList.toggle("show", !isNeg);
+  $("op-success").style.display    = "none";
+}
+
+/* ── NOTÍCIAS ────────────────────────────────────────── */
+
+function tempoAtras(ts) {
+  const diff = Math.floor((Date.now() / 1000) - ts);
+  if (diff < 60)        return "agora";
+  if (diff < 3600)      return `${Math.floor(diff/60)}min atrás`;
+  if (diff < 86400)     return `${Math.floor(diff/3600)}h atrás`;
+  if (diff < 86400*30)  return `${Math.floor(diff/86400)}d atrás`;
+  return new Date(ts*1000).toLocaleDateString("pt-BR");
+}
+
+async function buscarNoticias(ticker) {
+  // Reset state
+  $("news-loading").style.display  = "flex";
+  $("news-list").style.display     = "none";
+  $("news-empty").style.display    = "none";
+  $("news-footer").style.display   = "none";
+  $("news-list").innerHTML         = "";
+
+  const symbol = ticker.endsWith(".SA") ? ticker : ticker + ".SA";
+  const url    = `https://corsproxy.io/?https://query2.finance.yahoo.com/v1/finance/search?q=${symbol}&newsCount=15&quotesCount=0&lang=pt-BR&region=BR`;
+
+  try {
+    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error("Timeout")), 12000));
+    const req     = fetch(url).then(r => { if (!r.ok) throw new Error("status " + r.status); return r.json(); });
+    const data    = await Promise.race([req, timeout]);
+
+    const articles = data?.news ?? [];
+
+    $("news-loading").style.display = "none";
+
+    if (!articles.length) {
+      $("news-empty").style.display = "block";
+      return;
+    }
+
+    $("news-list").innerHTML = articles.map(a => {
+      const tempo = a.providerPublishTime ? tempoAtras(a.providerPublishTime) : "";
+      const fonte = a.publisher || "Yahoo Finance";
+      return `
+        <a class="news-card" href="${a.link || "#"}" target="_blank" rel="noopener">
+          <div class="news-meta">
+            <span class="news-source">${fonte}</span>
+            ${tempo ? `<span class="news-time">· ${tempo}</span>` : ""}
+          </div>
+          <div class="news-title">${a.title || "Sem título"}</div>
+        </a>`;
+    }).join("");
+
+    $("news-list").style.display  = "block";
+    $("news-footer").style.display = "block";
+    _log(`Notícias carregadas: ${articles.length} artigos sobre ${ticker}.`, "OK");
+
+  } catch(e) {
+    $("news-loading").style.display = "none";
+    $("news-empty").style.display   = "block";
+    $("news-empty").textContent     = `Não foi possível carregar notícias (${e.message})`;
+    _log(`Erro ao buscar notícias de ${ticker}: ${e.message}`, "AVISO");
+  }
+}
+
 /* ── Step 2: formulário ─────────────────────────────── */
+
+function abrirAtivoDetalhe(ticker) {
+  carregarDadosSalvos();
+  OP.buscado      = null;
+  OP.tickerAtual  = null;
+  OP.modoDetalhe  = true;
+
+  // Oculta step1 — o usuário já escolheu clicando na linha
+  $("op-step1").style.display      = "none";
+  $("op-step2").style.display      = "none";
+  $("op-step-fundo").style.display = "none";
+  $("op-success").classList.remove("show");
+  $("op-body").style.display       = "flex";
+
+  // Atualiza título do painel
+  const a = CARTEIRA.find(x => x.ticker === ticker);
+  $("op-ph-title").textContent = a ? `${a.ticker} — ${a.nome}` : ticker;
+
+  // Mostra abas Negociar | Notícias e ativa "Negociar"
+  $("op-panel-nav").classList.add("show");
+  setAbaPanel("negociar");
+
+  renderHistOp();
+  syncTabs();
+  $("op-panel").classList.add("open");
+  $("op-backdrop").classList.add("open");
+
+  // Preenche step2 diretamente
+  selecionarAtivo(ticker);
+
+  // Pré-carrega notícias em background
+  buscarNoticias(ticker);
+}
+
 function selecionarAtivo(ticker) {
   OP.tickerAtual = ticker;
   const isNovo = ticker === "__NOVO__";
-  const a = CARTEIRA.find(x => x.ticker === ticker);
-  const preco = ST.cotacoes[ticker]?.regularMarketPrice;
+  const a      = CARTEIRA.find(x => x.ticker === ticker);
+  const cot    = ST.cotacoes[ticker];
+  const preco  = cot?.regularMarketPrice ?? null;
+  const varDia = cot?.regularMarketChangePercent ?? null;
 
-  // Popula cabeçalho do form
   if (!isNovo && a) {
-    $("op-form-tk").textContent = a.ticker;
-    $("op-form-nm").textContent = a.nome;
-    $("op-form-pr").innerHTML =
-      `<span class="priv">${a.cotas}</span> cotas · PM <span class="priv">R$\u00a0${(a.valorAplicado / a.cotas).toFixed(2)}</span>` +
-      (preco ? ` · Atual <span class="priv">R$\u00a0${preco.toFixed(2)}</span>` : "");
+    const pm       = a.valorAplicado / a.cotas;
+    const valorAtu = preco != null ? preco * a.cotas : null;
+    const pnl      = valorAtu != null ? valorAtu - a.valorAplicado : null;
+    const varC     = preco != null ? ((preco - pm) / pm) * 100 : null;
+
+    $("op-form-tk").textContent     = a.ticker;
+    $("op-form-nm").textContent     = a.nome;
+    $("od-preco-atual").textContent = preco != null ? BRL(preco) : "—";
+
+    const vdEl = $("od-var-dia");
+    if (varDia != null) {
+      vdEl.textContent = (varDia >= 0 ? "+" : "") + varDia.toFixed(2) + "% hoje";
+      vdEl.style.color = varDia >= 0 ? "var(--lime)" : "var(--red2)";
+    } else { vdEl.textContent = ""; }
+
+    $("od-investido").textContent  = brl(a.valorAplicado);
+    $("od-cotas").textContent      = a.cotas;
+    $("od-pm").textContent         = "R$\u00a0" + pm.toFixed(4);
+
+    const vcEl = $("od-var-compra");
+    if (varC != null) {
+      vcEl.textContent = (varC >= 0 ? "+" : "") + varC.toFixed(2) + "%";
+      vcEl.style.color = varC >= 0 ? "var(--lime)" : "var(--red2)";
+    } else { vcEl.textContent = "—"; }
+
+    const pnlEl = $("od-pnl");
+    if (pnl != null) {
+      pnlEl.textContent = (pnl >= 0 ? "+" : "") + brl(pnl);
+      pnlEl.style.color = pnl >= 0 ? "var(--lime)" : "var(--red2)";
+    } else { pnlEl.textContent = "—"; }
+
+    $("od-valor-atual").textContent     = valorAtu != null ? brl(valorAtu) : "—";
+    $("op-detail-card").style.display   = "block";
+    $("op-novo-wrap").style.display     = "none";
   } else {
-    $("op-form-tk").textContent = "Novo ativo";
-    $("op-form-nm").textContent = "Preencha o ticker abaixo";
-    $("op-form-pr").innerHTML = "Será adicionado à carteira após confirmação";
+    $("op-form-tk").textContent          = "Novo Ativo";
+    $("op-form-nm").textContent          = "Preencha o ticker abaixo";
+    $("od-preco-atual").textContent      = "—";
+    $("od-var-dia").textContent          = "";
+    ["od-investido","od-cotas","od-pm","od-var-compra","od-pnl","od-valor-atual"]
+      .forEach(id => { $( id).textContent = "—"; });
+    $("op-detail-card").style.display    = "none";
+    $("op-novo-wrap").style.display      = "block";
   }
 
-  $("op-novo-wrap").style.display = isNovo ? "block" : "none";
-
-  // Limpa e pré-preenche preço
-  $("op-qtd").value   = "";
+  $("op-qtd").value  = "";
   preencherPreco(ticker);
   $("op-summary").style.display  = "none";
   $("op-btn-confirm").disabled   = true;
-  $("op-btn-confirm").textContent = OP.tipo === "C" ? "Preencha os campos" : "Preencha os campos";
-
-  // Atualiza grid com seleção visual
-  renderAssetGrid();
-
-  // Mostra step 2
+  $("op-btn-confirm").textContent = "Preencha os campos";
+  if (!OP.modoDetalhe) renderAssetGrid();
+  setTimeout(aplicarMascara, 0);
   $("op-step2").style.display = "block";
-  $("op-step1").scrollIntoView({ behavior: "smooth", block: "start" });
-  setTimeout(() => $("op-qtd").focus(), 150);
+  if (!OP.modoDetalhe) $("op-step1").scrollIntoView({ behavior: "smooth", block: "start" });
+  setTimeout(() => $("op-qtd").focus(), 200);
 }
 
 function preencherPreco(ticker) {
@@ -2174,6 +2825,11 @@ function preencherPreco(ticker) {
 }
 
 function voltarStep1() {
+  if (OP.modoDetalhe) {
+    // Veio de clique na tabela → fechar painel
+    fecharOperar();
+    return;
+  }
   OP.tickerAtual = null;
   $("op-step2").style.display      = "none";
   $("op-step-fundo").style.display = "none";
@@ -2327,10 +2983,15 @@ function executarOp() {
 
 /* Nova operação (após sucesso) */
 function novaOp() {
+  const manter = OP.modoDetalhe;  // se veio de detalhe, fecha ao invés de voltar p/ step1
   OP.tickerAtual  = null;
   OP.buscado      = null;
+  OP.modoDetalhe  = false;
   $("op-success").classList.remove("show");
+  if (manter) { fecharOperar(); return; }
   $("op-body").style.display       = "flex";
+  $("op-ph-title").textContent     = "Operar";
+  $("op-step1").style.display      = "block";
   $("op-step2").style.display      = "none";
   $("op-step-fundo").style.display = "none";
   $("op-summary").style.display    = "none";
@@ -2376,6 +3037,242 @@ function carregarDadosSalvos() {
     if (f) { const p = JSON.parse(f); FUNDOS.length   = 0; p.forEach(x => FUNDOS.push(x)); }
     if (h) { OP.historico = JSON.parse(h); }
   } catch(e) {}
+}
+
+/* ═══════════════════════════════════════════════════════
+   CHAT BOT FINANCEIRO
+═══════════════════════════════════════════════════════ */
+
+const CHAT = {
+  historico: [],   // [{role, content}]
+  pensando:  false,
+};
+
+/* ── API Key ───────────────────────────────────────── */
+function getChave() {
+  return localStorage.getItem("b3agent_apikey") || "";
+}
+
+function salvarChave() {
+  const chave = ($("chat-key-in").value || "").trim();
+  if (!chave.startsWith("sk-ant")) {
+    toast("Chave inválida. Deve começar com sk-ant…", "err");
+    return;
+  }
+  localStorage.setItem("b3agent_apikey", chave);
+  iniciarChat();
+}
+
+function limparChave() {
+  localStorage.removeItem("b3agent_apikey");
+  $("chat-key-in").value = "";
+  $("chat-key-screen").classList.add("show");
+  $("chat-main").style.display = "none";
+}
+
+/* ── Abrir / fechar ─────────────────────────────────── */
+function abrirChat() {
+  $("chat-panel").classList.add("open");
+  $("chat-backdrop").classList.add("open");
+  if (getChave()) {
+    iniciarChat();
+  } else {
+    $("chat-key-screen").classList.add("show");
+    $("chat-main").style.display = "none";
+    setTimeout(() => $("chat-key-in").focus(), 200);
+  }
+}
+
+function fecharChat() {
+  $("chat-panel").classList.remove("open");
+  $("chat-backdrop").classList.remove("open");
+}
+
+function iniciarChat() {
+  $("chat-key-screen").classList.remove("show");
+  $("chat-main").style.display = "flex";
+  $("chat-main").style.flexDirection = "column";
+  if (!CHAT.historico.length) {
+    adicionarBotMsg("Ola! Sou seu assistente financeiro B3.\n\nPosso analisar acoes, fundos, estrategias e responder duvidas sobre seu portfolio. Como posso ajudar hoje?");
+  }
+  renderSugestoes();
+  renderMsgs();
+}
+
+/* ── Sistema prompt com contexto do portfólio ─────── */
+function montarSystemPrompt() {
+  const acoes = CARTEIRA.map(a => {
+    const preco = ST.cotacoes[a.ticker]?.regularMarketPrice;
+    const pm    = (a.valorAplicado / a.cotas).toFixed(2);
+    const varC  = preco ? (((preco - pm) / pm) * 100).toFixed(2) + "%" : "—";
+    return "  * " + a.ticker + " (" + a.nome + "): " + a.cotas + " cotas, PM R$" + pm + ", atual " + (preco ? "R$" + preco.toFixed(2) : "-") + ", var.compra " + varC;
+  }).join("\n");
+
+  const fundos = FUNDOS.map(f =>
+    "  * " + f.nome + " (" + f.tipo + "): R$ " + f.valorAplicado.toLocaleString("pt-BR", {minimumFractionDigits:2})
+  ).join("\n");
+
+  const totalApl = (CARTEIRA.reduce((s,a) => s+a.valorAplicado, 0) + FUNDOS.reduce((s,f) => s+f.valorAplicado, 0));
+
+  return `Você é um assistente financeiro especialista em investimentos na B3 (bolsa brasileira) e fundos de investimento.
+
+PORTFÓLIO ATUAL DO USUÁRIO:
+Ações:
+${acoes || "  Nenhuma ação na carteira"}
+
+Fundos:
+${fundos || "  Nenhum fundo na carteira"}
+
+Total aplicado: R$ ${totalApl.toLocaleString("pt-BR", {minimumFractionDigits:2})}
+
+DIRETRIZES:
+- Analise sempre com base em fundamentos sólidos e contexto macroeconômico brasileiro
+- Cite indicadores relevantes: SELIC, IPCA, CDI, dividend yield, P/L, ROE, ROIC
+- Seja objetivo e direto, use emojis com moderação
+- SEMPRE alerte sobre riscos e que não é recomendação formal de investimento
+- Mencione diversificação quando pertinente
+- Responda em português do Brasil
+- Formate respostas com paragrafos curtos, use ** para negrito quando necessário`;
+}
+
+/* ── Sugestões contextuais ─────────────────────────── */
+function renderSugestoes() {
+  const tickers = CARTEIRA.map(a => a.ticker);
+  const sugs = [
+    `📊 Analise minha carteira`,
+    `🏆 Melhores FIIs do momento`,
+    `📈 ${tickers[0] || "PETR4"} vale comprar mais?`,
+    `💰 Renda fixa ou ações agora?`,
+    `🎯 Como diversificar meu portfólio?`,
+    `📉 Como proteger minha carteira?`,
+  ];
+
+  $("chat-sugs").innerHTML = sugs.map(s =>
+    `<button class="sug-chip" onclick="usarSugestao(this)">${s}</button>`
+  ).join("");
+}
+
+function usarSugestao(btn) {
+  const txt = btn.textContent;
+  $("chat-in").value = txt;
+  enviarMsg();
+}
+
+/* ── Render mensagens ───────────────────────────────── */
+function adicionarBotMsg(texto) {
+  CHAT.historico.push({ role: "assistant", content: texto });
+  renderMsgs();
+}
+
+function renderMsgs() {
+  const el = $("chat-msgs");
+  if (!CHAT.historico.length) { el.innerHTML = ""; return; }
+
+  el.innerHTML = CHAT.historico.map(m => {
+    const isUser = m.role === "user";
+    return `<div class="chat-msg ${isUser ? "user" : "bot"}">
+      ${!isUser ? '<div class="chat-msg-avatar">🤖</div>' : ""}
+      <div class="chat-bubble">${escHtml(m.content)}</div>
+    </div>`;
+  }).join("");
+
+  // Scroll to bottom
+  el.scrollTop = el.scrollHeight;
+}
+
+function escHtml(s) {
+  return s
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/\*\*(.*?)\*\*/g,"<strong>$1</strong>")
+    .replace(/\n/g,"<br>");
+}
+
+/* ── Typing indicator ───────────────────────────────── */
+function mostrarTyping() {
+  const el = $("chat-msgs");
+  const div = document.createElement("div");
+  div.className = "chat-msg bot chat-typing";
+  div.id = "chat-typing";
+  div.innerHTML = `<div class="chat-msg-avatar">🤖</div>
+    <div class="chat-bubble">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>`;
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+}
+
+function removerTyping() {
+  const el = document.getElementById("chat-typing");
+  if (el) el.remove();
+}
+
+/* ── Enviar mensagem ────────────────────────────────── */
+async function enviarMsg() {
+  const input = $("chat-in");
+  const txt   = (input.value || "").trim();
+  if (!txt || CHAT.pensando) return;
+
+  const chave = getChave();
+  if (!chave) { toast("Configure a chave de API primeiro.", "err"); return; }
+
+  // Adiciona mensagem do usuário
+  CHAT.historico.push({ role: "user", content: txt });
+  input.value = "";
+  input.style.height = "auto";
+  renderMsgs();
+
+  // Estado de carregamento
+  CHAT.pensando = true;
+  $("chat-send").disabled = true;
+  mostrarTyping();
+
+  try {
+    // Monta histórico (últimas 20 mensagens para controlar tokens)
+    const msgs = CHAT.historico.slice(-20).map(m => ({
+      role: m.role, content: m.content
+    }));
+
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": chave,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1024,
+        system: montarSystemPrompt(),
+        messages: msgs,
+      }),
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      if (resp.status === 401) throw new Error("Chave inválida ou expirada.");
+      throw new Error(err?.error?.message || `Erro ${resp.status}`);
+    }
+
+    const data   = await resp.json();
+    const answer = data?.content?.[0]?.text || "Não obtive resposta.";
+    removerTyping();
+    adicionarBotMsg(answer);
+
+  } catch(e) {
+    removerTyping();
+    adicionarBotMsg(`❌ Erro: ${e.message}
+
+Verifique sua chave de API e tente novamente.`);
+    _log(`Chat erro: ${e.message}`, "ERRO");
+  } finally {
+    CHAT.pensando = false;
+    $("chat-send").disabled = false;
+    renderSugestoes();
+    setTimeout(() => $("chat-in").focus(), 100);
+  }
 }
 
 /* ── PRIVACIDADE ─────────────────────────────────── */
