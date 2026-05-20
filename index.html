@@ -1822,14 +1822,14 @@ const CFG = {
 
 /* ── CARTEIRA ─────────────────────────────────────── */
 let CARTEIRA = [
-  { ticker: "CXSE3", nome: "Caixa Seguridade", cotas: 15,  valorAplicado: 214.13 },
+  { ticker: "CXSE3", nome: "Caixa Seguridade", cotas: 19,  valorAplicado: 286.61 },
   { ticker: "TAEE4", nome: "Taesa",             cotas: 33,  valorAplicado: 410.86 },
   { ticker: "BBAS3", nome: "Banco do Brasil",   cotas: 31,  valorAplicado: 709.96 },
 ];
 
 const FUNDOS = [
-  { nome: "Trend DI",        valorAplicado: 2357.21, tipo: "Renda Fixa"    },
-  { nome: "Absolute Atenas", valorAplicado: 3248.38, tipo: "Multimercado"  },
+  { nome: "Trend DI",        valorAplicado: 1964.94, valorAtual: 2089.86, tipo: "Renda Fixa"   },
+  { nome: "Absolute Atenas", valorAplicado: 3490.47, valorAtual: 3976.19, tipo: "Multimercado" },
 ];
 
 /* ── ESTADO ───────────────────────────────────────── */
@@ -1945,10 +1945,11 @@ async function atualizarPortfolio() {
   ST.cotacoes = mapa;
 
   let totalApl = CARTEIRA.reduce((s,a) => s + a.valorAplicado, 0);
-  const totalFundos = FUNDOS.reduce((s,f) => s + f.valorAplicado, 0);
-  totalApl += totalFundos;
+  const totalFundosApl = FUNDOS.reduce((s,f) => s + f.valorAplicado, 0);
+  const totalFundosAtu = FUNDOS.reduce((s,f) => s + (f.valorAtual ?? f.valorAplicado), 0);
+  totalApl += totalFundosApl;
 
-  let totalAtu = totalFundos;
+  let totalAtu = totalFundosAtu;
 
   const rows = CARTEIRA.map(ativo => {
     const c     = mapa[ativo.ticker] || {};
@@ -2042,16 +2043,42 @@ function renderAcoes(rows) {
 }
 
 function renderFundos() {
-  const total = FUNDOS.reduce((s,f) => s + f.valorAplicado, 0);
-  $("fundos-total").textContent = brl(total);
-  $("fundos-body").innerHTML = FUNDOS.map(f => `
-    <div class="fundo-row">
-      <div>
-        <div class="fundo-nm">${f.nome}</div>
-        <div class="fundo-tp">${f.tipo}</div>
+  const totalAtu = FUNDOS.reduce((s,f) => s + (f.valorAtual ?? f.valorAplicado), 0);
+  $("fundos-total").textContent = brl(totalAtu);
+  $("fundos-body").innerHTML = FUNDOS.map(f => {
+    const atu  = f.valorAtual ?? f.valorAplicado;
+    const pnl  = atu - f.valorAplicado;
+    const pnlP = (pnl / f.valorAplicado) * 100;
+    const cor  = pnl >= 0 ? "var(--lime)" : "var(--red2)";
+    const sinal = pnl >= 0 ? "+" : "";
+    return `
+    <div class="fundo-row" style="align-items:stretch;flex-direction:column;gap:0;padding:12px 18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+        <div>
+          <div class="fundo-nm">${f.nome}</div>
+          <div class="fundo-tp">${f.tipo}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="fundo-val priv" style="font-size:15px">${brl(atu)}</div>
+          <div class="fundo-tp" style="color:${cor}" >Atual</div>
+        </div>
       </div>
-      <div class="fundo-val priv">${brl(f.valorAplicado)}</div>
-    </div>`).join("");
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--wire);border-radius:4px;overflow:hidden;font-family:var(--mono);font-size:11px">
+        <div style="background:var(--ink3);padding:7px 10px">
+          <div style="font-size:9px;color:var(--body3);font-family:var(--sans);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px">Aplicado</div>
+          <div class="priv" style="color:var(--text2)">${brl(f.valorAplicado)}</div>
+        </div>
+        <div style="background:var(--ink3);padding:7px 10px">
+          <div style="font-size:9px;color:var(--body3);font-family:var(--sans);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px">Resultado</div>
+          <div class="priv" style="color:${cor}">${sinal}${brl(pnl)}</div>
+        </div>
+        <div style="background:var(--ink3);padding:7px 10px">
+          <div style="font-size:9px;color:var(--body3);font-family:var(--sans);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px">Rent.</div>
+          <div style="color:${cor}">${sinal}${pnlP.toFixed(2)}%</div>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
   setTimeout(aplicarMascara, 0);
 }
 
@@ -3320,6 +3347,15 @@ $id("btn-privacy").addEventListener("click", () => {
 syncBtnPrivacy();
 
 /* ── BOOT ───────────────────────────────────────────── */
+// Limpa cache desatualizado (versão da carteira mudou)
+(function() {
+  const VER = "2025-v2";
+  if (localStorage.getItem("b3agent_ver") !== VER) {
+    localStorage.removeItem("b3agent_carteira");
+    localStorage.removeItem("b3agent_fundos");
+    localStorage.setItem("b3agent_ver", VER);
+  }
+})();
 carregarDadosSalvos();
 _log("Agente B3 iniciado.", "OK");
 _log(`Carteira: ${CARTEIRA.map(a => a.ticker).join(", ")}`, "INFO");
