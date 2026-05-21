@@ -1324,6 +1324,212 @@ tbody tr:hover td:last-child::after {
   line-height: 1.5; flex-shrink: 0;
 }
 
+
+/* ═══════════════════════════════════════════════════════
+   PERFIL DO USUÁRIO
+═══════════════════════════════════════════════════════ */
+
+/* Avatar button no topbar */
+.topbar-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, #4facfe, #7c3aed);
+  border: 2px solid var(--wire2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--sans); font-size: 13px; font-weight: 800;
+  color: #fff; cursor: pointer; flex-shrink: 0;
+  transition: all .15s; letter-spacing: .02em;
+  margin-left: 4px;
+}
+.topbar-avatar:hover {
+  border-color: var(--cyan);
+  box-shadow: 0 0 12px rgba(79,172,254,.4);
+  transform: scale(1.06);
+}
+
+/* Profile panel — slide from right, full height */
+.profile-panel {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: 420px;
+  background: var(--ink);
+  border-left: 1px solid var(--wire2);
+  display: flex; flex-direction: column;
+  z-index: 600;
+  transform: translateX(100%);
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  box-shadow: -28px 0 70px rgba(0,0,0,.6);
+  overflow: hidden;
+}
+.profile-panel.open { transform: translateX(0); }
+
+.profile-backdrop {
+  position: fixed; inset: 0; z-index: 599;
+  background: rgba(6,8,15,.7);
+  backdrop-filter: blur(4px);
+  opacity: 0; pointer-events: none;
+  transition: opacity .3s;
+}
+.profile-backdrop.open { opacity: 1; pointer-events: auto; }
+
+/* Panel header */
+.profile-ph {
+  padding: 22px 24px 20px;
+  border-bottom: 1px solid var(--wire);
+  flex-shrink: 0;
+  background: var(--ink2);
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+.profile-ph-close {
+  background: transparent; border: 1px solid var(--wire);
+  color: var(--body2); font-family: var(--sans); font-size: 12px;
+  font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  padding: 6px 12px; border-radius: 3px; cursor: pointer;
+  transition: all .14s; flex-shrink: 0;
+}
+.profile-ph-close:hover { border-color: var(--body); color: var(--head); }
+
+/* Big avatar in panel header */
+.profile-avatar-big {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: linear-gradient(135deg, #4facfe, #7c3aed);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--sans); font-size: 24px; font-weight: 800;
+  color: #fff; letter-spacing: .02em;
+  border: 3px solid var(--wire2);
+  margin-bottom: 12px;
+  cursor: pointer; transition: all .15s;
+}
+.profile-avatar-big:hover { border-color: var(--cyan); box-shadow: 0 0 18px rgba(79,172,254,.3); }
+
+.profile-user-name {
+  font-family: var(--sans); font-size: 18px; font-weight: 800;
+  color: var(--head); letter-spacing: .02em;
+}
+.profile-user-nick {
+  font-family: var(--mono); font-size: 11px; color: var(--body2);
+  margin-top: 3px;
+}
+
+/* Scrollable body */
+.profile-body {
+  flex: 1; overflow-y: auto;
+  padding: 0;
+}
+
+/* Section headers */
+.profile-section {
+  padding: 20px 24px 0;
+}
+.profile-section-title {
+  font-family: var(--sans); font-size: 10px; font-weight: 800;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--cyan);
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.profile-section-title::after {
+  content: ''; flex: 1; height: 1px; background: var(--wire);
+}
+
+/* Form fields */
+.profile-field {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-bottom: 14px;
+}
+.profile-label {
+  font-family: var(--sans); font-size: 11px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--body3);
+}
+.profile-in {
+  background: var(--ink3); border: 1px solid var(--wire);
+  color: var(--head); font-family: var(--mono); font-size: 13px;
+  padding: 10px 14px; border-radius: 5px; width: 100%;
+  transition: border-color .15s;
+}
+.profile-in:focus {
+  outline: none; border-color: var(--blue);
+  box-shadow: 0 0 0 2px rgba(79,172,254,.1);
+}
+.profile-in::placeholder { color: var(--body3); font-family: var(--sans); font-weight: 400; }
+
+.profile-in-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+
+/* Config toggle rows */
+.profile-cfg-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(27,37,64,.6);
+}
+.profile-cfg-row:last-child { border-bottom: none; }
+.profile-cfg-label {
+  font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--body);
+}
+.profile-cfg-sub {
+  font-family: var(--mono); font-size: 10px; color: var(--body3);
+  margin-top: 2px;
+}
+.profile-cfg-in {
+  background: var(--ink3); border: 1px solid var(--wire);
+  color: var(--head); font-family: var(--mono); font-size: 12px;
+  padding: 7px 10px; border-radius: 4px; width: 90px; text-align: right;
+  transition: border-color .15s;
+}
+.profile-cfg-in:focus {
+  outline: none; border-color: var(--blue);
+  box-shadow: 0 0 0 2px rgba(79,172,254,.08);
+}
+
+/* Stats strip */
+.profile-stats {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px; background: var(--wire);
+  margin: 0 24px 20px; border-radius: 6px; overflow: hidden;
+}
+.profile-stat {
+  background: var(--ink2);
+  padding: 12px 14px;
+}
+.profile-stat-lbl {
+  font-family: var(--sans); font-size: 9px; font-weight: 800;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--body3);
+  margin-bottom: 5px;
+}
+.profile-stat-val {
+  font-family: var(--mono); font-size: 14px; font-weight: 700;
+  color: var(--head);
+}
+
+/* Footer */
+.profile-footer {
+  padding: 16px 24px 24px;
+  border-top: 1px solid var(--wire);
+  flex-shrink: 0;
+  background: var(--ink2);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.profile-save-btn {
+  width: 100%; padding: 12px;
+  font-family: var(--sans); font-size: 14px; font-weight: 800;
+  letter-spacing: .1em; text-transform: uppercase;
+  background: var(--lime); color: var(--ink);
+  border: none; border-radius: 5px; cursor: pointer;
+  transition: all .15s;
+}
+.profile-save-btn:hover {
+  background: var(--lime2);
+  box-shadow: 0 0 24px rgba(184,255,69,.3);
+}
+.profile-danger-btn {
+  width: 100%; padding: 9px;
+  font-family: var(--sans); font-size: 11px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  background: transparent;
+  border: 1px solid rgba(255,45,85,.35); color: var(--red);
+  border-radius: 4px; cursor: pointer; transition: all .15s;
+}
+.profile-danger-btn:hover { background: rgba(255,45,85,.08); }
+
 </style>
 </head>
 <body>
@@ -1370,6 +1576,7 @@ tbody tr:hover td:last-child::after {
     <button class="btn btn-wire" id="btn-cfg-toggle">⚙</button>
     <button class="btn btn-wire" id="btn-operar" style="letter-spacing:.06em">🔍 Buscar Ativo</button>
     <button class="btn btn-lime" id="btn-monitor" style="display:none">▶ Iniciar</button>
+    <div class="topbar-avatar" id="btn-profile" title="Meu Perfil" onclick="abrirPerfil()">?</div>
   </div>
 </header>
 
@@ -1789,6 +1996,107 @@ tbody tr:hover td:last-child::after {
     <div class="chat-disclaimer">
       ⚠ Não é recomendação de investimento · Sempre consulte um assessor qualificado
     </div>
+  </div>
+
+</div>
+
+<!-- ═══════ PERFIL ═══════ -->
+<div class="profile-backdrop" id="profile-backdrop" onclick="fecharPerfil()"></div>
+<div class="profile-panel" id="profile-panel">
+
+  <!-- Header com avatar grande -->
+  <div class="profile-ph">
+    <div>
+      <div class="profile-avatar-big" id="profile-avatar-big" onclick="escolherEmoji()">?</div>
+      <div class="profile-user-name" id="profile-user-name">Investidor</div>
+      <div class="profile-user-nick" id="profile-user-nick">@investidor</div>
+    </div>
+    <button class="profile-ph-close" onclick="fecharPerfil()">✕ Fechar</button>
+  </div>
+
+  <!-- Corpo scrollável -->
+  <div class="profile-body">
+
+    <!-- Identidade -->
+    <div class="profile-section" style="margin-top:4px">
+      <div class="profile-section-title">👤 Identidade</div>
+      <div class="profile-in-row">
+        <div class="profile-field">
+          <div class="profile-label">Nome</div>
+          <input class="profile-in" id="pf-nome" placeholder="Seu nome" maxlength="40">
+        </div>
+        <div class="profile-field">
+          <div class="profile-label">Apelido</div>
+          <input class="profile-in" id="pf-apelido" placeholder="@apelido" maxlength="20">
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumo da carteira (somente leitura) -->
+    <div class="profile-section">
+      <div class="profile-section-title">📊 Resumo da Carteira</div>
+    </div>
+    <div class="profile-stats">
+      <div class="profile-stat">
+        <div class="profile-stat-lbl">Ativos</div>
+        <div class="profile-stat-val" id="pf-num-ativos">—</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-lbl">Fundos</div>
+        <div class="profile-stat-val" id="pf-num-fundos">—</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-lbl">P&amp;L Total</div>
+        <div class="profile-stat-val priv" id="pf-pnl">—</div>
+      </div>
+    </div>
+
+    <!-- Alertas & Monitoramento -->
+    <div class="profile-section">
+      <div class="profile-section-title">🔔 Alertas e Monitoramento</div>
+      <div class="profile-cfg-row">
+        <div>
+          <div class="profile-cfg-label">Gatilho de queda</div>
+          <div class="profile-cfg-sub">Alerta quando ação cair X% vs. preço médio</div>
+        </div>
+        <input type="number" class="profile-cfg-in" id="pf-gatilho" value="5" min="0.5" max="50" step="0.5">
+      </div>
+      <div class="profile-cfg-row">
+        <div>
+          <div class="profile-cfg-label">Intervalo automático</div>
+          <div class="profile-cfg-sub">Verificação automática a cada N segundos</div>
+        </div>
+        <input type="number" class="profile-cfg-in" id="pf-intervalo" value="60" min="10" max="3600" step="10">
+      </div>
+    </div>
+
+    <!-- Integrações -->
+    <div class="profile-section" style="padding-bottom:20px">
+      <div class="profile-section-title">🔗 Integrações</div>
+      <div class="profile-field">
+        <div class="profile-label">Discord Webhook URL</div>
+        <input class="profile-in" id="pf-discord"
+          placeholder="https://discord.com/api/webhooks/…">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--body3);margin-top:4px;line-height:1.6">
+          Receba alertas de queda direto no seu canal Discord
+        </div>
+      </div>
+      <div class="profile-field">
+        <div class="profile-label">Chave API Anthropic (Assistente IA)</div>
+        <input class="profile-in" id="pf-apikey" type="password"
+          placeholder="sk-ant-api03-… (salvo no navegador)">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--body3);margin-top:4px;line-height:1.6">
+          Usada pelo Assistente Financeiro. Nunca é enviada para servidores externos.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /profile-body -->
+
+  <!-- Footer com botão salvar -->
+  <div class="profile-footer">
+    <button class="profile-save-btn" onclick="salvarPerfil()">💾 Salvar Configurações</button>
+    <button class="profile-danger-btn" onclick="resetarPerfil()">↺ Restaurar padrões</button>
   </div>
 
 </div>
@@ -3302,6 +3610,195 @@ Verifique sua chave de API e tente novamente.`);
   }
 }
 
+/* ═══════════════════════════════════════════════════════
+   PERFIL DO USUÁRIO
+═══════════════════════════════════════════════════════ */
+
+const EMOJIS_AVATAR = ["🦁","🐯","🦊","🐺","🦅","🐬","🦋","🌟","🚀","💎","🎯","⚡","🔥","🌊","🏆"];
+
+/* ── Helpers de perfil ──────────────────────────────── */
+function getPerfil() {
+  try {
+    return JSON.parse(localStorage.getItem("b3agent_perfil") || "{}");
+  } catch(e) { return {}; }
+}
+
+function salvarPerfilStorage(dados) {
+  try { localStorage.setItem("b3agent_perfil", JSON.stringify(dados)); } catch(e) {}
+}
+
+function getIniciais(nome) {
+  if (!nome || !nome.trim()) return "?";
+  const partes = nome.trim().split(" ").filter(Boolean);
+  if (partes.length === 1) return partes[0][0].toUpperCase();
+  return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+}
+
+/* ── Atualiza avatar no topbar ──────────────────────── */
+function sincronizarAvatar() {
+  const p    = getPerfil();
+  const btn  = $("btn-profile");
+  const nome = p.nome || "";
+  if (p.emoji) {
+    btn.textContent = p.emoji;
+    btn.style.fontSize = "18px";
+  } else {
+    btn.textContent = getIniciais(nome) || "?";
+    btn.style.fontSize = "13px";
+  }
+  $("profile-user-name").textContent = nome || "Investidor";
+  $("profile-user-nick").textContent = p.apelido ? "@" + p.apelido.replace(/^@/, "") : "@investidor";
+  const big = $("profile-avatar-big");
+  if (p.emoji) { big.textContent = p.emoji; big.style.fontSize = "28px"; }
+  else         { big.textContent = getIniciais(nome) || "?"; big.style.fontSize = "24px"; }
+}
+
+/* ── Escolher emoji como avatar ─────────────────────── */
+let _emojiPickerAberto = false;
+function escolherEmoji() {
+  if (_emojiPickerAberto) return;
+  _emojiPickerAberto = true;
+  const picker = document.createElement("div");
+  picker.style.cssText = `
+    position:absolute;top:90px;left:24px;
+    background:var(--ink3);border:1px solid var(--wire2);
+    border-radius:8px;padding:12px;z-index:700;
+    display:flex;flex-wrap:wrap;gap:8px;max-width:260px;
+    box-shadow:0 12px 40px rgba(0,0,0,.6);animation:fadeIn .2s ease;
+  `;
+  picker.innerHTML = EMOJIS_AVATAR.map(e =>
+    `<span style="font-size:26px;cursor:pointer;padding:4px;border-radius:6px;transition:background .12s"
+      onmouseover="this.style.background='rgba(79,172,254,.15)'"
+      onmouseout="this.style.background=''"
+      onclick="aplicarEmoji('${e}',this.parentNode)">${e}</span>`
+  ).join("") +
+  `<span style="font-size:13px;font-family:var(--sans);font-weight:700;color:var(--red);cursor:pointer;padding:4px 8px;border-radius:4px;border:1px solid rgba(255,45,85,.3);width:100%;text-align:center;margin-top:4px"
+    onclick="aplicarEmoji('',this.parentNode)">Usar iniciais</span>`;
+  $("profile-panel").style.position = "relative";
+  $("profile-panel").appendChild(picker);
+  setTimeout(() => {
+    document.addEventListener("click", function handler(e) {
+      if (!picker.contains(e.target) && e.target !== $("profile-avatar-big")) {
+        picker.remove(); _emojiPickerAberto = false;
+        document.removeEventListener("click", handler);
+      }
+    });
+  }, 50);
+}
+
+function aplicarEmoji(emoji, picker) {
+  const p = getPerfil();
+  p.emoji = emoji;
+  salvarPerfilStorage(p);
+  sincronizarAvatar();
+  picker.remove();
+  _emojiPickerAberto = false;
+}
+
+/* ── Estatísticas do portfólio no perfil ────────────── */
+function atualizarStatsPerfil() {
+  $("pf-num-ativos").textContent = CARTEIRA.length;
+  $("pf-num-fundos").textContent = FUNDOS.length;
+
+  // P&L total (ações + fundos)
+  let pnlTotal = 0;
+  CARTEIRA.forEach(a => {
+    const preco = ST.cotacoes[a.ticker]?.regularMarketPrice;
+    if (preco) pnlTotal += preco * a.cotas - a.valorAplicado;
+  });
+  FUNDOS.forEach(f => {
+    pnlTotal += (f.valorAtual ?? f.valorAplicado) - f.valorAplicado;
+  });
+  const pnlEl = $("pf-pnl");
+  pnlEl.textContent   = (pnlTotal >= 0 ? "+" : "") + brl(pnlTotal);
+  pnlEl.style.color   = pnlTotal >= 0 ? "var(--lime)" : "var(--red2)";
+}
+
+/* ── Abrir / Fechar ─────────────────────────────────── */
+function abrirPerfil() {
+  const p = getPerfil();
+
+  // Preenche campos com valores salvos
+  $("pf-nome").value     = p.nome     || "";
+  $("pf-apelido").value  = p.apelido  || "";
+  $("pf-discord").value  = p.discord  || CFG.DISCORD_WEBHOOK || "";
+  $("pf-gatilho").value  = p.gatilho  || CFG.ALERTA_PCT;
+  $("pf-intervalo").value= p.intervalo|| CFG.INTERVALO_SEG;
+
+  // API key do chat (se houver)
+  const apiKey = localStorage.getItem("b3agent_apikey") || "";
+  $("pf-apikey").value = apiKey ? apiKey.slice(0,12) + "…" : "";
+
+  atualizarStatsPerfil();
+  sincronizarAvatar();
+  setTimeout(aplicarMascara, 50);
+
+  $("profile-panel").classList.add("open");
+  $("profile-backdrop").classList.add("open");
+}
+
+function fecharPerfil() {
+  $("profile-panel").classList.remove("open");
+  $("profile-backdrop").classList.remove("open");
+}
+
+/* ── Salvar ─────────────────────────────────────────── */
+function salvarPerfil() {
+  const nome     = $("pf-nome").value.trim();
+  const apelido  = $("pf-apelido").value.trim().replace(/^@/, "");
+  const discord  = $("pf-discord").value.trim();
+  const gatilho  = parseFloat($("pf-gatilho").value)  || CFG.ALERTA_PCT;
+  const intervalo= parseInt($("pf-intervalo").value)   || CFG.INTERVALO_SEG;
+  const apiRaw   = $("pf-apikey").value.trim();
+
+  // Salva perfil
+  const p = getPerfil();
+  p.nome     = nome;
+  p.apelido  = apelido;
+  p.discord  = discord;
+  p.gatilho  = gatilho;
+  p.intervalo= intervalo;
+  salvarPerfilStorage(p);
+
+  // Aplica configurações globais
+  CFG.DISCORD_WEBHOOK = discord;
+  CFG.ALERTA_PCT      = gatilho;
+  CFG.INTERVALO_SEG   = intervalo;
+  $("gatilho-lbl").textContent = gatilho;
+  $("cfg-q").value = gatilho;
+  $("cfg-i").value = intervalo;
+  if (discord) $("cfg-d").value = discord;
+
+  // Salva API key se foi alterada (não é placeholder)
+  if (apiRaw && !apiRaw.endsWith("…")) {
+    if (apiRaw.startsWith("sk-ant")) {
+      localStorage.setItem("b3agent_apikey", apiRaw);
+    } else {
+      toast("Chave API inválida — deve começar com sk-ant…", "err");
+    }
+  }
+
+  // Reinicia monitoramento se estava rodando
+  if (ST.monitorando) { pararMonitoramento(); iniciarMonitoramento(); }
+
+  sincronizarAvatar();
+  toast(`✅ Perfil salvo${nome ? " — Olá, " + nome + "!" : ""}`, "ok");
+  _log(`Perfil atualizado: ${nome || "Anônimo"} | gatilho=${gatilho}% | intervalo=${intervalo}s`, "INFO");
+  fecharPerfil();
+}
+
+/* ── Resetar ────────────────────────────────────────── */
+function resetarPerfil() {
+  if (!confirm("Restaurar todos os padrões de configuração?")) return;
+  localStorage.removeItem("b3agent_perfil");
+  CFG.DISCORD_WEBHOOK = "";
+  CFG.ALERTA_PCT      = 5.0;
+  CFG.INTERVALO_SEG   = 60;
+  sincronizarAvatar();
+  toast("↺ Padrões restaurados.", "ok");
+  fecharPerfil();
+}
+
 /* ── PRIVACIDADE ─────────────────────────────────── */
 let _privacyAtivo = localStorage.getItem("b3agent_privacy") === "1";
 
@@ -3357,6 +3854,7 @@ syncBtnPrivacy();
   }
 })();
 carregarDadosSalvos();
+sincronizarAvatar();
 _log("Agente B3 iniciado.", "OK");
 _log(`Carteira: ${CARTEIRA.map(a => a.ticker).join(", ")}`, "INFO");
 _log(`Fundos: ${FUNDOS.map(f => f.nome).join(", ")}`, "INFO");
