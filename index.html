@@ -1530,6 +1530,214 @@ tbody tr:hover td:last-child::after {
 }
 .profile-danger-btn:hover { background: rgba(255,45,85,.08); }
 
+
+/* ═══════════════════════════════════════════════════════
+   NAVEGAÇÃO DE PÁGINAS
+═══════════════════════════════════════════════════════ */
+.page-nav {
+  position: sticky; top: 52px; z-index: 490;
+  background: rgba(6,8,15,.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--wire);
+  display: flex; align-items: stretch;
+  height: 42px; padding: 0 20px; gap: 4px;
+}
+.page-tab {
+  font-family: var(--sans); font-size: 12px; font-weight: 800;
+  letter-spacing: .1em; text-transform: uppercase;
+  padding: 0 18px; border: none; background: transparent;
+  color: var(--body2); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .15s; display: flex; align-items: center; gap: 7px;
+}
+.page-tab:hover { color: var(--head); }
+.page-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+/* Pages */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ═══════════════════════════════════════════════════════
+   HOME PAGE — VISÃO GERAL
+═══════════════════════════════════════════════════════ */
+.home-wrap {
+  max-width: 1440px; margin: 0 auto;
+  padding: 20px 20px 40px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+
+/* Índices do mercado */
+.mercado-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: var(--wire);
+  border-radius: 6px; overflow: hidden;
+}
+.mercado-cell {
+  background: var(--ink2);
+  padding: 14px 18px;
+  display: flex; flex-direction: column; gap: 3px;
+  position: relative; overflow: hidden;
+  transition: background .15s;
+}
+.mercado-cell:hover { background: var(--ink3); }
+.mercado-cell::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--wire2), transparent);
+  transition: background .4s;
+}
+.mercado-cell.pos::before { background: linear-gradient(90deg, transparent, var(--lime), transparent); }
+.mercado-cell.neg::before { background: linear-gradient(90deg, transparent, var(--red), transparent); }
+.mercado-cell.neutral::before { background: linear-gradient(90deg, transparent, var(--blue), transparent); }
+.mercado-label {
+  font-family: var(--sans); font-size: 9px; font-weight: 800;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--body3);
+}
+.mercado-val {
+  font-family: var(--mono); font-size: 18px; font-weight: 700;
+  color: var(--head); letter-spacing: -.02em; line-height: 1;
+}
+.mercado-var {
+  font-family: var(--mono); font-size: 11px; margin-top: 2px;
+}
+
+/* Layout home dois painéis */
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px; align-items: start;
+}
+.home-col-l { display: flex; flex-direction: column; gap: 20px; }
+.home-col-r { display: flex; flex-direction: column; gap: 20px; }
+
+/* Cards de ativos */
+.ativos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+.ativo-card {
+  background: var(--ink2); border: 1px solid var(--wire);
+  border-radius: 8px; padding: 16px;
+  cursor: pointer; transition: all .15s;
+  position: relative; overflow: hidden;
+}
+.ativo-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: var(--wire2); transition: background .2s;
+}
+.ativo-card:hover { border-color: var(--wire2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
+.ativo-card:hover::before { background: var(--cyan); }
+.ativo-card.alerta-card-home::before { background: var(--red); }
+.ativo-card.alerta-card-home { border-color: rgba(255,45,85,.25); background: rgba(255,45,85,.03); }
+
+.ac-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+.ac-ticker {
+  font-family: var(--sans); font-size: 16px; font-weight: 800;
+  letter-spacing: .04em; color: var(--head);
+}
+.ac-nome {
+  font-family: var(--sans); font-size: 10px; color: var(--body3);
+  font-weight: 500; margin-top: 2px;
+}
+.ac-preco {
+  font-family: var(--mono); font-size: 20px; font-weight: 700;
+  color: var(--head); letter-spacing: -.02em;
+  margin-bottom: 10px;
+}
+.ac-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 10px; border-top: 1px solid var(--wire);
+  font-family: var(--mono); font-size: 10px; color: var(--body2);
+}
+.ac-pnl { font-size: 12px; font-weight: 700; }
+
+/* Fundo cards na home */
+.fundos-home-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.fundo-card-home {
+  background: var(--ink2); border: 1px solid var(--wire);
+  border-radius: 8px; padding: 16px; transition: all .15s;
+  position: relative; overflow: hidden;
+}
+.fundo-card-home::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: var(--blue);
+}
+.fundo-card-home:hover { border-color: var(--wire2); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
+.fch-nome {
+  font-family: var(--sans); font-size: 14px; font-weight: 800;
+  color: var(--head); margin-bottom: 3px;
+}
+.fch-tipo {
+  font-family: var(--sans); font-size: 9px; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--body3);
+}
+.fch-valor {
+  font-family: var(--mono); font-size: 18px; font-weight: 700;
+  color: var(--cyan); margin: 10px 0 6px; letter-spacing: -.01em;
+}
+.fch-row {
+  display: flex; justify-content: space-between;
+  font-family: var(--mono); font-size: 10px; color: var(--body2);
+  margin-top: 4px;
+}
+
+/* Painel lateral home */
+.home-side-card {
+  background: var(--ink2); border: 1px solid var(--wire);
+  border-radius: 8px; overflow: hidden;
+}
+.home-side-head {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--wire);
+  font-family: var(--sans); font-size: 10px; font-weight: 800;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--blue);
+  background: rgba(27,37,64,.4);
+}
+
+/* Resumo portfólio na home */
+.home-resumo {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 1px; background: var(--wire);
+  border-radius: 8px; overflow: hidden;
+}
+.home-resumo-cell {
+  background: var(--ink2); padding: 18px 16px;
+}
+.hrc-label {
+  font-family: var(--sans); font-size: 9px; font-weight: 800;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--body3);
+  margin-bottom: 6px;
+}
+.hrc-val {
+  font-family: var(--mono); font-size: 20px; font-weight: 700;
+  color: var(--head); letter-spacing: -.02em;
+}
+
+/* Section titles */
+.home-section-title {
+  font-family: var(--sans); font-size: 11px; font-weight: 800;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--cyan);
+  display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+}
+.home-section-title::after {
+  content: ''; flex: 1; height: 1px; background: var(--wire);
+}
+
+@media (max-width: 1100px) {
+  .home-grid { grid-template-columns: 1fr; }
+  .mercado-strip { grid-template-columns: repeat(2,1fr); }
+  .home-resumo { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 620px) {
+  .ativos-grid { grid-template-columns: 1fr 1fr; }
+  .fundos-home-grid { grid-template-columns: 1fr; }
+  .mercado-strip { grid-template-columns: 1fr 1fr; }
+  .home-resumo { grid-template-columns: 1fr 1fr; }
+}
+
 </style>
 </head>
 <body>
@@ -1583,6 +1791,104 @@ tbody tr:hover td:last-child::after {
 <!-- ═══════ COUNTDOWN BAR ═══════ -->
 <div class="countdown-bar"><div class="countdown-fill" id="cdown" style="width:100%"></div></div>
 
+<!-- ═══════ NAVEGAÇÃO ═══════ -->
+<nav class="page-nav">
+  <button class="page-tab active" id="tab-home"     onclick="setPage('home')">🏠 Visão Geral</button>
+  <button class="page-tab"        id="tab-carteira" onclick="setPage('carteira')">💼 Minha Carteira</button>
+</nav>
+
+<!-- ═══════ HOME PAGE — VISÃO GERAL ═══════ -->
+<div id="page-home" class="page active">
+<div class="home-wrap">
+
+  <!-- Índices do mercado -->
+  <div class="mercado-strip" id="mercado-strip">
+    <div class="mercado-cell neutral">
+      <div class="mercado-label">Ibovespa</div>
+      <div class="mercado-val" id="mc-ibov"><span class="skel" style="width:80px"></span></div>
+      <div class="mercado-var" id="mc-ibov-v">—</div>
+    </div>
+    <div class="mercado-cell neutral">
+      <div class="mercado-label">USD · BRL</div>
+      <div class="mercado-val" id="mc-usd"><span class="skel" style="width:60px"></span></div>
+      <div class="mercado-var" id="mc-usd-v">—</div>
+    </div>
+    <div class="mercado-cell neutral">
+      <div class="mercado-label">SELIC Meta</div>
+      <div class="mercado-val" id="mc-selic">13,25%</div>
+      <div class="mercado-var" style="color:var(--body3)">a.a. · Banco Central</div>
+    </div>
+    <div class="mercado-cell neutral">
+      <div class="mercado-label">CDI</div>
+      <div class="mercado-val" id="mc-cdi">13,15%</div>
+      <div class="mercado-var" style="color:var(--body3)">a.a. · estimado</div>
+    </div>
+  </div>
+
+  <!-- Resumo do portfólio -->
+  <div>
+    <div class="home-section-title">📊 Meu Portfólio</div>
+    <div class="home-resumo" id="home-resumo">
+      <div class="home-resumo-cell"><div class="hrc-label">Total Aplicado</div><div class="hrc-val priv" id="hr-apl"><span class="skel" style="width:110px"></span></div></div>
+      <div class="home-resumo-cell"><div class="hrc-label">Valor Atual</div><div class="hrc-val priv" id="hr-atu"><span class="skel" style="width:110px"></span></div></div>
+      <div class="home-resumo-cell"><div class="hrc-label">Resultado R$</div><div class="hrc-val priv" id="hr-pnl"><span class="skel" style="width:90px"></span></div></div>
+      <div class="home-resumo-cell"><div class="hrc-label">Resultado %</div><div class="hrc-val priv" id="hr-pct"><span class="skel" style="width:70px"></span></div></div>
+    </div>
+  </div>
+
+  <div class="home-grid">
+    <div class="home-col-l">
+
+      <!-- Ações em carteira -->
+      <div>
+        <div class="home-section-title">📈 Ações em Carteira</div>
+        <div class="ativos-grid" id="home-ativos-grid">
+          <div class="ativo-card"><span class="skel" style="width:80px;height:14px"></span></div>
+          <div class="ativo-card"><span class="skel" style="width:80px;height:14px"></span></div>
+          <div class="ativo-card"><span class="skel" style="width:80px;height:14px"></span></div>
+        </div>
+      </div>
+
+      <!-- Fundos -->
+      <div>
+        <div class="home-section-title">💼 Fundos de Investimento</div>
+        <div class="fundos-home-grid" id="home-fundos-grid">
+          <div class="fundo-card-home"><span class="skel" style="width:120px;height:14px"></span></div>
+          <div class="fundo-card-home"><span class="skel" style="width:120px;height:14px"></span></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="home-col-r">
+
+      <!-- Alertas -->
+      <div class="home-side-card">
+        <div class="home-side-head">🔴 Alertas Ativos <span id="home-alert-cnt" style="display:none;margin-left:6px;background:var(--red);color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;vertical-align:middle"></span></div>
+        <div id="home-alertas-body" style="padding:8px 0;max-height:220px;overflow-y:auto">
+          <div style="text-align:center;padding:24px 16px;color:var(--body3);font-family:var(--sans);font-size:12px">✅ Nenhum alerta</div>
+        </div>
+      </div>
+
+      <!-- Status do agente -->
+      <div class="home-side-card">
+        <div class="home-side-head">⚡ Agente</div>
+        <div style="padding:14px 16px;font-family:var(--mono);font-size:11px;color:var(--body2);line-height:2">
+          <div>Status <span id="home-mon-status" style="color:var(--red)">● parado</span></div>
+          <div>Último check <span id="home-last-check" class="priv" style="color:var(--head)">—</span></div>
+          <div style="margin-top:10px">
+            <button class="btn btn-lime" style="width:100%;padding:8px" id="home-btn-mon">▶ Iniciar Monitoramento</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /home-wrap -->
+</div><!-- /page-home -->
+
+<!-- ═══════ MINHA CARTEIRA ═══════ -->
+<div id="page-carteira" class="page">
 <!-- ═══════ MAIN ═══════ -->
 <div class="main">
 
@@ -1726,6 +2032,7 @@ tbody tr:hover td:last-child::after {
 
   </div>
 </div>
+</div><!-- /page-carteira -->
 
 <!-- ═══════ PAINEL OPERAR ═══════ -->
 <div class="op-backdrop" id="op-backdrop" onclick="fecharOperar()"></div>
@@ -2304,6 +2611,12 @@ async function atualizarPortfolio() {
 
   // Reaplica máscara de privacidade se ativa
   setTimeout(aplicarMascara, 50);
+
+  // Sincroniza home page se visível
+  if (document.getElementById("page-home").classList.contains("active")) {
+    renderHomePage();
+  }
+  syncHomeStatus();
 }
 
 /* ── RENDERS ─────────────────────────────────────────── */
@@ -2568,6 +2881,7 @@ function iniciarMonitoramento() {
 
   setDot("live");
   agendarProximo();
+  syncHomeStatus();
 }
 
 function pararMonitoramento() {
@@ -2586,6 +2900,7 @@ function pararMonitoramento() {
   $("next-check").textContent = "—";
 
   setDot("off");
+  syncHomeStatus();
 }
 
 function agendarProximo() {
@@ -3863,6 +4178,221 @@ renderFundos();
 renderAlertas();
 setTimeout(atualizarPortfolio, 400);
 setTimeout(aplicarMascara, 500);
+setTimeout(fetchMercado, 600);
+setTimeout(renderHomePage, 450);
+
+/* ═══════════════════════════════════════════════════════
+   SISTEMA DE PÁGINAS
+═══════════════════════════════════════════════════════ */
+
+function setPage(nome) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".page-tab").forEach(t => t.classList.remove("active"));
+  document.getElementById("page-" + nome).classList.add("active");
+  document.getElementById("tab-"  + nome).classList.add("active");
+  if (nome === "home") renderHomePage();
+}
+
+/* ═══════════════════════════════════════════════════════
+   HOME PAGE — VISÃO GERAL
+═══════════════════════════════════════════════════════ */
+
+/* ── Mercado: IBOV + USD/BRL ────────────────────────── */
+async function fetchMercado() {
+  const symbols = ["%5EBVSP", "BRL%3DX"];
+  const labels  = ["ibov", "usd"];
+  for (let i = 0; i < symbols.length; i++) {
+    const sym = symbols[i];
+    const key = labels[i];
+    try {
+      const url = `${CFG.YF_BASE}/${sym}?interval=1d&range=1d`;
+      const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error("T")), 10000));
+      const req = fetch(url).then(r => r.json()).then(d => {
+        const meta = d?.chart?.result?.[0]?.meta;
+        if (!meta) return;
+        const preco = meta.regularMarketPrice;
+        const prev  = meta.chartPreviousClose ?? meta.regularMarketPrice;
+        const varP  = prev ? ((preco - prev) / prev) * 100 : 0;
+        const cor   = varP >= 0 ? "var(--lime)" : "var(--red2)";
+        const sinal = varP >= 0 ? "+" : "";
+
+        if (key === "ibov") {
+          $("mc-ibov").textContent   = preco.toLocaleString("pt-BR", {maximumFractionDigits:0});
+          $("mc-ibov-v").textContent = sinal + varP.toFixed(2) + "%";
+          $("mc-ibov-v").style.color = cor;
+          $("mc-ibov").closest(".mercado-cell").className = "mercado-cell " + (varP >= 0 ? "pos" : "neg");
+        } else {
+          $("mc-usd").textContent   = "R$\u00a0" + preco.toFixed(2);
+          $("mc-usd-v").textContent = sinal + varP.toFixed(2) + "%";
+          $("mc-usd-v").style.color = cor;
+          $("mc-usd").closest(".mercado-cell").className = "mercado-cell " + (varP >= 0 ? "pos" : "neg");
+        }
+      });
+      await Promise.race([req, timeout]);
+    } catch(e) { /* silencioso */ }
+  }
+}
+
+/* ── Resumo do portfólio na home ───────────────────── */
+function renderHomeResumo() {
+  const totalFundosApl = FUNDOS.reduce((s,f) => s + f.valorAplicado, 0);
+  const totalFundosAtu = FUNDOS.reduce((s,f) => s + (f.valorAtual ?? f.valorAplicado), 0);
+  let totalAcaoApl = CARTEIRA.reduce((s,a) => s + a.valorAplicado, 0);
+  let totalAcaoAtu = 0;
+  CARTEIRA.forEach(a => {
+    const p = ST.cotacoes[a.ticker]?.regularMarketPrice;
+    totalAcaoAtu += p ? p * a.cotas : a.valorAplicado;
+  });
+  const totalApl  = totalAcaoApl + totalFundosApl;
+  const totalAtu  = totalAcaoAtu + totalFundosAtu;
+  const pnl       = totalAtu - totalApl;
+  const pnlPct    = totalApl ? (pnl / totalApl) * 100 : 0;
+  const cor       = pnl >= 0 ? "pos" : "neg";
+  const sinal     = pnl >= 0 ? "+" : "";
+
+  $("hr-apl").textContent = brl(totalApl);
+  $("hr-atu").textContent = brl(totalAtu);
+  $("hr-pnl").textContent = sinal + brl(pnl);
+  $("hr-pct").textContent = sinal + pnlPct.toFixed(2) + "%";
+  $("hr-pnl").className = "hrc-val priv " + cor;
+  $("hr-pct").className = "hrc-val priv " + cor;
+}
+
+/* ── Cards de ativos na home ────────────────────────── */
+function renderHomeAtivos() {
+  const grid = $("home-ativos-grid");
+  if (!CARTEIRA.length) {
+    grid.innerHTML = '<div style="color:var(--body3);font-family:var(--sans);font-size:12px;padding:12px">Nenhum ativo na carteira</div>';
+    return;
+  }
+  grid.innerHTML = CARTEIRA.map(a => {
+    const cot     = ST.cotacoes[a.ticker] || {};
+    const preco   = cot.regularMarketPrice;
+    const varDia  = cot.regularMarketChangePercent;
+    const pm      = a.valorAplicado / a.cotas;
+    const valorAtu = preco ? preco * a.cotas : null;
+    const pnl      = valorAtu != null ? valorAtu - a.valorAplicado : null;
+    const varC     = preco ? ((preco - pm) / pm) * 100 : null;
+    const isAlerta = varC != null && varC <= -CFG.ALERTA_PCT;
+    const corPnl   = pnl == null ? "var(--body3)" : pnl >= 0 ? "var(--lime)" : "var(--red2)";
+    const corVd    = varDia == null ? "var(--body3)" : varDia >= 0 ? "var(--lime)" : "var(--red2)";
+    const corVc    = varC == null ? "var(--body3)" : varC >= 0 ? "var(--lime)" : "var(--red2)";
+
+    return `<div class="ativo-card ${isAlerta ? "alerta-card-home" : ""}"
+        onclick="setPage('carteira');abrirAtivoDetalhe('${a.ticker}')">
+      <div class="ac-header">
+        <div>
+          <div class="ac-ticker">${isAlerta ? "🔴 " : ""}${a.ticker}</div>
+          <div class="ac-nome">${a.nome}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:var(--mono);font-size:10px;color:${corVd}">
+            ${varDia != null ? (varDia >= 0 ? "+" : "") + varDia.toFixed(2) + "% hoje" : "—"}
+          </div>
+          <div style="font-family:var(--mono);font-size:10px;color:${corVc};margin-top:2px">
+            vs. compra: ${varC != null ? (varC >= 0 ? "+" : "") + varC.toFixed(2) + "%" : "—"}
+          </div>
+        </div>
+      </div>
+      <div class="ac-preco priv">${preco != null ? "R$\u00a0" + preco.toFixed(2) : '<span style="color:var(--body3)">cotação pendente</span>'}</div>
+      <div class="ac-footer">
+        <span>${a.cotas} cotas · PM <span class="priv">R$\u00a0${pm.toFixed(2)}</span></span>
+        <span class="ac-pnl priv" style="color:${corPnl}">${pnl != null ? (pnl >= 0 ? "+" : "") + brl(pnl) : "—"}</span>
+      </div>
+    </div>`;
+  }).join("");
+  setTimeout(aplicarMascara, 0);
+}
+
+/* ── Cards de fundos na home ────────────────────────── */
+function renderHomeFundos() {
+  const grid = $("home-fundos-grid");
+  if (!FUNDOS.length) {
+    grid.innerHTML = '<div style="color:var(--body3);font-family:var(--sans);font-size:12px;padding:12px">Nenhum fundo na carteira</div>';
+    return;
+  }
+  grid.innerHTML = FUNDOS.map(f => {
+    const atu   = f.valorAtual ?? f.valorAplicado;
+    const pnl   = atu - f.valorAplicado;
+    const pnlP  = f.valorAplicado ? (pnl / f.valorAplicado) * 100 : 0;
+    const cor   = pnl >= 0 ? "var(--lime)" : "var(--red2)";
+    const sinal = pnl >= 0 ? "+" : "";
+    return `<div class="fundo-card-home">
+      <div class="fch-nome">${f.nome}</div>
+      <div class="fch-tipo">${f.tipo}</div>
+      <div class="fch-valor priv">${brl(atu)}</div>
+      <div class="fch-row">
+        <span>Aplicado <span class="priv">${brl(f.valorAplicado)}</span></span>
+        <span style="color:${cor}">${sinal}${pnlP.toFixed(2)}%</span>
+      </div>
+      <div class="fch-row">
+        <span>Resultado</span>
+        <span class="priv" style="color:${cor}">${sinal}${brl(pnl)}</span>
+      </div>
+    </div>`;
+  }).join("");
+  setTimeout(aplicarMascara, 0);
+}
+
+/* ── Alertas na home ────────────────────────────────── */
+function renderHomeAlertas() {
+  const pend = ST.alertas.filter(a => a.status === "pendente");
+  const cnt  = $("home-alert-cnt");
+  const body = $("home-alertas-body");
+  cnt.textContent = pend.length;
+  cnt.style.display = pend.length > 0 ? "inline-block" : "none";
+
+  if (!ST.alertas.length) {
+    body.innerHTML = '<div style="text-align:center;padding:24px 16px;color:var(--body3);font-family:var(--sans);font-size:12px">✅ Nenhum alerta</div>';
+    return;
+  }
+  body.innerHTML = [...ST.alertas].reverse().slice(0, 6).map(a => {
+    const isPend = a.status === "pendente";
+    const cor    = isPend ? "var(--red2)" : a.status === "confirmado" ? "var(--lime)" : "var(--body3)";
+    const icon   = isPend ? "⚠" : a.status === "confirmado" ? "✅" : "❌";
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid rgba(27,37,64,.5);font-size:11px">
+      <span style="font-family:var(--sans);font-weight:700;color:${cor}">${icon} ${a.ticker}</span>
+      <span style="font-family:var(--mono);color:var(--red2)">${a.quedaPct.toFixed(2)}%</span>
+      <span style="font-family:var(--mono);color:var(--body3)">${new Date(a.horario).toLocaleTimeString("pt-BR")}</span>
+    </div>`;
+  }).join("");
+}
+
+/* ── Status agente na home ──────────────────────────── */
+function syncHomeStatus() {
+  const el  = $("home-mon-status");
+  const btn = $("home-btn-mon");
+  const lc  = $("home-last-check");
+  if (ST.monitorando) {
+    el.textContent  = "● ativo";
+    el.style.color  = "var(--lime)";
+    btn.textContent = "⏹ Parar Monitoramento";
+    btn.className   = "btn btn-red";
+  } else {
+    el.textContent  = "● parado";
+    el.style.color  = "var(--red2)";
+    btn.textContent = "▶ Iniciar Monitoramento";
+    btn.className   = "btn btn-lime";
+  }
+  if (lc) lc.textContent = ST.ultimoCheck ? new Date(ST.ultimoCheck).toLocaleTimeString("pt-BR") : "—";
+  setTimeout(aplicarMascara, 0);
+}
+
+/* ── Render completo da home ────────────────────────── */
+function renderHomePage() {
+  renderHomeResumo();
+  renderHomeAtivos();
+  renderHomeFundos();
+  renderHomeAlertas();
+  syncHomeStatus();
+}
+
+
+document.getElementById("home-btn-mon").addEventListener("click", function() {
+  if (ST.monitorando) pararMonitoramento(); else iniciarMonitoramento();
+  syncHomeStatus();
+});
+
 </script>
 </body>
 </html>
