@@ -1649,6 +1649,76 @@ tbody tr:hover td:last-child::after {
 @media (max-width: 1100px) { .home-grid { grid-template-columns: 1fr; } .mercado-strip { grid-template-columns: repeat(2,1fr); } .home-resumo { grid-template-columns: repeat(2,1fr); } }
 @media (max-width: 620px)  { .ativos-grid { grid-template-columns: 1fr 1fr; } .fundos-home-grid { grid-template-columns: 1fr; } }
 
+
+/* ── PRINCIPAIS AÇÕES DA B3 ─────────────────────────── */
+.b3-toolbar {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.b3-search-in {
+  background: var(--ink3); border: 1px solid var(--wire);
+  color: var(--head); font-family: var(--mono);
+  font-size: 12px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; padding: 7px 12px;
+  border-radius: 4px; width: 130px; transition: border-color .15s;
+}
+.b3-search-in::placeholder { text-transform: none; font-weight: 400; color: var(--body3); letter-spacing: 0; }
+.b3-search-in:focus { outline: none; border-color: var(--cyan); }
+
+.b3-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+  gap: 8px;
+}
+.b3-mini {
+  background: var(--ink2); border: 1px solid var(--wire);
+  border-radius: 6px; padding: 10px 12px;
+  cursor: pointer; transition: all .14s;
+  position: relative; overflow: hidden;
+}
+.b3-mini::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 2px; background: transparent; transition: background .14s;
+}
+.b3-mini:hover { border-color: var(--wire2); background: var(--ink3); }
+.b3-mini:hover::before { background: var(--cyan); }
+.b3-mini.em-carteira { border-color: rgba(184,255,69,.22); }
+.b3-mini.em-carteira::before { background: var(--lime); }
+.b3-mini.pos-day::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(184,255,69,.02); pointer-events: none;
+}
+.b3-mini.neg-day::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(255,45,85,.02); pointer-events: none;
+}
+.bm-ticker {
+  font-family: var(--sans); font-size: 13px; font-weight: 800;
+  letter-spacing: .04em; color: var(--head); display: block;
+}
+.bm-nome {
+  font-family: var(--sans); font-size: 9px; color: var(--body3);
+  font-weight: 500; display: block; margin-top: 1px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.bm-preco {
+  font-family: var(--mono); font-size: 13px; font-weight: 700;
+  color: var(--head); display: block; margin-top: 7px;
+}
+.bm-var {
+  font-family: var(--mono); font-size: 10px; display: block; margin-top: 2px;
+}
+.bm-badge {
+  font-family: var(--sans); font-size: 8px; font-weight: 800;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 1px 5px; border-radius: 2px; margin-top: 5px; display: inline-block;
+}
+.bm-badge-cart { background: rgba(184,255,69,.15); color: var(--lime); }
+
+.b3-loading {
+  grid-column: 1/-1; text-align: center; padding: 20px;
+  color: var(--body3); font-family: var(--mono); font-size: 11px;
+}
+
 </style>
 </head>
 <body>
@@ -1752,6 +1822,22 @@ tbody tr:hover td:last-child::after {
           <div style="margin-top:10px"><button class="btn btn-lime" style="width:100%;padding:8px" id="home-btn-mon">▶ Iniciar Monitoramento</button></div>
         </div>
       </div>
+    </div>
+  </div>
+
+
+  <!-- Principais Ações da B3 -->
+  <div>
+    <div class="home-section-title">🏛 Principais Ações da B3</div>
+    <div class="b3-toolbar">
+      <input class="b3-search-in" id="b3-search" placeholder="Filtrar ticker ou nome…"
+        oninput="filtrarB3(this.value)">
+      <button class="btn btn-wire" style="padding:6px 14px;font-size:11px"
+        onclick="fetchB3Precos()">↻ Atualizar</button>
+      <span id="b3-upd" style="font-family:var(--mono);font-size:10px;color:var(--body3)"></span>
+    </div>
+    <div class="b3-grid" id="b3-grid">
+      <div class="b3-loading"><span class="spin"></span>&nbsp; Buscando cotações da B3…</div>
     </div>
   </div>
 
@@ -4202,18 +4288,144 @@ function syncHomeStatus() {
   setTimeout(aplicarMascara, 0);
 }
 
+let _b3Loaded = false;
 function renderHomePage() {
   renderHomeResumo();
   renderHomeAtivos();
   renderHomeFundos();
   renderHomeAlertas();
   syncHomeStatus();
+  // Carrega B3 na primeira vez que a home é visitada
+  if (!_b3Loaded) { _b3Loaded = true; fetchB3Precos(); }
+  else renderB3Grid();
 }
 
 document.getElementById("home-btn-mon").addEventListener("click", function() {
   if (ST.monitorando) pararMonitoramento(); else iniciarMonitoramento();
   syncHomeStatus();
 });
+
+
+/* ═══════════════════════════════════════════════════════
+   PRINCIPAIS AÇÕES DA B3
+═══════════════════════════════════════════════════════ */
+
+const B3_ACOES = [
+  {ticker:"PETR4",nome:"Petrobras PN"},   {ticker:"PETR3",nome:"Petrobras ON"},
+  {ticker:"VALE3",nome:"Vale"},           {ticker:"ITUB4",nome:"Itaú Unibanco"},
+  {ticker:"BBDC4",nome:"Bradesco PN"},    {ticker:"ABEV3",nome:"Ambev"},
+  {ticker:"WEGE3",nome:"WEG"},            {ticker:"B3SA3",nome:"B3 S.A."},
+  {ticker:"RENT3",nome:"Localiza"},       {ticker:"SUZB3",nome:"Suzano"},
+  {ticker:"JBSS3",nome:"JBS"},            {ticker:"GGBR4",nome:"Gerdau PN"},
+  {ticker:"PRIO3",nome:"PRIO"},           {ticker:"EGIE3",nome:"Engie Brasil"},
+  {ticker:"RDOR3",nome:"Rede D'Or"},      {ticker:"EMBR3",nome:"Embraer"},
+  {ticker:"LREN3",nome:"Lojas Renner"},   {ticker:"MGLU3",nome:"Magalu"},
+  {ticker:"CPLE6",nome:"Copel"},          {ticker:"BBAS3",nome:"Banco do Brasil"},
+  {ticker:"CXSE3",nome:"Caixa Seguridade"},{ticker:"TAEE4",nome:"Taesa"},
+  {ticker:"SBSP3",nome:"Sabesp"},         {ticker:"CCRO3",nome:"CCR"},
+  {ticker:"EQTL3",nome:"Equatorial"},     {ticker:"CSAN3",nome:"Cosan"},
+  {ticker:"VBBR3",nome:"Vibra Energia"},  {ticker:"TOTS3",nome:"Totvs"},
+  {ticker:"RADL3",nome:"Raia Drogasil"},  {ticker:"HYPE3",nome:"Hypera"},
+];
+
+// Cache: {ticker -> {preco, varDia, atualizado}}
+const B3_CACHE = {};
+let _b3FetchInProgress = false;
+let _b3FiltroAtual = "";
+
+/* ── Fetch em paralelo, lotes de 6 ─────────────────── */
+async function fetchB3Precos() {
+  if (_b3FetchInProgress) return;
+  _b3FetchInProgress = true;
+  $("b3-upd").textContent = "buscando…";
+  renderB3Grid(); // mostra loading
+
+  const LOTE = 6;
+  for (let i = 0; i < B3_ACOES.length; i += LOTE) {
+    const lote = B3_ACOES.slice(i, i + LOTE);
+    await Promise.allSettled(lote.map(async a => {
+      try {
+        const url = `${CFG.YF_BASE}/${a.ticker}.SA?interval=1d&range=1d`;
+        const timeout = new Promise((_,rej) => setTimeout(()=>rej(new Error("T")), 12000));
+        const req = fetch(url).then(r => r.json()).then(d => {
+          const meta = d?.chart?.result?.[0]?.meta;
+          if (!meta) return;
+          const prev  = meta.chartPreviousClose ?? meta.regularMarketPrice;
+          const preco = meta.regularMarketPrice;
+          B3_CACHE[a.ticker] = {
+            preco,
+            varDia: prev ? ((preco - prev) / prev) * 100 : 0,
+          };
+        });
+        await Promise.race([req, timeout]);
+      } catch(e) { /* ignora falhas individuais */ }
+    }));
+    renderB3Grid(); // atualiza progressivamente
+  }
+
+  const hora = new Date().toLocaleTimeString("pt-BR");
+  $("b3-upd").textContent = "atualizado " + hora;
+  _b3FetchInProgress = false;
+}
+
+/* ── Render do grid ─────────────────────────────────── */
+function renderB3Grid() {
+  const grid   = $("b3-grid");
+  const filtro = _b3FiltroAtual.toUpperCase();
+  const lista  = filtro
+    ? B3_ACOES.filter(a => a.ticker.includes(filtro) || a.nome.toUpperCase().includes(filtro))
+    : B3_ACOES;
+
+  if (!lista.length) {
+    grid.innerHTML = `<div class="b3-loading">Nenhum ativo encontrado para "${filtro}"</div>`;
+    return;
+  }
+
+  grid.innerHTML = lista.map(a => {
+    const dados     = B3_CACHE[a.ticker];
+    const emCart    = CARTEIRA.some(c => c.ticker === a.ticker);
+    const preco     = dados?.preco;
+    const varDia    = dados?.varDia;
+    const posDay    = varDia != null && varDia >= 0;
+    const cor       = varDia == null ? "var(--body3)" : posDay ? "var(--lime)" : "var(--red2)";
+    const sinal     = varDia != null ? (varDia >= 0 ? "+" : "") : "";
+    const cls       = [
+      "b3-mini",
+      emCart    ? "em-carteira" : "",
+      varDia == null ? "" : posDay ? "pos-day" : "neg-day",
+    ].filter(Boolean).join(" ");
+
+    return `<div class="${cls}" onclick="abrirAtivoB3('${a.ticker}','${a.nome.replace(/'/g,"\\'")}')">
+      <span class="bm-ticker">${a.ticker}</span>
+      <span class="bm-nome">${a.nome}</span>
+      <span class="bm-preco">${preco != null ? "R$\u00a0" + preco.toFixed(2) : '<span style="color:var(--body3);font-size:10px">carregando…</span>'}</span>
+      <span class="bm-var" style="color:${cor}">${varDia != null ? sinal + varDia.toFixed(2) + "% hoje" : ""}</span>
+      ${emCart ? '<span class="bm-badge bm-badge-cart">em carteira</span>' : ""}
+    </div>`;
+  }).join("");
+  setTimeout(aplicarMascara, 0);
+}
+
+/* ── Filtro ─────────────────────────────────────────── */
+function filtrarB3(txt) {
+  _b3FiltroAtual = txt;
+  renderB3Grid();
+}
+
+/* ── Ação: abrir painel de compra/venda ─────────────── */
+async function abrirAtivoB3(ticker, nome) {
+  const emCart = CARTEIRA.some(a => a.ticker === ticker);
+  if (emCart) {
+    // Já está na carteira — abre painel de detalhe direto
+    abrirAtivoDetalhe(ticker);
+  } else {
+    // Não está na carteira — abre painel de busca com ticker pré-preenchido
+    abrirOperar();
+    $("op-search-in").value = ticker;
+    await new Promise(r => setTimeout(r, 80)); // aguarda painel abrir
+    buscarAtivo();
+  }
+}
 
 </script>
 </body>
