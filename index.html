@@ -1788,22 +1788,8 @@ tbody tr:hover td:last-child::after {
     <div class="mercado-cell neutral"><div class="mercado-label">CDI</div><div class="mercado-val">13,15%</div><div class="mercado-var" style="color:var(--body3)">a.a. · estimado</div></div>
   </div>
 
-  <div>
-    <div class="home-section-title">📊 Meu Portfólio</div>
-    <div class="home-resumo">
-      <div class="home-resumo-cell"><div class="hrc-label">Total Aplicado</div><div class="hrc-val priv" id="hr-apl"><span class="skel" style="width:110px"></span></div></div>
-      <div class="home-resumo-cell"><div class="hrc-label">Valor Atual</div><div class="hrc-val priv" id="hr-atu"><span class="skel" style="width:110px"></span></div></div>
-      <div class="home-resumo-cell"><div class="hrc-label">Resultado R$</div><div class="hrc-val priv" id="hr-pnl"><span class="skel" style="width:90px"></span></div></div>
-      <div class="home-resumo-cell"><div class="hrc-label">Resultado %</div><div class="hrc-val priv" id="hr-pct"><span class="skel" style="width:70px"></span></div></div>
-    </div>
-  </div>
-
   <div class="home-grid">
     <div class="home-col-l">
-      <div>
-        <div class="home-section-title">📈 Ações em Carteira</div>
-        <div class="ativos-grid" id="home-ativos-grid"><div class="ativo-card"><span class="skel" style="width:80px;height:14px"></span></div><div class="ativo-card"><span class="skel" style="width:80px;height:14px"></span></div><div class="ativo-card"><span class="skel" style="width:80px;height:14px"></span></div></div>
-      </div>
       <div>
         <div class="home-section-title">💼 Fundos de Investimento</div>
         <div class="fundos-home-grid" id="home-fundos-grid"><div class="fundo-card-home"><span class="skel" style="width:120px;height:14px"></span></div><div class="fundo-card-home"><span class="skel" style="width:120px;height:14px"></span></div></div>
@@ -4175,63 +4161,6 @@ async function fetchMercado() {
   }
 }
 
-function renderHomeResumo() {
-  const aplFundos = FUNDOS.reduce((s,f) => s + f.valorAplicado, 0);
-  const atuFundos = FUNDOS.reduce((s,f) => s + (f.valorAtual ?? f.valorAplicado), 0);
-  const aplAcoes  = CARTEIRA.reduce((s,a) => s + a.valorAplicado, 0);
-  const atuAcoes  = CARTEIRA.reduce((s,a) => {
-    const p = ST.cotacoes[a.ticker]?.regularMarketPrice;
-    return s + (p ? p * a.cotas : a.valorAplicado);
-  }, 0);
-  const totalApl = aplAcoes + aplFundos;
-  const totalAtu = atuAcoes + atuFundos;
-  const pnl      = totalAtu - totalApl;
-  const pct      = totalApl ? (pnl / totalApl) * 100 : 0;
-  const cor      = pnl >= 0 ? "pos" : "neg";
-  const s        = pnl >= 0 ? "+" : "";
-  $("hr-apl").textContent = brl(totalApl);
-  $("hr-atu").textContent = brl(totalAtu);
-  $("hr-pnl").textContent = s + brl(pnl);
-  $("hr-pct").textContent = s + pct.toFixed(2) + "%";
-  $("hr-pnl").className = "hrc-val priv " + cor;
-  $("hr-pct").className = "hrc-val priv " + cor;
-}
-
-function renderHomeAtivos() {
-  const grid = $("home-ativos-grid");
-  grid.innerHTML = CARTEIRA.map(a => {
-    const cot    = ST.cotacoes[a.ticker] || {};
-    const preco  = cot.regularMarketPrice;
-    const varDia = cot.regularMarketChangePercent;
-    const pm     = a.valorAplicado / a.cotas;
-    const valAtu = preco ? preco * a.cotas : null;
-    const pnl    = valAtu != null ? valAtu - a.valorAplicado : null;
-    const varC   = preco ? ((preco - pm) / pm) * 100 : null;
-    const isAl   = varC != null && varC <= -CFG.ALERTA_PCT;
-    const cPnl   = pnl == null ? "var(--body3)" : pnl >= 0 ? "var(--lime)" : "var(--red2)";
-    const cVd    = varDia == null ? "var(--body3)" : varDia >= 0 ? "var(--lime)" : "var(--red2)";
-    const cVc    = varC  == null ? "var(--body3)" : varC  >= 0 ? "var(--lime)" : "var(--red2)";
-    const sVd    = varDia != null ? (varDia >= 0 ? "+" : "") + varDia.toFixed(2) + "% hoje" : "—";
-    const sVc    = varC   != null ? (varC   >= 0 ? "+" : "") + varC.toFixed(2)  + "% compra" : "—";
-    return `<div class="ativo-card ${isAl ? "home-alert" : ""}"
-        onclick="setPage('carteira');setTimeout(()=>abrirAtivoDetalhe('${a.ticker}'),80)">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
-        <div><div class="ac-ticker">${isAl ? "🔴 " : ""}${a.ticker}</div><div class="ac-nome">${a.nome}</div></div>
-        <div style="text-align:right">
-          <div style="font-family:var(--mono);font-size:10px;color:${cVd}">${sVd}</div>
-          <div style="font-family:var(--mono);font-size:10px;color:${cVc};margin-top:2px">${sVc}</div>
-        </div>
-      </div>
-      <div class="ac-preco priv">${preco != null ? "R$\u00a0" + preco.toFixed(2) : '<span style="color:var(--body3)">aguardando</span>'}</div>
-      <div class="ac-footer">
-        <span>${a.cotas} cotas · PM <span class="priv">R$\u00a0${pm.toFixed(2)}</span></span>
-        <span class="ac-pnl priv" style="color:${cPnl}">${pnl != null ? (pnl >= 0 ? "+" : "") + brl(pnl) : "—"}</span>
-      </div>
-    </div>`;
-  }).join("") || '<div style="color:var(--body3);font-size:12px;padding:12px">Nenhum ativo</div>';
-  setTimeout(aplicarMascara, 0);
-}
-
 function renderHomeFundos() {
   const grid = $("home-fundos-grid");
   grid.innerHTML = FUNDOS.map(f => {
@@ -4290,14 +4219,11 @@ function syncHomeStatus() {
 
 let _b3Loaded = false;
 function renderHomePage() {
-  renderHomeResumo();
-  renderHomeAtivos();
   renderHomeFundos();
   renderHomeAlertas();
   syncHomeStatus();
-  // Carrega B3 na primeira vez que a home é visitada
+  renderB3Grid();
   if (!_b3Loaded) { _b3Loaded = true; fetchB3Precos(); }
-  else renderB3Grid();
 }
 
 document.getElementById("home-btn-mon").addEventListener("click", function() {
@@ -4372,9 +4298,11 @@ async function fetchB3Precos() {
 function renderB3Grid() {
   const grid   = $("b3-grid");
   const filtro = _b3FiltroAtual.toUpperCase();
+  const emCart = new Set(CARTEIRA.filter(a => a.cotas > 0).map(a => a.ticker));
+  const base   = B3_ACOES.filter(a => !emCart.has(a.ticker));
   const lista  = filtro
-    ? B3_ACOES.filter(a => a.ticker.includes(filtro) || a.nome.toUpperCase().includes(filtro))
-    : B3_ACOES;
+    ? base.filter(a => a.ticker.includes(filtro) || a.nome.toUpperCase().includes(filtro))
+    : base;
 
   if (!lista.length) {
     grid.innerHTML = `<div class="b3-loading">Nenhum ativo encontrado para "${filtro}"</div>`;
@@ -4383,7 +4311,6 @@ function renderB3Grid() {
 
   grid.innerHTML = lista.map(a => {
     const dados     = B3_CACHE[a.ticker];
-    const emCart    = CARTEIRA.some(c => c.ticker === a.ticker);
     const preco     = dados?.preco;
     const varDia    = dados?.varDia;
     const posDay    = varDia != null && varDia >= 0;
@@ -4391,7 +4318,6 @@ function renderB3Grid() {
     const sinal     = varDia != null ? (varDia >= 0 ? "+" : "") : "";
     const cls       = [
       "b3-mini",
-      emCart    ? "em-carteira" : "",
       varDia == null ? "" : posDay ? "pos-day" : "neg-day",
     ].filter(Boolean).join(" ");
 
@@ -4400,7 +4326,6 @@ function renderB3Grid() {
       <span class="bm-nome">${a.nome}</span>
       <span class="bm-preco">${preco != null ? "R$\u00a0" + preco.toFixed(2) : '<span style="color:var(--body3);font-size:10px">carregando…</span>'}</span>
       <span class="bm-var" style="color:${cor}">${varDia != null ? sinal + varDia.toFixed(2) + "% hoje" : ""}</span>
-      ${emCart ? '<span class="bm-badge bm-badge-cart">em carteira</span>' : ""}
     </div>`;
   }).join("");
   setTimeout(aplicarMascara, 0);
