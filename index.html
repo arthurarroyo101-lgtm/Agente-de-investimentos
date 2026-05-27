@@ -4739,16 +4739,14 @@ async function abrirDetalheB3(ticker, nome) {
   $("sd-backdrop").classList.add("open");
 
   // Fetch quoteSummary — tenta v11, depois v10, depois mostra dados do cache
+  // IMPORTANTE: corsproxy.io exige URL sem encode (igual ao chart API que já funciona)
   const mods = "financialData,defaultKeyStatistics,summaryDetail,price";
   let res = null;
 
   for (const ver of ["v11", "v10"]) {
     try {
-      // Codifica a URL inteira do Yahoo para o corsproxy não confundir os parâmetros
-      const yfUrl = "https://query2.finance.yahoo.com/" + ver +
-                    "/finance/quoteSummary/" + ticker + ".SA?modules=" + mods +
-                    "&corsDomain=finance.yahoo.com&_t=" + Date.now();
-      const url   = "https://corsproxy.io/?" + encodeURIComponent(yfUrl);
+      const url = "https://corsproxy.io/?https://query2.finance.yahoo.com/" + ver +
+                  "/finance/quoteSummary/" + ticker + ".SA?modules=" + mods;
 
       const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error("Timeout")), 12000));
       const req = fetch(url).then(r => {
