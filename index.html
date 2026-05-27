@@ -4,7 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>B3 Agent · Rico (XP)</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+  <!-- PWA -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="B3 Agent">
+  <meta name="application-name" content="B3 Agent">
+  <meta name="theme-color" content="#06080f">
+  <meta name="background-color" content="#06080f">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Barlow+Condensed:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
@@ -4819,6 +4831,16 @@ async function abrirDetalheB3(ticker, nome) {
   }
 }
 
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(r => console.log('[B3 Agent] SW registrado:', r.scope))
+      .catch(e => console.warn('[B3 Agent] SW falhou:', e));
+  });
+}
 </script>
 </body>
 </html>
