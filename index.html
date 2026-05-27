@@ -4738,21 +4738,35 @@ async function abrirDetalheB3(ticker, nome) {
   $("sd-panel").classList.add("open");
   $("sd-backdrop").classList.add("open");
 
-  // Fetch quoteSummary
+  // Fetch quoteSummary — tenta v11, depois v10, depois mostra dados do cache
   const mods = "financialData,defaultKeyStatistics,summaryDetail,price";
-  const url  = `https://corsproxy.io/?https://query2.finance.yahoo.com/v10/finance/quoteSummary/${ticker}.SA?modules=${encodeURIComponent(mods)}`;
+  let res = null;
 
-  try {
-    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error("Timeout")), 14000));
-    const req = fetch(url).then(r => {
-      if (!r.ok) throw new Error("status " + r.status);
-      return r.json();
-    });
-    const data = await Promise.race([req, timeout]);
+  for (const ver of ["v11", "v10"]) {
+    try {
+      // Codifica a URL inteira do Yahoo para o corsproxy não confundir os parâmetros
+      const yfUrl = "https://query2.finance.yahoo.com/" + ver +
+                    "/finance/quoteSummary/" + ticker + ".SA?modules=" + mods +
+                    "&corsDomain=finance.yahoo.com&_t=" + Date.now();
+      const url   = "https://corsproxy.io/?" + encodeURIComponent(yfUrl);
 
-    const res = data?.quoteSummary?.result?.[0];
-    if (!res) throw new Error("sem dados");
+      const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error("Timeout")), 12000));
+      const req = fetch(url).then(r => {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      });
+      const data = await Promise.race([req, timeout]);
+      const candidate = data?.quoteSummary?.result?.[0];
+      if (candidate) { res = candidate; break; }
+    } catch(e) {
+      _log(`quoteSummary ${ver} falhou para ${ticker}: ${e.message}`, "AVISO");
+    }
+  }
 
+  // Oculta loading
+  $("sd-loading").style.display = "none";
+
+  if (res) {
     const fin  = res.financialData;
     const stat = res.defaultKeyStatistics;
     const det  = res.summaryDetail;
@@ -4775,17 +4789,35 @@ async function abrirDetalheB3(ticker, nome) {
       $("sd-nome").textContent = pr.shortName || pr.longName || nome;
     }
 
-    // Renderiza métricas
     $("sd-metrics-grid").innerHTML = buildMetrics(fin, stat, det, pr);
+    $("sd-body").style.display = "flex";
+    _log("Indicadores carregados: " + ticker, "OK");
 
-    $("sd-loading").style.display = "none";
-    $("sd-body").style.display    = "flex";
-    _log(`Indicadores carregados: ${ticker}`, "OK");
+  } else {
+    // Fallback — mostra painel com preço do cache e métricas como indisponível
+    $("sd-metrics-grid").innerHTML = buildMetrics(null, null, null, null);
+    $("sd-body").style.display = "flex";
 
-  } catch(e) {
-    $("sd-loading").style.display = "none";
-    $("sd-error").style.display   = "block";
-    _log(`Erro ao carregar indicadores de ${ticker}: ${e.message}`, "AVISO");
+    // Tenta buscar pelo menos o preço atualizado via chart API
+    try {
+      const chartUrl = CFG.YF_BASE + "/" + ticker + ".SA?interval=1d&range=1d";
+      const r = await fetch(chartUrl).then(x => x.json());
+      const meta = r?.chart?.result?.[0]?.meta;
+      if (meta?.regularMarketPrice) {
+        $("sd-price").textContent = "R$\u00a0" + meta.regularMarketPrice.toFixed(2);
+        const prev = meta.chartPreviousClose ?? meta.regularMarketPrice;
+        const vd = ((meta.regularMarketPrice - prev) / prev) * 100;
+        const vdEl = $("sd-var-dia");
+        vdEl.textContent = (vd >= 0 ? "+" : "") + vd.toFixed(2) + "% hoje";
+        vdEl.style.color = vd >= 0 ? "var(--lime)" : "var(--red2)";
+      }
+    } catch(_) {}
+
+    const note = document.createElement("div");
+    note.style.cssText = "font-family:var(--mono);font-size:10px;color:var(--amber);padding:8px 0 4px;text-align:center";
+    note.textContent = "⚠ Indicadores fundamentais indisponíveis no momento";
+    $("sd-body").prepend(note);
+    _log("Indicadores indisponíveis para " + ticker + " — exibindo preço do cache", "AVISO");
   }
 }
 
