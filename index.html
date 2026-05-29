@@ -4,19 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>B3 Agent · Rico (XP)</title>
-  <!-- PWA -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="B3 Agent">
-  <meta name="application-name" content="B3 Agent">
-  <meta name="theme-color" content="#06080f">
-  <meta name="background-color" content="#06080f">
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Barlow+Condensed:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
@@ -4626,7 +4614,8 @@ function sdRow(label, val, dotCls, extra) {
 }
 
 /* ── Gera HTML das 6 métricas ───────────────────────── */
-function buildMetrics(fin, stat, det, pr) {
+function buildMetrics(fin, stat, det, pr, extra) {
+  extra = extra || {};
   const roe   = fin?.returnOnEquity?.raw;
   const roa   = fin?.returnOnAssets?.raw;
   const marg  = fin?.profitMargins?.raw;
@@ -4637,12 +4626,12 @@ function buildMetrics(fin, stat, det, pr) {
   const beta  = stat?.beta?.raw;
   const pb    = stat?.priceToBook?.raw;
   const ev_eb = stat?.enterpriseToEbitda?.raw;
-  const w52h  = det?.fiftyTwoWeekHigh?.raw;
-  const w52l  = det?.fiftyTwoWeekLow?.raw;
-  const vol   = det?.volume?.raw;
+  const w52h  = det?.fiftyTwoWeekHigh?.raw || extra.w52h;
+  const w52l  = det?.fiftyTwoWeekLow?.raw || extra.w52l;
+  const vol   = extra.volAtual || det?.volume?.raw;
   const avgVol= det?.averageVolume?.raw;
-  const pe    = det?.trailingPE?.raw;
-  const dy    = det?.dividendYield?.raw;
+  const pe    = extra.pe  || det?.trailingPE?.raw;
+  const dy    = extra.dy  != null ? extra.dy : det?.dividendYield?.raw;
   const price = pr?.regularMarketPrice?.raw;
 
   // Posição na faixa de 52 semanas (0-100%)
@@ -4666,8 +4655,8 @@ function buildMetrics(fin, stat, det, pr) {
     {
       icon: "🌊", title: "Volatilidade",
       rows: [
-        sdRow("Beta",          beta  != null ? fmtNum(beta, 2) + "×" : "—", betaColor(beta)),
-        sdRow("Cresc. Receita",rev   != null ? fmtPct(rev)           : "—", rev>0?"g":rev<0?"r":"y"),
+        sdRow("Beta / Volat.", beta != null ? fmtNum(beta,2)+"×" : (extra.volatilidade != null ? extra.volatilidade.toFixed(1)+"% a.a." : "—"), beta!=null?betaColor(beta):(extra.volatilidade!=null?(extra.volatilidade<25?"g":extra.volatilidade<45?"y":"r"):"n")),
+        sdRow("Retorno 1 ano", (rev != null ? (rev*100).toFixed(1)+"%" : (extra.retorno1a != null ? extra.retorno1a.toFixed(1)+"%" : "—")), (rev||extra.retorno1a||0)>0?"g":(rev||extra.retorno1a||0)<0?"r":"y"),
         `<div style="margin-top:4px">
           <div style="font-size:10px;color:var(--body3);font-family:var(--sans);margin-bottom:4px">
             Faixa 52 semanas: ${w52l ? "R$\u00a0"+w52l.toFixed(2) : "—"} · ${w52h ? "R$\u00a0"+w52h.toFixed(2) : "—"}
@@ -4680,7 +4669,7 @@ function buildMetrics(fin, stat, det, pr) {
       icon: "💧", title: "Liquidez",
       rows: [
         sdRow("Vol. atual",     vol    != null ? fmtVol(vol)    : "—", vol>1e6?"g":vol>1e5?"y":"r"),
-        sdRow("Vol. médio 3m",  avgVol != null ? fmtVol(avgVol) : "—", "n"),
+        sdRow("Vol. médio",  (avgVol != null ? fmtVol(avgVol) : (extra.volMed != null ? fmtVol(extra.volMed) : "—")), "n"),
         sdRow("D.Y. anual",     dy     != null ? fmtNum(dy*100) + "%" : "—", dy>0.05?"g":dy>0?"y":"n"),
       ]
     },
@@ -4724,123 +4713,141 @@ function buildMetrics(fin, stat, det, pr) {
 /* ── Fetch dados e abre painel ──────────────────────── */
 async function abrirDetalheB3(ticker, nome) {
   _sdTickerAtual = ticker;
-  $("sd-buy-btn").dataset.ticker = ticker;
 
-  // Preenche header com o que já temos do cache
+  // Preenche imediatamente com cache
   $("sd-ticker").textContent = ticker;
   $("sd-nome").textContent   = nome || ticker;
   const cached = B3_CACHE[ticker];
   if (cached?.preco) {
-    $("sd-price").textContent   = "R$\u00a0" + cached.preco.toFixed(2);
-    const vd = cached.varDia;
-    const vdEl = $("sd-var-dia");
-    vdEl.textContent = vd != null ? (vd >= 0 ? "+" : "") + vd.toFixed(2) + "%" : "";
-    vdEl.style.color = vd >= 0 ? "var(--lime)" : "var(--red2)";
+    $("sd-price").textContent = "R$\u00a0" + cached.preco.toFixed(2);
+    if (cached.varDia != null) {
+      $("sd-var-dia").textContent = (cached.varDia >= 0 ? "+" : "") + cached.varDia.toFixed(2) + "% hoje";
+      $("sd-var-dia").style.color = cached.varDia >= 0 ? "var(--lime)" : "var(--red2)";
+    }
   } else {
     $("sd-price").textContent = "—";
     $("sd-var-dia").textContent = "";
   }
   $("sd-mcap").textContent = "";
-
-  // Reset state
   $("sd-loading").style.display = "flex";
   $("sd-body").style.display    = "none";
   $("sd-error").style.display   = "none";
-
   $("sd-panel").classList.add("open");
   $("sd-backdrop").classList.add("open");
 
-  // Fetch quoteSummary — tenta v11, depois v10, depois mostra dados do cache
-  // IMPORTANTE: corsproxy.io exige URL sem encode (igual ao chart API que já funciona)
+  // ── Lança 3 fontes em paralelo ────────────────────────────────────────────
+  const sym = ticker + ".SA";
+  const T   = ms => new Promise((_, r) => setTimeout(() => r(new Error("timeout")), ms));
+
+  // Fonte A: brapi.dev — CORS nativo, sem proxy, retorna fundamentais básicos
+  const fetchBrapi = fetch(
+    "https://brapi.dev/api/quote/" + ticker + "?fundamental=true&range=1d&interval=1d"
+  ).then(r => r.ok ? r.json() : null).catch(() => null);
+
+  // Fonte B: Chart 2y mensal — cálculo de retorno e volatilidade
+  const fetchChart = fetch(
+    CFG.YF_BASE + "/" + sym + "?interval=1mo&range=2y"
+  ).then(r => r.json()).catch(() => null);
+
+  // Fonte C: quoteSummary query1 — fundamentais completos (pode falhar)
   const mods = "financialData,defaultKeyStatistics,summaryDetail,price";
-  let res = null;
+  const qsUrl = CFG.YF_BASE.replace("/v8/finance/chart", "/v10/finance/quoteSummary")
+                + "/" + sym + "?modules=" + mods;
+  const fetchQS = fetch(qsUrl).then(r => r.ok ? r.json() : null).catch(() => null);
 
-  for (const ver of ["v11", "v10"]) {
-    try {
-      const url = "https://corsproxy.io/?https://query2.finance.yahoo.com/" + ver +
-                  "/finance/quoteSummary/" + ticker + ".SA?modules=" + mods;
+  // Aguarda todas (sem rejeitar se alguma falhar)
+  const [brapiData, chartData, qsData] = await Promise.all([
+    Promise.race([fetchBrapi, T(12000)]).catch(() => null),
+    Promise.race([fetchChart, T(12000)]).catch(() => null),
+    Promise.race([fetchQS,    T(10000)]).catch(() => null),
+  ]);
 
-      const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error("Timeout")), 12000));
-      const req = fetch(url).then(r => {
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        return r.json();
-      });
-      const data = await Promise.race([req, timeout]);
-      const candidate = data?.quoteSummary?.result?.[0];
-      if (candidate) { res = candidate; break; }
-    } catch(e) {
-      _log(`quoteSummary ${ver} falhou para ${ticker}: ${e.message}`, "AVISO");
+  // ── Extrai dados de cada fonte ────────────────────────────────────────────
+  // brapi.dev
+  const bp     = brapiData?.results?.[0] || null;
+  const bpPE   = bp?.priceEarnings;
+  const bpEPS  = bp?.earningsPerShare;
+  const bpDY   = bp?.dividendYield;        // já em % (ex: 15.3)
+  const bpMcap = bp?.marketCap;
+  const bpVol  = bp?.regularMarketVolume;
+  const bpVol3m= bp?.averageDailyVolume3Month;
+  const bp52h  = bp?.fiftyTwoWeekHigh;
+  const bp52l  = bp?.fiftyTwoWeekLow;
+  const bpChg  = bp?.regularMarketChangePercent;
+  const bpPrice= bp?.regularMarketPrice;
+  const bpNome = bp?.shortName || bp?.longName;
+
+  // Chart 2y
+  const chart2 = chartData?.chart?.result?.[0];
+  const chartM = chart2?.meta;
+  const closes = chart2?.indicators?.quote?.[0]?.close || [];
+  const chartVols = chart2?.indicators?.quote?.[0]?.volume || [];
+  const hist   = closes.map((c,i) => ({c, v: chartVols[i]||0})).filter(x => x.c != null);
+  let retorno1a = null, volatilidade = null, volMedChart = null;
+  if (hist.length >= 2) {
+    const last = hist[hist.length - 1].c;
+    const prev12 = hist.length >= 13 ? hist[hist.length - 13].c : null;
+    if (prev12 && prev12 > 0) retorno1a = ((last - prev12) / prev12) * 100;
+    const rets = [];
+    for (let i = 1; i < hist.length; i++)
+      if (hist[i-1].c > 0) rets.push((hist[i].c - hist[i-1].c) / hist[i-1].c);
+    if (rets.length >= 4) {
+      const mean = rets.reduce((s,v) => s+v, 0) / rets.length;
+      const vari = rets.reduce((s,v) => s + (v-mean)**2, 0) / rets.length;
+      volatilidade = Math.sqrt(vari * 12) * 100;
     }
+    const cv = hist.map(h => h.v).filter(v => v > 0);
+    if (cv.length) volMedChart = cv.reduce((s,v) => s+v, 0) / cv.length;
   }
 
-  // Oculta loading
+  // quoteSummary
+  const qs   = qsData?.quoteSummary?.result?.[0] || null;
+  const fin  = qs?.financialData;
+  const stat = qs?.defaultKeyStatistics;
+  const det  = qs?.summaryDetail;
+  const pr   = qs?.price;
+
+  // ── Mescla e atualiza header ──────────────────────────────────────────────
+  const priceNow = bpPrice || pr?.regularMarketPrice?.raw || chartM?.regularMarketPrice || cached?.preco;
+  if (priceNow) $("sd-price").textContent = "R$\u00a0" + priceNow.toFixed(2);
+
+  const vd = bpChg ?? (pr?.regularMarketChangePercent?.raw != null ? pr.regularMarketChangePercent.raw * 100 : null)
+           ?? (chartM ? ((chartM.regularMarketPrice-(chartM.chartPreviousClose||chartM.regularMarketPrice))/(chartM.chartPreviousClose||chartM.regularMarketPrice))*100 : null)
+           ?? cached?.varDia;
+  if (vd != null) {
+    $("sd-var-dia").textContent = (vd >= 0 ? "+" : "") + vd.toFixed(2) + "% hoje";
+    $("sd-var-dia").style.color = vd >= 0 ? "var(--lime)" : "var(--red2)";
+  }
+
+  const mcap = bpMcap || pr?.marketCap?.raw || chartM?.marketCap;
+  if (mcap) $("sd-mcap").textContent = "Market Cap: " + fmtBig(mcap);
+
+  const nomeReal = bpNome || pr?.shortName || pr?.longName || chartM?.shortName || nome;
+  if (nomeReal) $("sd-nome").textContent = nomeReal;
+
+  // ── Constrói extra com todas as fontes mescladas ──────────────────────────
+  const extra = {
+    retorno1a,
+    volatilidade,
+    volMed:  bpVol3m || volMedChart,
+    volAtual: bpVol,
+    w52h: bp52h || det?.fiftyTwoWeekHigh?.raw || chartM?.fiftyTwoWeekHigh,
+    w52l: bp52l || det?.fiftyTwoWeekLow?.raw  || chartM?.fiftyTwoWeekLow,
+    pe:   bpPE  || det?.trailingPE?.raw,
+    eps:  bpEPS || stat?.trailingEps?.raw,
+    dy:   bpDY  != null ? bpDY / 100 : det?.dividendYield?.raw,  // normaliza p/ decimal
+    mcap: bpMcap,
+    priceNow,
+  };
+
+  $("sd-metrics-grid").innerHTML = buildMetrics(fin, stat, det, pr, extra);
   $("sd-loading").style.display = "none";
+  $("sd-body").style.display    = "flex";
 
-  if (res) {
-    const fin  = res.financialData;
-    const stat = res.defaultKeyStatistics;
-    const det  = res.summaryDetail;
-    const pr   = res.price;
-
-    // Atualiza header com dados frescos
-    if (pr?.regularMarketPrice?.raw) {
-      $("sd-price").textContent = "R$\u00a0" + pr.regularMarketPrice.raw.toFixed(2);
-    }
-    if (pr?.regularMarketChangePercent?.raw != null) {
-      const vd = pr.regularMarketChangePercent.raw;
-      const vdEl = $("sd-var-dia");
-      vdEl.textContent = (vd >= 0 ? "+" : "") + (vd * 100).toFixed(2) + "% hoje";
-      vdEl.style.color = vd >= 0 ? "var(--lime)" : "var(--red2)";
-    }
-    if (pr?.marketCap?.raw) {
-      $("sd-mcap").textContent = "Market Cap: " + fmtBig(pr.marketCap.raw);
-    }
-    if (pr?.shortName || pr?.longName) {
-      $("sd-nome").textContent = pr.shortName || pr.longName || nome;
-    }
-
-    $("sd-metrics-grid").innerHTML = buildMetrics(fin, stat, det, pr);
-    $("sd-body").style.display = "flex";
-    _log("Indicadores carregados: " + ticker, "OK");
-
-  } else {
-    // Fallback — mostra painel com preço do cache e métricas como indisponível
-    $("sd-metrics-grid").innerHTML = buildMetrics(null, null, null, null);
-    $("sd-body").style.display = "flex";
-
-    // Tenta buscar pelo menos o preço atualizado via chart API
-    try {
-      const chartUrl = CFG.YF_BASE + "/" + ticker + ".SA?interval=1d&range=1d";
-      const r = await fetch(chartUrl).then(x => x.json());
-      const meta = r?.chart?.result?.[0]?.meta;
-      if (meta?.regularMarketPrice) {
-        $("sd-price").textContent = "R$\u00a0" + meta.regularMarketPrice.toFixed(2);
-        const prev = meta.chartPreviousClose ?? meta.regularMarketPrice;
-        const vd = ((meta.regularMarketPrice - prev) / prev) * 100;
-        const vdEl = $("sd-var-dia");
-        vdEl.textContent = (vd >= 0 ? "+" : "") + vd.toFixed(2) + "% hoje";
-        vdEl.style.color = vd >= 0 ? "var(--lime)" : "var(--red2)";
-      }
-    } catch(_) {}
-
-    const note = document.createElement("div");
-    note.style.cssText = "font-family:var(--mono);font-size:10px;color:var(--amber);padding:8px 0 4px;text-align:center";
-    note.textContent = "⚠ Indicadores fundamentais indisponíveis no momento";
-    $("sd-body").prepend(note);
-    _log("Indicadores indisponíveis para " + ticker + " — exibindo preço do cache", "AVISO");
-  }
+  const fontes = [bp?"brapi":"", qs?"quoteSummary":"", hist.length?"chart":""].filter(Boolean).join("+");
+  _log("Indicadores carregados: " + ticker + " (" + (fontes||"cache") + ")", "OK");
 }
 
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
-      .then(r => console.log('[B3 Agent] SW registrado:', r.scope))
-      .catch(e => console.warn('[B3 Agent] SW falhou:', e));
-  });
-}
 </script>
 </body>
 </html>
