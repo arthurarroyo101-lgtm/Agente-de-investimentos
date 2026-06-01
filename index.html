@@ -1941,10 +1941,41 @@ tbody tr:hover td:last-child::after {
     <div class="mercado-cell neutral"><div class="mercado-label">CDI</div><div class="mercado-val">13,15%</div><div class="mercado-var" style="color:var(--body3)">a.a. · estimado</div></div>
   </div>
 
+  <!-- 1. Principais Ações da B3 — PRIMEIRA POSIÇÃO -->
+  <div>
+    <div class="home-section-title">🏛 Principais Ações da B3</div>
+    <div class="b3-toolbar">
+      <input class="b3-search-in" id="b3-search" placeholder="Filtrar ticker ou nome…"
+        oninput="filtrarB3(this.value)">
+      <button class="btn btn-wire" style="padding:6px 14px;font-size:11px"
+        onclick="fetchB3Precos()">↻ Atualizar</button>
+      <span id="b3-upd" style="font-family:var(--mono);font-size:10px;color:var(--body3)"></span>
+    </div>
+    <div class="b3-grid" id="b3-grid">
+      <div class="b3-loading"><span class="spin"></span>&nbsp; Buscando cotações da B3…</div>
+    </div>
+  </div>
+
+  <!-- 2. Principais FIIs da B3 -->
+  <div>
+    <div class="home-section-title">🏢 Principais FIIs da B3</div>
+    <div class="b3-toolbar">
+      <input class="b3-search-in" id="fii-search" placeholder="Filtrar FII ou nome…"
+        oninput="filtrarFII(this.value)">
+      <button class="btn btn-wire" style="padding:6px 14px;font-size:11px"
+        onclick="fetchFIIPrecos()">↻ Atualizar</button>
+      <span id="fii-upd" style="font-family:var(--mono);font-size:10px;color:var(--body3)"></span>
+    </div>
+    <div class="b3-grid" id="fii-grid">
+      <div class="b3-loading"><span class="spin"></span>&nbsp; Buscando cotações de FIIs…</div>
+    </div>
+  </div>
+
+  <!-- 3. Grade: Meus Fundos + Sidebar -->
   <div class="home-grid">
     <div class="home-col-l">
       <div>
-        <div class="home-section-title">💼 Fundos de Investimento</div>
+        <div class="home-section-title">💼 Meus Fundos de Investimento</div>
         <div class="fundos-home-grid" id="home-fundos-grid"><div class="fundo-card-home"><span class="skel" style="width:120px;height:14px"></span></div><div class="fundo-card-home"><span class="skel" style="width:120px;height:14px"></span></div></div>
       </div>
     </div>
@@ -1961,22 +1992,6 @@ tbody tr:hover td:last-child::after {
           <div style="margin-top:10px"><button class="btn btn-lime" style="width:100%;padding:8px" id="home-btn-mon">▶ Iniciar Monitoramento</button></div>
         </div>
       </div>
-    </div>
-  </div>
-
-
-  <!-- Principais Ações da B3 -->
-  <div>
-    <div class="home-section-title">🏛 Principais Ações da B3</div>
-    <div class="b3-toolbar">
-      <input class="b3-search-in" id="b3-search" placeholder="Filtrar ticker ou nome…"
-        oninput="filtrarB3(this.value)">
-      <button class="btn btn-wire" style="padding:6px 14px;font-size:11px"
-        onclick="fetchB3Precos()">↻ Atualizar</button>
-      <span id="b3-upd" style="font-family:var(--mono);font-size:10px;color:var(--body3)"></span>
-    </div>
-    <div class="b3-grid" id="b3-grid">
-      <div class="b3-loading"><span class="spin"></span>&nbsp; Buscando cotações da B3…</div>
     </div>
   </div>
 
@@ -4416,12 +4431,15 @@ function syncHomeStatus() {
 }
 
 let _b3Loaded = false;
+let _fiiLoaded = false;
 function renderHomePage() {
   renderHomeFundos();
   renderHomeAlertas();
   syncHomeStatus();
   renderB3Grid();
+  renderFIIGrid();
   if (!_b3Loaded) { _b3Loaded = true; fetchB3Precos(); }
+  if (!_fiiLoaded) { _fiiLoaded = true; fetchFIIPrecos(); }
 }
 
 document.getElementById("home-btn-mon").addEventListener("click", function() {
@@ -4846,6 +4864,103 @@ async function abrirDetalheB3(ticker, nome) {
 
   const fontes = [bp?"brapi":"", qs?"quoteSummary":"", hist.length?"chart":""].filter(Boolean).join("+");
   _log("Indicadores carregados: " + ticker + " (" + (fontes||"cache") + ")", "OK");
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   PRINCIPAIS FIIs DA B3
+═══════════════════════════════════════════════════════ */
+
+const B3_FIIS = [
+  {ticker:"MXRF11",nome:"Maxi Renda"},          {ticker:"KNRI11",nome:"Kinea Renda Imob."},
+  {ticker:"HGLG11",nome:"CSHG Logística"},       {ticker:"XPLG11",nome:"XP Log"},
+  {ticker:"VISC11",nome:"Vinci Shopping"},       {ticker:"XPML11",nome:"XP Malls"},
+  {ticker:"BTLG11",nome:"BTG Logística"},        {ticker:"BCFF11",nome:"BTG Fdo.de Fundos"},
+  {ticker:"IRDM11",nome:"Iridium Recebíveis"},   {ticker:"MALL11",nome:"Malls BR Plural"},
+  {ticker:"HCTR11",nome:"Hectare CE"},           {ticker:"VRTA11",nome:"Fator Verita"},
+  {ticker:"PVBI11",nome:"VBI Prime Prop."},      {ticker:"JSRE11",nome:"JS Real Estate"},
+  {ticker:"RECT11",nome:"REC Recebíveis"},       {ticker:"RBRP11",nome:"RBR Properties"},
+  {ticker:"RBVA11",nome:"Rio Bravo Renda Varejo"},{ticker:"BPFF11",nome:"Brasil Plural Abs."},
+  {ticker:"HFOF11",nome:"Hedge Fund of Funds"},  {ticker:"RZTR11",nome:"Riza Terrax"},
+  {ticker:"CPTS11",nome:"Capitânia Securities"}, {ticker:"KNCR11",nome:"Kinea CR Imob."},
+  {ticker:"VGIP11",nome:"Valora IP"},            {ticker:"TRXF11",nome:"TRX Real Estate"},
+  {ticker:"LVBI11",nome:"LivBV Industrial"},     {ticker:"PQAO11",nome:"Pátria Queiroz Galvão"},
+  {ticker:"HGRE11",nome:"CSHG Real Estate"},     {ticker:"RBRF11",nome:"RBR Alpha"},
+  {ticker:"VINO11",nome:"Vinci Offices"},        {ticker:"CVBI11",nome:"CV Pactual"},
+];
+
+const FII_CACHE = {};
+let _fiiFetchInProgress = false;
+let _fiiFiltroAtual = "";
+
+async function fetchFIIPrecos() {
+  if (_fiiFetchInProgress) return;
+  _fiiFetchInProgress = true;
+  $("fii-upd").textContent = "buscando…";
+  renderFIIGrid();
+
+  const LOTE = 6;
+  for (let i = 0; i < B3_FIIS.length; i += LOTE) {
+    const lote = B3_FIIS.slice(i, i + LOTE);
+    await Promise.allSettled(lote.map(async a => {
+      try {
+        const url = `${CFG.YF_BASE}/${a.ticker}.SA?interval=1d&range=1d`;
+        const timeout = new Promise((_,rej) => setTimeout(()=>rej(new Error("T")), 12000));
+        const req = fetch(url).then(r => r.json()).then(d => {
+          const meta = d?.chart?.result?.[0]?.meta;
+          if (!meta) return;
+          const prev  = meta.chartPreviousClose ?? meta.regularMarketPrice;
+          const preco = meta.regularMarketPrice;
+          FII_CACHE[a.ticker] = {
+            preco,
+            varDia: prev ? ((preco - prev) / prev) * 100 : 0,
+          };
+        });
+        await Promise.race([req, timeout]);
+      } catch(e) {}
+    }));
+    renderFIIGrid();
+  }
+
+  $("fii-upd").textContent = "atualizado " + new Date().toLocaleTimeString("pt-BR");
+  _fiiFetchInProgress = false;
+}
+
+function renderFIIGrid() {
+  const grid   = $("fii-grid");
+  const filtro = _fiiFiltroAtual.toUpperCase();
+  const emCart = new Set(FUNDOS.map(f => f.nome.toUpperCase().trim()));
+
+  const lista = (filtro
+    ? B3_FIIS.filter(a => a.ticker.includes(filtro) || a.nome.toUpperCase().includes(filtro))
+    : B3_FIIS);
+
+  if (!lista.length) {
+    grid.innerHTML = `<div class="b3-loading">Nenhum FII encontrado para "${filtro}"</div>`;
+    return;
+  }
+
+  grid.innerHTML = lista.map(a => {
+    const dados  = FII_CACHE[a.ticker];
+    const preco  = dados?.preco;
+    const varDia = dados?.varDia;
+    const posDay = varDia != null && varDia >= 0;
+    const cor    = varDia == null ? "var(--body3)" : posDay ? "var(--lime)" : "var(--red2)";
+    const sinal  = varDia != null ? (varDia >= 0 ? "+" : "") : "";
+    const cls    = ["b3-mini", varDia == null ? "" : posDay ? "pos-day" : "neg-day"].filter(Boolean).join(" ");
+
+    return `<div class="${cls}" onclick="abrirDetalheB3('${a.ticker}','${a.nome.replace(/'/g,"\\'")}')">
+      <span class="bm-ticker">${a.ticker}</span>
+      <span class="bm-nome">${a.nome}</span>
+      <span class="bm-preco">${preco != null ? "R$\u00a0" + preco.toFixed(2) : '<span style="color:var(--body3);font-size:10px">carregando\u2026</span>'}</span>
+      <span class="bm-var" style="color:${cor}">${varDia != null ? sinal + varDia.toFixed(2) + "% hoje" : ""}</span>
+    </div>`;
+  }).join("");
+}
+
+function filtrarFII(txt) {
+  _fiiFiltroAtual = txt;
+  renderFIIGrid();
 }
 
 </script>
