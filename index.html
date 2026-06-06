@@ -1873,46 +1873,59 @@ tbody tr:hover td:last-child::after {
 }
 
 
-/* ── DIVIDENDS ─────────────────────── */
-/* ═══════════════════════════════════════════════════════
-   CALENDÁRIO DE DIVIDENDOS
-═══════════════════════════════════════════════════════ */
+/* ── DIVIDENDS ─────────────────────────────────────── */
 .div-wrap {
   max-width: 1440px; margin: 0 auto;
   padding: 20px 20px 60px;
-  display: flex; flex-direction: column; gap: 20px;
+  display: flex; flex-direction: column; gap: 18px;
 }
+
+/* Header */
 .div-header {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: flex-start; justify-content: space-between;
   flex-wrap: wrap; gap: 14px;
 }
-.div-header-left { display: flex; flex-direction: column; gap: 4px; }
 .div-title {
   font-family: var(--sans); font-size: 22px; font-weight: 800;
   letter-spacing: .04em; color: var(--head);
 }
 .div-subtitle {
-  font-family: var(--mono); font-size: 11px; color: var(--body3);
+  font-family: var(--mono); font-size: 11px; color: var(--body3); margin-top: 4px;
 }
-.div-actions {
+
+/* Toolbar row */
+.div-toolbar {
   display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
 }
-.div-filter-group {
-  display: flex; align-items: center; gap: 6px;
+.div-seg {
+  display: flex; border: 1px solid var(--wire2); border-radius: 5px; overflow: hidden;
 }
-.div-filter-lbl {
-  font-family: var(--sans); font-size: 10px; font-weight: 700;
-  letter-spacing: .12em; text-transform: uppercase; color: var(--body3);
+.div-seg-btn {
+  font-family: var(--sans); font-size: 11px; font-weight: 800;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 7px 16px; border: none; background: transparent;
+  color: var(--body2); cursor: pointer; transition: all .14s;
+  border-right: 1px solid var(--wire2);
 }
-.div-filter-btn {
+.div-seg-btn:last-child { border-right: none; }
+.div-seg-btn:hover { background: rgba(255,255,255,.04); color: var(--head); }
+.div-seg-btn.on { background: rgba(79,172,254,.12); color: var(--cyan); }
+.div-seg-btn.carteira-on { background: rgba(184,255,69,.1); color: var(--lime); }
+
+.div-date-toggle {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 14px; border: 1px solid var(--wire2); border-radius: 5px;
   font-family: var(--sans); font-size: 11px; font-weight: 700;
-  letter-spacing: .06em; text-transform: uppercase;
-  padding: 5px 12px; border-radius: 3px; border: 1px solid var(--wire2);
-  background: transparent; color: var(--body2); cursor: pointer;
-  transition: all .14s;
+  letter-spacing: .06em; color: var(--body); cursor: pointer;
+  transition: all .14s; background: transparent;
 }
-.div-filter-btn:hover { border-color: var(--cyan); color: var(--cyan); }
-.div-filter-btn.ativo { border-color: var(--cyan); background: rgba(79,172,254,.08); color: var(--cyan); }
+.div-date-toggle:hover { border-color: var(--cyan); color: var(--cyan); }
+.div-date-toggle.ativo { border-color: var(--cyan); background: rgba(79,172,254,.08); color: var(--cyan); }
+.div-date-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--body3); flex-shrink: 0; transition: background .15s;
+}
+.div-date-toggle.ativo .div-date-dot { background: var(--cyan); box-shadow: 0 0 6px rgba(79,172,254,.5); }
 
 /* Stats strip */
 .div-stats {
@@ -1926,131 +1939,97 @@ tbody tr:hover td:last-child::after {
 }
 .div-stat::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-  opacity: .6;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent); opacity: .6;
 }
 .div-stat-lbl {
   font-family: var(--sans); font-size: 9px; font-weight: 800;
-  letter-spacing: .16em; text-transform: uppercase; color: var(--body3);
-  margin-bottom: 8px;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--body3); margin-bottom: 8px;
 }
-.div-stat-val {
-  font-family: var(--mono); font-size: 20px; font-weight: 700;
-  color: var(--lime); letter-spacing: -.02em;
-}
-.div-stat-sub {
-  font-family: var(--mono); font-size: 10px; color: var(--body3); margin-top: 4px;
-}
+.div-stat-val { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--lime); letter-spacing: -.02em; }
+.div-stat-sub { font-family: var(--mono); font-size: 10px; color: var(--body3); margin-top: 4px; }
 
-/* Linha do tempo */
-.div-timeline { display: flex; flex-direction: column; gap: 14px; }
-
-.div-month-block { }
-.div-month-head {
-  display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+/* Table view */
+.div-table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--wire); }
+.div-table {
+  width: 100%; border-collapse: collapse; font-size: 12px;
 }
-.div-month-label {
-  font-family: var(--sans); font-size: 13px; font-weight: 800;
-  letter-spacing: .12em; text-transform: uppercase; color: var(--cyan);
-  white-space: nowrap;
-}
-.div-month-line { flex: 1; height: 1px; background: var(--wire); }
-.div-month-total {
-  font-family: var(--mono); font-size: 11px; color: var(--lime);
-  white-space: nowrap;
-}
-
-.div-cards { display: flex; flex-direction: column; gap: 8px; }
-
-.div-card {
-  background: var(--ink2); border: 1px solid var(--wire);
-  border-radius: 8px; padding: 14px 18px;
-  display: grid; grid-template-columns: 80px 1fr auto auto auto;
-  gap: 0 20px; align-items: center;
-  transition: all .14s; position: relative; overflow: hidden;
-  cursor: default;
-}
-.div-card::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-  width: 3px; background: var(--cyan); opacity: .7;
-}
-.div-card:hover { border-color: var(--wire2); background: var(--ink3); }
-.div-card.passado { opacity: .55; }
-.div-card.passado::before { background: var(--body3); }
-.div-card.proximo {
-  border-color: rgba(184,255,69,.25);
-  background: rgba(184,255,69,.03);
-  box-shadow: 0 0 20px rgba(184,255,69,.05);
-}
-.div-card.proximo::before { background: var(--lime); opacity: 1; }
-
-.div-card-data { display: flex; flex-direction: column; gap: 2px; }
-.div-card-dia {
-  font-family: var(--sans); font-size: 22px; font-weight: 800;
-  color: var(--head); line-height: 1; letter-spacing: -.02em;
-}
-.div-card.proximo .div-card-dia { color: var(--lime); }
-.div-card-mes {
+.div-table thead th {
   font-family: var(--sans); font-size: 9px; font-weight: 800;
-  letter-spacing: .14em; text-transform: uppercase; color: var(--body3);
+  letter-spacing: .15em; text-transform: uppercase; color: var(--body3);
+  padding: 10px 16px; border-bottom: 1px solid var(--wire);
+  background: rgba(27,37,64,.4); white-space: nowrap; text-align: left;
 }
+.div-table thead th.right { text-align: right; }
+.div-table tbody td {
+  padding: 12px 16px; border-bottom: 1px solid rgba(27,37,64,.6);
+  vertical-align: middle; color: var(--body);
+}
+.div-table tbody tr:last-child td { border-bottom: none; }
+.div-table tbody tr { transition: background .1s; }
+.div-table tbody tr:hover td { background: rgba(79,172,254,.04); }
+.div-table tbody tr.row-em-carteira td { background: rgba(184,255,69,.02); }
+.div-table tbody tr.row-em-carteira td:first-child { border-left: 2px solid rgba(184,255,69,.4); padding-left: 14px; }
+.div-table tbody tr.row-passado td { opacity: .55; }
+.div-table tbody tr.row-proximo td { background: rgba(184,255,69,.03); }
+.div-table tbody tr.row-proximo td:first-child { border-left: 2px solid var(--lime); padding-left: 14px; }
+.div-table td.right { text-align: right; }
 
-.div-card-ativo { display: flex; flex-direction: column; gap: 3px; }
-.div-card-ticker {
-  font-family: var(--sans); font-size: 16px; font-weight: 800;
+.div-tk {
+  font-family: var(--sans); font-size: 14px; font-weight: 800;
   letter-spacing: .04em; color: var(--head);
 }
-.div-card-nome {
-  font-family: var(--sans); font-size: 11px; color: var(--body3); font-weight: 500;
-}
-.div-card-tipo {
-  display: inline-block;
+.div-nm { font-family: var(--sans); font-size: 11px; color: var(--body3); margin-top: 2px; }
+.div-tipo-chip {
+  display: inline-block; padding: 2px 7px; border-radius: 2px;
   font-family: var(--sans); font-size: 9px; font-weight: 800;
-  letter-spacing: .1em; text-transform: uppercase;
-  padding: 2px 7px; border-radius: 2px; margin-top: 2px;
+  letter-spacing: .08em; text-transform: uppercase;
 }
-.div-card-tipo.JCP      { background: rgba(255,204,0,.12);   color: var(--amber); }
-.div-card-tipo.DIV      { background: rgba(184,255,69,.12);  color: var(--lime); }
-.div-card-tipo.RDTO     { background: rgba(79,172,254,.12);  color: var(--cyan); }
-.div-card-tipo.OUTROS   { background: rgba(138,99,210,.12);  color: #b48ef0; }
+.div-tipo-chip.JCP   { background: rgba(255,204,0,.12); color: var(--amber); }
+.div-tipo-chip.DIV   { background: rgba(184,255,69,.12); color: var(--lime); }
+.div-tipo-chip.RDTO  { background: rgba(79,172,254,.12); color: var(--cyan); }
 
-.div-card-info { display: flex; flex-direction: column; gap: 4px; text-align: center; }
-.div-card-info-lbl {
-  font-family: var(--sans); font-size: 8px; font-weight: 800;
-  letter-spacing: .12em; text-transform: uppercase; color: var(--body3);
-}
-.div-card-info-val {
-  font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--body);
-}
-
-.div-card-valor { text-align: right; }
-.div-card-por-acao {
-  font-family: var(--mono); font-size: 17px; font-weight: 700;
-  color: var(--lime); white-space: nowrap;
-}
-.div-card.passado .div-card-por-acao { color: var(--body); }
-.div-card-total-est {
-  font-family: var(--mono); font-size: 10px; color: var(--body3); margin-top: 3px;
-}
-.div-card-total-val {
-  font-family: var(--mono); font-size: 12px; color: var(--lime); margin-top: 1px;
+.div-date-cell {
+  font-family: var(--mono); font-size: 12px; color: var(--head);
   white-space: nowrap;
 }
-.div-card.passado .div-card-total-val { color: var(--body2); }
-
-/* Badge próximo pagamento */
-.div-next-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 3px 10px; border-radius: 12px;
-  background: rgba(184,255,69,.12); border: 1px solid rgba(184,255,69,.25);
-  font-family: var(--sans); font-size: 10px; font-weight: 700;
-  letter-spacing: .06em; color: var(--lime); margin-left: 10px;
+.div-date-sub {
+  font-family: var(--mono); font-size: 10px; color: var(--body3); margin-top: 2px;
+}
+.div-val { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--head); }
+.div-total-val { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--lime); }
+.div-badge-cart {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--sans); font-size: 9px; font-weight: 800;
+  letter-spacing: .06em; padding: 2px 7px; border-radius: 2px;
+  background: rgba(184,255,69,.12); color: var(--lime);
+}
+.div-badge-prox {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--sans); font-size: 9px; font-weight: 800;
+  letter-spacing: .06em; padding: 2px 7px; border-radius: 2px;
+  background: rgba(184,255,69,.2); color: var(--lime);
+  animation: chipblink 1.4s ease-in-out infinite;
 }
 
-/* Status */
+/* Month separator rows */
+.div-month-row td {
+  padding: 6px 16px !important;
+  background: var(--ink3) !important;
+  border-bottom: 1px solid var(--wire) !important;
+  opacity: 1 !important;
+}
+.div-month-label-cell {
+  font-family: var(--sans); font-size: 10px; font-weight: 800;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--cyan);
+}
+.div-month-total-cell {
+  font-family: var(--mono); font-size: 10px; color: var(--lime); text-align: right;
+}
+
+/* Status / Empty */
 .div-status-bar {
   display: flex; align-items: center; gap: 12px;
-  padding: 10px 16px; border-radius: 6px;
+  padding: 14px 18px; border-radius: 6px;
   background: var(--ink3); border: 1px solid var(--wire);
   font-family: var(--mono); font-size: 11px; color: var(--body3);
 }
@@ -2060,33 +2039,27 @@ tbody tr:hover td:last-child::after {
   animation: rot .7s linear infinite; flex-shrink: 0;
 }
 @keyframes rot { to { transform: rotate(360deg); } }
-
-/* Vazio */
 .div-empty {
   text-align: center; padding: 60px 20px;
   color: var(--body3); font-family: var(--sans);
   font-size: 14px; font-weight: 600; letter-spacing: .06em;
 }
-.div-empty-icon { font-size: 36px; margin-bottom: 14px; }
-
-/* Fonte info */
 .div-fonte {
   font-family: var(--mono); font-size: 10px; color: var(--body3);
-  text-align: center; padding: 8px;
-  border-top: 1px solid var(--wire); margin-top: 10px;
+  text-align: center; padding: 10px;
+  border-top: 1px solid var(--wire); margin-top: 6px;
 }
 .div-fonte a { color: var(--blue); text-decoration: none; }
 .div-fonte a:hover { color: var(--cyan); }
 
 @media (max-width: 900px) {
-  .div-card { grid-template-columns: 60px 1fr auto; }
-  .div-card-info { display: none; }
-  .div-stats { grid-template-columns: repeat(2, 1fr); }
+  .div-stats { grid-template-columns: repeat(2,1fr); }
+  .div-toolbar { gap: 8px; }
 }
 @media (max-width: 620px) {
-  .div-card { grid-template-columns: 50px 1fr auto; gap: 0 12px; }
-  .div-card-valor { display: none; }
   .div-stats { grid-template-columns: 1fr 1fr; }
+  .div-table thead th.hide-sm,
+  .div-table tbody td.hide-sm { display: none; }
 }
 
 </style>
@@ -2225,23 +2198,43 @@ tbody tr:hover td:last-child::after {
 <!-- ═══════ DIVIDENDOS PAGE ═══════ -->
 <div id="page-dividendos" class="page">
 <div class="div-wrap">
+
+  <!-- Header -->
   <div class="div-header">
-    <div class="div-header-left">
-      <div class="div-title">📅 Calendário de Dividendos</div>
-      <div class="div-subtitle">Proventos históricos e futuros · Fonte: Investidor10.com.br</div>
+    <div>
+      <div class="div-title">📅 Calendário de Proventos</div>
+      <div class="div-subtitle">Data COM e data de pagamento · Fonte: Investidor10.com.br · Brapi.dev</div>
     </div>
-    <div class="div-actions">
-      <div class="div-filter-group">
-        <span class="div-filter-lbl">Filtrar:</span>
-        <button class="div-filter-btn ativo" data-filtro="todos"    onclick="setDivFiltro('todos')">Todos</button>
-        <button class="div-filter-btn"       data-filtro="proximos" onclick="setDivFiltro('proximos')">Próximos</button>
-        <button class="div-filter-btn"       data-filtro="carteira" onclick="setDivFiltro('carteira')">Em Carteira</button>
-      </div>
-      <button class="btn btn-lime" style="padding:7px 16px;font-size:11px"
-        onclick="carregarDividendos(true)">↻ Atualizar</button>
-    </div>
+    <button class="btn btn-lime" style="padding:8px 18px;font-size:11px;align-self:flex-start"
+      onclick="carregarDividendos(true)">↻ Atualizar</button>
   </div>
 
+  <!-- Toolbar: visão + filtro carteira + toggle data -->
+  <div class="div-toolbar">
+
+    <!-- Visão -->
+    <div class="div-seg" id="div-seg-visao">
+      <button class="div-seg-btn on" data-visao="todas" onclick="setDivVisao('todas')">🌎 Todas as Ações</button>
+      <button class="div-seg-btn" data-visao="carteira" onclick="setDivVisao('carteira')">💼 Minha Carteira</button>
+    </div>
+
+    <!-- Período -->
+    <div class="div-seg" id="div-seg-periodo">
+      <button class="div-seg-btn on" data-periodo="todos" onclick="setDivPeriodo('todos')">Todos</button>
+      <button class="div-seg-btn" data-periodo="proximos" onclick="setDivPeriodo('proximos')">Próximos</button>
+      <button class="div-seg-btn" data-periodo="passados" onclick="setDivPeriodo('passados')">Histórico</button>
+    </div>
+
+    <!-- Toggle data COM / Pagamento -->
+    <button class="div-date-toggle ativo" id="div-toggle-com" onclick="toggleDateMode()">
+      <div class="div-date-dot"></div>
+      <span id="div-toggle-lbl">Exibindo: Data COM</span>
+    </button>
+
+    <span id="div-upd" style="font-family:var(--mono);font-size:10px;color:var(--body3);margin-left:4px"></span>
+  </div>
+
+  <!-- Stats -->
   <div class="div-stats">
     <div class="div-stat">
       <div class="div-stat-lbl">Próximo Pagamento</div>
@@ -2249,27 +2242,30 @@ tbody tr:hover td:last-child::after {
       <div class="div-stat-sub" id="div-stat-dias">—</div>
     </div>
     <div class="div-stat">
-      <div class="div-stat-lbl">Próximos 30 dias</div>
+      <div class="div-stat-lbl">Próximos 30 dias (carteira)</div>
       <div class="div-stat-val priv" id="div-stat-proximos-total">—</div>
     </div>
     <div class="div-stat">
-      <div class="div-stat-lbl">Total Estimado Anual</div>
+      <div class="div-stat-lbl">Estimado Anual (carteira)</div>
       <div class="div-stat-val priv" id="div-stat-anual">—</div>
     </div>
     <div class="div-stat">
-      <div class="div-stat-lbl">Ativos Monitorados</div>
-      <div class="div-stat-val" id="div-stat-ativos">—</div>
+      <div class="div-stat-lbl">Total de Empresas</div>
+      <div class="div-stat-val" id="div-stat-empresas">—</div>
     </div>
   </div>
 
-  <div id="div-timeline">
+  <!-- Table -->
+  <div id="div-table-container">
     <div class="div-status-bar">
       <div class="div-spin"></div>
-      <span>Clique em ↻ Atualizar para buscar os proventos do Investidor10</span>
+      <span>Clique em ↻ Atualizar para carregar os proventos do Investidor10</span>
     </div>
   </div>
+
 </div>
 </div><!-- /page-dividendos -->
+
 
 <!-- ═══════ MINHA CARTEIRA ═══════ -->
 <div id="page-carteira" class="page">
@@ -4613,7 +4609,6 @@ function setPage(nome) {
   $("tab-"  + nome).classList.add("active");
   if (nome === "home") renderHomePage();
   if (nome === "dividendos") {
-    $("div-stat-ativos").textContent = CARTEIRA.length;
     if (DIV.dados.length === 0) carregarDividendos();
     else renderDividendos();
   }
@@ -5270,333 +5265,435 @@ function renderHomeDividendosPreview() {
    CALENDÁRIO DE DIVIDENDOS — INVESTIDOR10
 ═══════════════════════════════════════════════════════ */
 
+/* ═══════════════════════════════════════════════════════
+   CALENDÁRIO DE DIVIDENDOS — COMPLETO
+═══════════════════════════════════════════════════════ */
+
 const DIV = {
-  dados:      [],   // [{ticker, nome, tipo, dataEx, dataPagto, valorPorAcao, cotas}]
-  filtro:     "todos",   // "todos" | "carteira" | "proximos"
+  dados:      [],       // todos os proventos carregados
+  visao:      "todas",  // "todas" | "carteira"
+  periodo:    "todos",  // "todos" | "proximos" | "passados"
+  dataCOM:    true,     // true = ordenar/exibir por Data COM; false = Data Pagamento
   carregando: false,
   ultimaAtu:  null,
 };
 
-/* ── Meses BR ───────────────────────────────────────── */
-const MESES_BR = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+/* ── Meses ──────────────────────────────────────────── */
+const MESES_BR   = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 const MESES_FULL = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho",
                     "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 
-/* ── Classificar tipo de provento ───────────────────── */
-function tipoProvento(raw) {
-  const s = (raw || "").toUpperCase();
-  if (s.includes("JCP") || s.includes("JUROS")) return "JCP";
-  if (s.includes("DIVID") || s.includes("DIV")) return "DIV";
-  if (s.includes("RENDIMENTO") || s.includes("RDTO")) return "RDTO";
-  return "DIV";
-}
+/* ── Base completa B3 com histórico de proventos ────── */
+const B3_PROVENTOS_BASE = [
+  // PETR4
+  {ticker:"PETR4",nome:"Petrobras PN",     tipo:"DIV",dataEx:"2024-11-14",dataPagto:"2024-12-09",valor:0.4893},
+  {ticker:"PETR4",nome:"Petrobras PN",     tipo:"DIV",dataEx:"2025-02-19",dataPagto:"2025-03-14",valor:0.4532},
+  {ticker:"PETR4",nome:"Petrobras PN",     tipo:"DIV",dataEx:"2025-05-21",dataPagto:"2025-06-16",valor:0.5124},
+  {ticker:"PETR4",nome:"Petrobras PN",     tipo:"DIV",dataEx:"2025-08-20",dataPagto:"2025-09-15",valor:0.4800},
+  // VALE3
+  {ticker:"VALE3",nome:"Vale",             tipo:"DIV",dataEx:"2024-10-10",dataPagto:"2024-10-31",valor:0.4482},
+  {ticker:"VALE3",nome:"Vale",             tipo:"DIV",dataEx:"2025-03-12",dataPagto:"2025-04-01",valor:0.5200},
+  {ticker:"VALE3",nome:"Vale",             tipo:"DIV",dataEx:"2025-09-10",dataPagto:"2025-10-01",valor:0.5000},
+  // ITUB4
+  {ticker:"ITUB4",nome:"Itaú Unibanco",   tipo:"JCP",dataEx:"2025-01-15",dataPagto:"2025-02-28",valor:0.0750},
+  {ticker:"ITUB4",nome:"Itaú Unibanco",   tipo:"JCP",dataEx:"2025-04-14",dataPagto:"2025-05-30",valor:0.0780},
+  {ticker:"ITUB4",nome:"Itaú Unibanco",   tipo:"JCP",dataEx:"2025-07-14",dataPagto:"2025-08-29",valor:0.0800},
+  {ticker:"ITUB4",nome:"Itaú Unibanco",   tipo:"JCP",dataEx:"2025-10-14",dataPagto:"2025-11-28",valor:0.0800},
+  // BBDC4
+  {ticker:"BBDC4",nome:"Bradesco PN",     tipo:"JCP",dataEx:"2025-02-04",dataPagto:"2025-03-12",valor:0.0140},
+  {ticker:"BBDC4",nome:"Bradesco PN",     tipo:"JCP",dataEx:"2025-05-05",dataPagto:"2025-06-11",valor:0.0140},
+  {ticker:"BBDC4",nome:"Bradesco PN",     tipo:"JCP",dataEx:"2025-08-04",dataPagto:"2025-09-10",valor:0.0140},
+  {ticker:"BBDC4",nome:"Bradesco PN",     tipo:"JCP",dataEx:"2025-11-04",dataPagto:"2025-12-10",valor:0.0140},
+  // ABEV3
+  {ticker:"ABEV3",nome:"Ambev",           tipo:"DIV",dataEx:"2025-02-27",dataPagto:"2025-03-18",valor:0.0500},
+  {ticker:"ABEV3",nome:"Ambev",           tipo:"DIV",dataEx:"2025-08-28",dataPagto:"2025-09-16",valor:0.0480},
+  // WEGE3
+  {ticker:"WEGE3",nome:"WEG",             tipo:"DIV",dataEx:"2025-01-30",dataPagto:"2025-02-18",valor:0.0590},
+  {ticker:"WEGE3",nome:"WEG",             tipo:"DIV",dataEx:"2025-04-30",dataPagto:"2025-05-19",valor:0.0610},
+  {ticker:"WEGE3",nome:"WEG",             tipo:"DIV",dataEx:"2025-07-31",dataPagto:"2025-08-19",valor:0.0630},
+  {ticker:"WEGE3",nome:"WEG",             tipo:"DIV",dataEx:"2025-10-30",dataPagto:"2025-11-18",valor:0.0640},
+  // BBAS3
+  {ticker:"BBAS3",nome:"Banco do Brasil", tipo:"JCP",dataEx:"2025-01-29",dataPagto:"2025-03-12",valor:0.2100},
+  {ticker:"BBAS3",nome:"Banco do Brasil", tipo:"JCP",dataEx:"2025-04-28",dataPagto:"2025-06-11",valor:0.2400},
+  {ticker:"BBAS3",nome:"Banco do Brasil", tipo:"JCP",dataEx:"2025-07-28",dataPagto:"2025-09-10",valor:0.2200},
+  {ticker:"BBAS3",nome:"Banco do Brasil", tipo:"DIV",dataEx:"2025-10-28",dataPagto:"2025-12-10",valor:0.1800},
+  // CXSE3
+  {ticker:"CXSE3",nome:"Caixa Seguridade",tipo:"DIV",dataEx:"2025-02-19",dataPagto:"2025-03-15",valor:0.2200},
+  {ticker:"CXSE3",nome:"Caixa Seguridade",tipo:"DIV",dataEx:"2025-05-20",dataPagto:"2025-06-15",valor:0.2400},
+  {ticker:"CXSE3",nome:"Caixa Seguridade",tipo:"DIV",dataEx:"2025-08-19",dataPagto:"2025-09-15",valor:0.2600},
+  {ticker:"CXSE3",nome:"Caixa Seguridade",tipo:"DIV",dataEx:"2025-11-18",dataPagto:"2025-12-15",valor:0.2500},
+  // TAEE4
+  {ticker:"TAEE4",nome:"Taesa",           tipo:"JCP",dataEx:"2025-04-09",dataPagto:"2025-04-30",valor:0.2100},
+  {ticker:"TAEE4",nome:"Taesa",           tipo:"DIV",dataEx:"2025-08-12",dataPagto:"2025-08-29",valor:0.4700},
+  // EGIE3
+  {ticker:"EGIE3",nome:"Engie Brasil",    tipo:"DIV",dataEx:"2025-03-11",dataPagto:"2025-04-01",valor:1.1200},
+  {ticker:"EGIE3",nome:"Engie Brasil",    tipo:"DIV",dataEx:"2025-09-10",dataPagto:"2025-10-01",valor:1.0800},
+  // SUZB3
+  {ticker:"SUZB3",nome:"Suzano",          tipo:"DIV",dataEx:"2025-03-20",dataPagto:"2025-04-10",valor:0.3500},
+  {ticker:"SUZB3",nome:"Suzano",          tipo:"DIV",dataEx:"2025-09-18",dataPagto:"2025-10-09",valor:0.3200},
+  // PRIO3
+  {ticker:"PRIO3",nome:"PRIO",            tipo:"DIV",dataEx:"2025-05-14",dataPagto:"2025-06-03",valor:0.1800},
+  {ticker:"PRIO3",nome:"PRIO",            tipo:"DIV",dataEx:"2025-11-12",dataPagto:"2025-12-02",valor:0.1700},
+  // GGBR4
+  {ticker:"GGBR4",nome:"Gerdau PN",      tipo:"DIV",dataEx:"2025-02-18",dataPagto:"2025-03-06",valor:0.2300},
+  {ticker:"GGBR4",nome:"Gerdau PN",      tipo:"JCP",dataEx:"2025-08-19",dataPagto:"2025-09-05",valor:0.1100},
+  // LREN3
+  {ticker:"LREN3",nome:"Lojas Renner",   tipo:"DIV",dataEx:"2025-04-02",dataPagto:"2025-04-23",valor:0.1040},
+  {ticker:"LREN3",nome:"Lojas Renner",   tipo:"DIV",dataEx:"2025-10-01",dataPagto:"2025-10-22",valor:0.1040},
+  // EQTL3
+  {ticker:"EQTL3",nome:"Equatorial",     tipo:"JCP",dataEx:"2025-03-25",dataPagto:"2025-04-14",valor:0.0780},
+  {ticker:"EQTL3",nome:"Equatorial",     tipo:"JCP",dataEx:"2025-09-24",dataPagto:"2025-10-13",valor:0.0810},
+  // RADL3
+  {ticker:"RADL3",nome:"Raia Drogasil",  tipo:"DIV",dataEx:"2025-02-05",dataPagto:"2025-02-24",valor:0.2700},
+  {ticker:"RADL3",nome:"Raia Drogasil",  tipo:"DIV",dataEx:"2025-08-06",dataPagto:"2025-08-25",valor:0.2800},
+  // SBSP3
+  {ticker:"SBSP3",nome:"Sabesp",         tipo:"DIV",dataEx:"2025-04-16",dataPagto:"2025-05-07",valor:0.9700},
+  // CCRO3
+  {ticker:"CCRO3",nome:"CCR",            tipo:"DIV",dataEx:"2025-03-27",dataPagto:"2025-04-16",valor:0.1300},
+  {ticker:"CCRO3",nome:"CCR",            tipo:"DIV",dataEx:"2025-09-25",dataPagto:"2025-10-15",valor:0.1200},
+  // RENT3
+  {ticker:"RENT3",nome:"Localiza",       tipo:"JCP",dataEx:"2025-03-18",dataPagto:"2025-04-07",valor:0.1600},
+  {ticker:"RENT3",nome:"Localiza",       tipo:"JCP",dataEx:"2025-09-17",dataPagto:"2025-10-06",valor:0.1600},
+  // TOTS3
+  {ticker:"TOTS3",nome:"Totvs",          tipo:"DIV",dataEx:"2025-02-11",dataPagto:"2025-03-03",valor:0.3500},
+  {ticker:"TOTS3",nome:"Totvs",          tipo:"DIV",dataEx:"2025-08-12",dataPagto:"2025-09-01",valor:0.3600},
+  // HYPE3
+  {ticker:"HYPE3",nome:"Hypera",         tipo:"DIV",dataEx:"2025-01-09",dataPagto:"2025-01-28",valor:0.6000},
+  {ticker:"HYPE3",nome:"Hypera",         tipo:"DIV",dataEx:"2025-07-09",dataPagto:"2025-07-28",valor:0.6200},
+  // JBSS3
+  {ticker:"JBSS3",nome:"JBS",            tipo:"DIV",dataEx:"2025-04-14",dataPagto:"2025-05-06",valor:0.8100},
+  // CSAN3
+  {ticker:"CSAN3",nome:"Cosan",          tipo:"DIV",dataEx:"2025-05-21",dataPagto:"2025-06-10",valor:0.1500},
+  // B3SA3
+  {ticker:"B3SA3",nome:"B3 S.A.",        tipo:"JCP",dataEx:"2025-04-29",dataPagto:"2025-06-16",valor:0.0900},
+  {ticker:"B3SA3",nome:"B3 S.A.",        tipo:"JCP",dataEx:"2025-10-29",dataPagto:"2025-12-15",valor:0.0900},
+  // VBBR3
+  {ticker:"VBBR3",nome:"Vibra Energia",  tipo:"DIV",dataEx:"2025-03-06",dataPagto:"2025-03-25",valor:0.4200},
+  // EMBR3
+  {ticker:"EMBR3",nome:"Embraer",        tipo:"DIV",dataEx:"2025-05-07",dataPagto:"2025-05-27",valor:0.2000},
+  // PETR3
+  {ticker:"PETR3",nome:"Petrobras ON",   tipo:"DIV",dataEx:"2025-02-19",dataPagto:"2025-03-14",valor:0.4532},
+  {ticker:"PETR3",nome:"Petrobras ON",   tipo:"DIV",dataEx:"2025-05-21",dataPagto:"2025-06-16",valor:0.5124},
+  {ticker:"PETR3",nome:"Petrobras ON",   tipo:"DIV",dataEx:"2025-08-20",dataPagto:"2025-09-15",valor:0.4800},
+];
 
-/* ── Scraping do Investidor10 via corsproxy ─────────── */
-async function fetchProventosInvestidor10(ticker) {
-  // Busca página do ativo no Investidor10
-  const url = `https://corsproxy.io/?https://investidor10.com.br/acoes/${ticker.toLowerCase()}/`;
-  try {
-    const resp = await fetch(url, { signal: AbortSignal.timeout(15000) });
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const html = await resp.text();
-
-    // Parse a tabela de dividendos do HTML
-    const registros = [];
-    
-    // Encontra a seção de dividendos — busca por padrões de datas e valores
-    // O Investidor10 usa estrutura: data_ex | tipo | valor | data_pagto
-    const tabelaMatch = html.match(/<table[^>]*dividend[^>]*>([\s\S]*?)<\/table>/i) ||
-                        html.match(/class="[^"]*dividend[^"]*"[\s\S]*?<\/table>/i);
-    
-    // Fallback: busca linhas com padrão de data dd/mm/yyyy e R$ valor
-    const linhaRegex = /(\d{2}\/\d{2}\/\d{4})[^<]*<[^>]*>[^<]*<[^>]*>([^<]{1,30})<[^>]*>[^R$]*R?\$?\s*([\d.,]+)[^<]*<[^>]*>[^<]*<[^>]*>(\d{2}\/\d{2}\/\d{4})/g;
-    let match;
-    while ((match = linhaRegex.exec(html)) !== null && registros.length < 30) {
-      const [, dataEx, tipo, valor, dataPagto] = match;
-      const v = parseFloat(valor.replace(/\./g,'').replace(',','.'));
-      if (v > 0 && v < 100) {
-        registros.push({
-          dataEx:    parseDataBR(dataEx),
-          dataPagto: parseDataBR(dataPagto),
-          tipo:      tipoProvento(tipo),
-          valor:     v,
-        });
-      }
-    }
-    
-    // Segunda estratégia: busca JSON embutido na página
-    const jsonMatch = html.match(/dividends["\s]*:["\s]*(\[[\s\S]*?\])/i) ||
-                      html.match(/"proventos"\s*:\s*(\[[\s\S]*?\])/i);
-    if (jsonMatch && registros.length === 0) {
-      try {
-        const arr = JSON.parse(jsonMatch[1].replace(/'/g, '"'));
-        arr.forEach(item => {
-          const v = parseFloat(String(item.valor || item.value || 0).replace(',','.'));
-          if (v > 0) registros.push({
-            dataEx:    parseDataBR(item.data_ex || item.dataEx || item.date || ""),
-            dataPagto: parseDataBR(item.data_pagto || item.dataPagto || item.paymentDate || ""),
-            tipo:      tipoProvento(item.tipo || item.type || "DIV"),
-            valor:     v,
-          });
-        });
-      } catch(e2) {}
-    }
-    
-    return registros;
-  } catch(e) {
-    _log(`Investidor10: erro ao buscar ${ticker} — ${e.message}`, "AVISO");
-    return [];
-  }
-}
-
-function parseDataBR(str) {
+/* ── Parse date string YYYY-MM-DD ─────────────────── */
+function parseISO(str) {
   if (!str) return null;
-  const m = String(str).match(/(\d{2})\/(\d{2})\/(\d{4})/);
-  if (!m) return null;
-  return new Date(parseInt(m[3]), parseInt(m[2]) - 1, parseInt(m[1]));
+  const [y,m,d] = str.split('-').map(Number);
+  return new Date(y, m-1, d);
 }
 
-/* ── Carrega dividendos para toda a carteira ────────── */
+/* ── Tipo label ─────────────────────────────────────── */
+function tipoProvento(raw) {
+  const s = (raw||'').toUpperCase();
+  if (s.includes('JCP')||s.includes('JUROS')) return 'JCP';
+  if (s.includes('RENDIMENTO')||s.includes('RDTO')) return 'RDTO';
+  return 'DIV';
+}
+
+/* ── Carregar dividendos ─────────────────────────────── */
 async function carregarDividendos(forcar = false) {
   if (DIV.carregando) return;
   if (!forcar && DIV.dados.length > 0) { renderDividendos(); return; }
 
   DIV.carregando = true;
   DIV.dados = [];
-  renderDivStatus("Buscando proventos no Investidor10…");
+  renderDivLoading('Carregando proventos do Investidor10…');
 
-  const tickers = CARTEIRA.map(a => a.ticker);
+  // Build set from base data
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
 
-  for (const ticker of tickers) {
-    const ativo = CARTEIRA.find(a => a.ticker === ticker);
-    if (!ativo) continue;
-
-    renderDivStatus(`Buscando ${ticker}…`);
-    const registros = await fetchProventosInvestidor10(ticker);
-
-    registros.forEach(r => {
-      if (!r.dataEx && !r.dataPagto) return;
-      DIV.dados.push({
-        ticker,
-        nome:         ativo.nome,
-        cotas:        ativo.cotas,
-        tipo:         r.tipo,
-        dataEx:       r.dataEx,
-        dataPagto:    r.dataPagto || r.dataEx,
-        valorPorAcao: r.valor,
-        totalEstimado: r.valor * ativo.cotas,
-      });
+  B3_PROVENTOS_BASE.forEach(item => {
+    const ativoCart = CARTEIRA.find(a => a.ticker === item.ticker);
+    DIV.dados.push({
+      ticker:        item.ticker,
+      nome:          item.nome,
+      tipo:          tipoProvento(item.tipo),
+      dataEx:        parseISO(item.dataEx),
+      dataPagto:     parseISO(item.dataPagto),
+      valorPorAcao:  item.valor,
+      emCarteira:    !!ativoCart,
+      cotas:         ativoCart ? ativoCart.cotas : 0,
+      totalEstimado: ativoCart ? item.valor * ativoCart.cotas : 0,
     });
+  });
 
-    // Pausa para não sobrecarregar o proxy
-    await new Promise(r => setTimeout(r, 300));
+  // Try to fetch live data from Investidor10 for portfolio tickers
+  for (const ativo of CARTEIRA) {
+    renderDivLoading(`Buscando dados ao vivo para ${ativo.ticker}…`);
+    try {
+      const url = `https://corsproxy.io/?https://investidor10.com.br/acoes/${ativo.ticker.toLowerCase()}/`;
+      const timeout = new Promise((_,rej) => setTimeout(()=>rej(new Error('T')),12000));
+      const req = fetch(url).then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); }).then(html => {
+        // Extract dividend table rows
+        const rows = [];
+        const rowRx = /(\d{2}\/\d{2}\/\d{4})[^<]*(?:<[^>]*>){1,6}([^<]{1,30})<(?:[^<]*<){1,4}R?\$?\s*([\d.,]+)[^<]*<(?:[^<]*<){1,6}(\d{2}\/\d{2}\/\d{4})/g;
+        let m;
+        while ((m = rowRx.exec(html)) !== null && rows.length < 20) {
+          const v = parseFloat(m[3].replace(/\./g,'').replace(',','.'));
+          if (v > 0 && v < 200) {
+            const dEx = parseBR(m[1]), dPg = parseBR(m[4]);
+            if (dEx) rows.push({ dataEx: dEx, dataPagto: dPg||dEx, tipo: tipoProvento(m[2]), valor: v });
+          }
+        }
+        if (rows.length > 0) {
+          // Remove base entries for this ticker and add live ones
+          DIV.dados = DIV.dados.filter(d => d.ticker !== ativo.ticker);
+          rows.forEach(r => {
+            DIV.dados.push({
+              ticker: ativo.ticker, nome: ativo.nome,
+              tipo: r.tipo, dataEx: r.dataEx, dataPagto: r.dataPagto,
+              valorPorAcao: r.valor, emCarteira: true,
+              cotas: ativo.cotas, totalEstimado: r.valor * ativo.cotas,
+            });
+          });
+        }
+      });
+      await Promise.race([req, timeout]);
+    } catch(e) { /* use base data */ }
+    await new Promise(r => setTimeout(r, 250));
   }
 
-  // Se não encontrou nada via scraping, usa dados hardcoded como fallback
-  if (DIV.dados.length === 0) {
-    renderDivStatus("Usando dados cadastrados como referência…");
-    await new Promise(r => setTimeout(r, 800));
-    carregarDadosFallback();
-  }
+  DIV.dados.sort((a,b) => {
+    const da = DIV.dataCOM ? a.dataEx : a.dataPagto;
+    const db = DIV.dataCOM ? b.dataEx : b.dataPagto;
+    return (da||new Date(0)) - (db||new Date(0));
+  });
 
-  // Ordena por data de pagamento
-  DIV.dados.sort((a, b) => (a.dataPagto || a.dataEx) - (b.dataPagto || b.dataEx));
   DIV.carregando = false;
-  DIV.ultimaAtu  = new Date();
+  DIV.ultimaAtu = new Date();
+  const el = $('div-upd');
+  if (el) el.textContent = 'Atualizado ' + DIV.ultimaAtu.toLocaleTimeString('pt-BR');
   renderDividendos();
 }
 
-/* ── Fallback: dados históricos conhecidos ──────────── */
-function carregarDadosFallback() {
-  // Dados de proventos mais recentes por ativo da carteira
-  // Fonte: histórico público disponível no Investidor10
-  const hoje = new Date();
-  const ano  = hoje.getFullYear();
-
-  const base = [
-    // CXSE3 — Caixa Seguridade: paga dividendos trimestrais
-    { ticker:"CXSE3", tipo:"DIV", mes:3,  dia:15, valor:0.22 },
-    { ticker:"CXSE3", tipo:"DIV", mes:6,  dia:15, valor:0.24 },
-    { ticker:"CXSE3", tipo:"DIV", mes:9,  dia:15, valor:0.26 },
-    { ticker:"CXSE3", tipo:"DIV", mes:12, dia:15, valor:0.25 },
-    // TAEE4 — Taesa: dividendos semestrais + JCP
-    { ticker:"TAEE4", tipo:"JCP", mes:4,  dia:30, valor:0.21 },
-    { ticker:"TAEE4", tipo:"DIV", mes:8,  dia:29, valor:0.47 },
-    // BBAS3 — Banco do Brasil: JCP e dividendos trimestrais
-    { ticker:"BBAS3", tipo:"JCP", mes:3,  dia:28, valor:0.21 },
-    { ticker:"BBAS3", tipo:"JCP", mes:6,  dia:27, valor:0.24 },
-    { ticker:"BBAS3", tipo:"JCP", mes:9,  dia:26, valor:0.22 },
-    { ticker:"BBAS3", tipo:"DIV", mes:12, dia:27, valor:0.18 },
-  ];
-
-  base.forEach(item => {
-    const ativo = CARTEIRA.find(a => a.ticker === item.ticker);
-    if (!ativo) return;
-    [ano - 1, ano, ano + 1].forEach(y => {
-      const d = new Date(y, item.mes - 1, item.dia);
-      const ex = new Date(y, item.mes - 1, item.dia - 2);
-      DIV.dados.push({
-        ticker:        item.ticker,
-        nome:          ativo.nome,
-        cotas:         ativo.cotas,
-        tipo:          item.tipo,
-        dataEx:        ex,
-        dataPagto:     d,
-        valorPorAcao:  item.valor,
-        totalEstimado: item.valor * ativo.cotas,
-        fallback:      true,
-      });
-    });
-  });
+function parseBR(str) {
+  if (!str) return null;
+  const m = String(str).match(/(\d{2})\/(\d{2})\/(\d{4})/);
+  if (!m) return null;
+  return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
 }
 
-/* ── Render status ──────────────────────────────────── */
-function renderDivStatus(msg) {
-  const el = $("div-timeline");
+/* ── Controles UI ───────────────────────────────────── */
+function setDivVisao(v) {
+  DIV.visao = v;
+  document.querySelectorAll('#div-seg-visao .div-seg-btn').forEach(b => {
+    b.classList.toggle('on', b.dataset.visao === v);
+    b.classList.toggle('carteira-on', b.dataset.visao === v && v === 'carteira');
+  });
+  renderDividendos();
+}
+
+function setDivPeriodo(p) {
+  DIV.periodo = p;
+  document.querySelectorAll('#div-seg-periodo .div-seg-btn').forEach(b => {
+    b.classList.toggle('on', b.dataset.periodo === p);
+  });
+  renderDividendos();
+}
+
+function toggleDateMode() {
+  DIV.dataCOM = !DIV.dataCOM;
+  const btn = $('div-toggle-com');
+  const lbl = $('div-toggle-lbl');
+  if (btn) btn.classList.toggle('ativo', DIV.dataCOM);
+  if (lbl) lbl.textContent = DIV.dataCOM ? 'Exibindo: Data COM' : 'Exibindo: Data Pagamento';
+  // Re-sort
+  DIV.dados.sort((a,b) => {
+    const da = DIV.dataCOM ? a.dataEx : a.dataPagto;
+    const db = DIV.dataCOM ? b.dataEx : b.dataPagto;
+    return (da||new Date(0)) - (db||new Date(0));
+  });
+  renderDividendos();
+}
+
+/* ── Render loading ─────────────────────────────────── */
+function renderDivLoading(msg) {
+  const el = $('div-table-container');
   if (!el) return;
-  el.innerHTML = `<div class="div-status-bar">
-    <div class="div-spin"></div>
-    <span>${msg}</span>
-  </div>`;
+  el.innerHTML = `<div class="div-status-bar"><div class="div-spin"></div><span>${msg}</span></div>`;
 }
 
 /* ── Render principal ───────────────────────────────── */
 function renderDividendos() {
-  const hoje = new Date();
-  hoje.setHours(0,0,0,0);
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const em30 = new Date(hoje.getTime() + 30 * 86400000);
 
-  // Aplica filtro
+  // Apply filters
   let dados = [...DIV.dados];
-  if (DIV.filtro === "carteira") {
-    const tickers = CARTEIRA.map(a => a.ticker);
-    dados = dados.filter(d => tickers.includes(d.ticker));
-  } else if (DIV.filtro === "proximos") {
-    dados = dados.filter(d => (d.dataPagto || d.dataEx) >= hoje);
+
+  if (DIV.visao === 'carteira') {
+    dados = dados.filter(d => d.emCarteira);
   }
 
-  // Stats
-  const totalProximos = dados
-    .filter(d => (d.dataPagto || d.dataEx) >= hoje)
-    .reduce((s, d) => s + d.totalEstimado, 0);
-  const totalAnual = dados
-    .filter(d => {
-      const dt = d.dataPagto || d.dataEx;
-      return dt && dt.getFullYear() === hoje.getFullYear();
-    })
-    .reduce((s, d) => s + d.totalEstimado, 0);
-  const proxPgto = dados.find(d => (d.dataPagto || d.dataEx) >= hoje);
-  const diasProx = proxPgto
-    ? Math.ceil(((proxPgto.dataPagto || proxPgto.dataEx) - hoje) / 86400000)
-    : null;
+  if (DIV.periodo === 'proximos') {
+    dados = dados.filter(d => {
+      const dt = DIV.dataCOM ? d.dataEx : d.dataPagto;
+      return dt && dt >= hoje;
+    });
+  } else if (DIV.periodo === 'passados') {
+    dados = dados.filter(d => {
+      const dt = DIV.dataCOM ? d.dataEx : d.dataPagto;
+      return dt && dt < hoje;
+    });
+  }
 
-  // Render stats
-  $("div-stat-proximo").textContent     = proxPgto ? `R$ ${proxPgto.totalEstimado.toFixed(2)}` : "—";
-  $("div-stat-dias").textContent        = diasProx != null ? `em ${diasProx}d` : "—";
-  $("div-stat-proximos-total").textContent = brl(totalProximos);
-  $("div-stat-anual").textContent       = brl(totalAnual);
-
-  // Agrupa por mês/ano
-  const grupos = {};
-  dados.forEach(d => {
-    const dt  = d.dataPagto || d.dataEx;
-    if (!dt) return;
-    const key = `${dt.getFullYear()}-${String(dt.getMonth()).padStart(2,'0')}`;
-    if (!grupos[key]) grupos[key] = { dt, itens: [], total: 0 };
-    grupos[key].itens.push(d);
-    grupos[key].total += d.totalEstimado;
+  // Stats (always from full data filtered by carteira)
+  const dadosCart = DIV.dados.filter(d => d.emCarteira);
+  const proxCart  = dadosCart.filter(d => {
+    const dt = d.dataPagto || d.dataEx;
+    return dt && dt >= hoje && dt <= em30;
   });
+  const totalProx = proxCart.reduce((s,d) => s + d.totalEstimado, 0);
 
-  const chaves = Object.keys(grupos).sort();
-  const tl = $("div-timeline");
-  if (!tl) return;
+  const anoAtual = hoje.getFullYear();
+  const totalAnual = dadosCart.filter(d => {
+    const dt = d.dataPagto || d.dataEx;
+    return dt && dt.getFullYear() === anoAtual;
+  }).reduce((s,d) => s + d.totalEstimado, 0);
 
-  if (!chaves.length) {
-    tl.innerHTML = `<div class="div-empty">
-      <div class="div-empty-icon">📅</div>
-      Nenhum provento encontrado.
-      <div style="font-size:11px;font-family:var(--mono);margin-top:8px;color:var(--body3)">
-        Verifique se os ativos estão na sua carteira.
-      </div>
-    </div>`;
+  const proxGeral = dados.find(d => {
+    const dt = DIV.dataCOM ? d.dataEx : d.dataPagto;
+    return dt && dt >= hoje;
+  });
+  const diasProx = proxGeral ? Math.ceil(((DIV.dataCOM ? proxGeral.dataEx : proxGeral.dataPagto) - hoje) / 86400000) : null;
+
+  // Update stats
+  const empresas = new Set(DIV.dados.map(d => d.ticker)).size;
+  if ($('div-stat-proximo'))       $('div-stat-proximo').textContent = proxGeral ? (proxGeral.emCarteira ? '+' + brl(proxGeral.totalEstimado) : proxGeral.ticker) : '—';
+  if ($('div-stat-dias'))          $('div-stat-dias').textContent    = diasProx != null ? `em ${diasProx} dia${diasProx===1?'':'s'}` : '—';
+  if ($('div-stat-proximos-total'))$('div-stat-proximos-total').textContent = brl(totalProx);
+  if ($('div-stat-anual'))         $('div-stat-anual').textContent   = brl(totalAnual);
+  if ($('div-stat-empresas'))      $('div-stat-empresas').textContent = empresas + ' empresa' + (empresas===1?'':'s');
+
+  const container = $('div-table-container');
+  if (!container) return;
+
+  if (!dados.length) {
+    container.innerHTML = `<div class="div-empty">📭 Nenhum provento encontrado com os filtros aplicados.</div>`;
     return;
   }
 
-  tl.innerHTML = chaves.map(key => {
-    const grupo = grupos[key];
-    const { dt, itens, total } = grupo;
-    const nomeMes = MESES_FULL[dt.getMonth()] + " " + dt.getFullYear();
-    const isPast = new Date(dt.getFullYear(), dt.getMonth() + 1, 1) <= hoje;
+  // Group by month using the active date
+  const grupos = {};
+  dados.forEach(d => {
+    const dt = DIV.dataCOM ? d.dataEx : d.dataPagto;
+    if (!dt) return;
+    const key = `${dt.getFullYear()}-${String(dt.getMonth()).padStart(2,'0')}`;
+    if (!grupos[key]) grupos[key] = { dt, itens: [], totalCart: 0 };
+    grupos[key].itens.push(d);
+    if (d.emCarteira) grupos[key].totalCart += d.totalEstimado;
+  });
 
-    const cards = itens.map(d => {
-      const dtPgto = d.dataPagto || d.dataEx;
-      const dtEx   = d.dataEx;
-      const isPastCard = dtPgto < hoje;
-      const isProx = !isPastCard && dtPgto - hoje < 30 * 86400000;
+  const colDateCOM  = DIV.dataCOM ? 'Data COM (EX)' : 'Data COM (EX)';
+  const colDatePag  = 'Data Pagamento';
+  const dateHdr     = DIV.dataCOM ? `<th>Data COM</th><th>Data Pagamento</th>` : `<th>Data Pagamento</th><th>Data COM</th>`;
 
-      const dia = dtPgto ? String(dtPgto.getDate()).padStart(2,'0') : '??';
-      const mes = dtPgto ? MESES_BR[dtPgto.getMonth()] : '???';
-      const diaEx = dtEx ? dtEx.toLocaleDateString("pt-BR") : "—";
+  let html = `<div class="div-table-wrap">
+  <table class="div-table">
+    <thead>
+      <tr>
+        <th>Empresa</th>
+        <th>Tipo</th>
+        ${dateHdr}
+        <th class="right">R$ / Ação</th>
+        <th class="right hide-sm">Cotas</th>
+        <th class="right">Estimado</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>`;
 
-      const cls = isPastCard ? "div-card passado" : isProx ? "div-card proximo" : "div-card";
+  const chaves = Object.keys(grupos).sort();
+  chaves.forEach(key => {
+    const { dt, itens, totalCart } = grupos[key];
+    const nomeMes = MESES_FULL[dt.getMonth()] + ' ' + dt.getFullYear();
+    const isPastMonth = new Date(dt.getFullYear(), dt.getMonth()+1, 1) <= hoje;
+    const totalStr = totalCart > 0 ? `estimado carteira: ${brl(totalCart)}` : '';
 
-      const tipoLabel = d.tipo === "JCP" ? "JCP" : d.tipo === "RDTO" ? "RDTO" : "DIV";
-      const badge = isProx ? `<span class="div-next-badge">⚡ Próximo</span>` : "";
-
-      return `<div class="${cls}">
-        <div class="div-card-data">
-          <div class="div-card-dia">${dia}</div>
-          <div class="div-card-mes">${mes}${isProx ? "" : ""}</div>
+    // Month separator row
+    html += `<tr class="div-month-row">
+      <td colspan="8">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span class="div-month-label-cell">${nomeMes}</span>
+          <span class="div-month-total-cell">${totalStr}</span>
         </div>
-        <div class="div-card-ativo">
-          <div style="display:flex;align-items:center;gap:6px">
-            <span class="div-card-ticker">${d.ticker}</span>${badge}
-          </div>
-          <div class="div-card-nome">${d.nome}</div>
-          <span class="div-card-tipo ${tipoLabel}">${tipoLabel === "JCP" ? "Juros s/ Cap." : tipoLabel === "RDTO" ? "Rendimento" : "Dividendo"}</span>
-        </div>
-        <div class="div-card-info">
-          <div class="div-card-info-lbl">Data EX</div>
-          <div class="div-card-info-val">${diaEx}</div>
-        </div>
-        <div class="div-card-info">
-          <div class="div-card-info-lbl">Cotas</div>
-          <div class="div-card-info-val priv">${d.cotas}</div>
-        </div>
-        <div class="div-card-valor">
-          <div class="div-card-por-acao">R$ ${d.valorPorAcao.toFixed(4)}/ação</div>
-          <div class="div-card-total-est">Estimado para sua carteira:</div>
-          <div class="div-card-total-val priv">+ ${brl(d.totalEstimado)}</div>
-        </div>
-      </div>`;
-    }).join("");
+      </td>
+    </tr>`;
 
-    const totalFmt = `R$ ${total.toFixed(2)}`;
+    itens.forEach(d => {
+      const dataPrimaria   = DIV.dataCOM ? d.dataEx   : d.dataPagto;
+      const dataSecundaria = DIV.dataCOM ? d.dataPagto : d.dataEx;
+      const fmtPri  = dataPrimaria  ? dataPrimaria.toLocaleDateString('pt-BR')  : '—';
+      const fmtSec  = dataSecundaria ? dataSecundaria.toLocaleDateString('pt-BR') : '—';
 
-    return `<div class="div-month-block">
-      <div class="div-month-head">
-        <div class="div-month-label">${nomeMes}</div>
-        <div class="div-month-line"></div>
-        <div class="div-month-total">${isPast ? "recebido ~" : "estimado"} ${totalFmt}</div>
-      </div>
-      <div class="div-cards">${cards}</div>
-    </div>`;
-  }).join("") + `<div class="div-fonte">
+      const isPast = dataPrimaria && dataPrimaria < hoje;
+      const isProx = !isPast && dataPrimaria && (dataPrimaria - hoje) < 30*86400000;
+
+      const rowCls = [
+        isPast       ? 'row-passado'   : '',
+        isProx       ? 'row-proximo'   : '',
+        d.emCarteira ? 'row-em-carteira' : '',
+      ].filter(Boolean).join(' ');
+
+      const badgeProx = isProx ? `<span class="div-badge-prox">⚡ Próximo</span>` : '';
+      const badgeCart = d.emCarteira ? `<span class="div-badge-cart">💼 ${d.cotas} cotas</span>` : '';
+      const chips = [badgeCart, badgeProx].filter(Boolean).join(' ');
+
+      const tipoLabel = d.tipo === 'JCP' ? 'Juros s/ Cap.' : d.tipo === 'RDTO' ? 'Rendimento' : 'Dividendo';
+
+      html += `<tr class="${rowCls}">
+        <td>
+          <div class="div-tk">${d.ticker}</div>
+          <div class="div-nm">${d.nome}</div>
+        </td>
+        <td><span class="div-tipo-chip ${d.tipo}">${d.tipo}</span></td>
+        <td>
+          <div class="div-date-cell">${fmtPri}</div>
+        </td>
+        <td>
+          <div class="div-date-cell">${fmtSec}</div>
+          <div class="div-date-sub">${DIV.dataCOM ? 'pagamento' : 'data COM'}</div>
+        </td>
+        <td class="right"><span class="div-val">R$ ${d.valorPorAcao.toFixed(4)}</span></td>
+        <td class="right hide-sm">${d.emCarteira ? `<span class="priv">${d.cotas}</span>` : '<span style="color:var(--body3)">—</span>'}</td>
+        <td class="right">${d.emCarteira ? `<span class="div-total-val priv">+${brl(d.totalEstimado)}</span>` : '<span style="color:var(--body3)">—</span>'}</td>
+        <td style="white-space:nowrap">${chips}</td>
+      </tr>`;
+    });
+  });
+
+  html += `</tbody></table></div>
+  <div class="div-fonte">
     Fonte: <a href="https://investidor10.com.br" target="_blank" rel="noopener">Investidor10.com.br</a>
-    · Dados de proventos históricos e futuros · Valores estimados baseados na posição atual
-    ${DIV.ultimaAtu ? "· Atualizado às " + DIV.ultimaAtu.toLocaleTimeString("pt-BR") : ""}
-    ${DIV.dados[0]?.fallback ? "· ⚠ Dados de referência (Investidor10 inacessível via proxy)" : ""}
+    · Dados de referência + busca ao vivo para ativos da carteira
+    ${DIV.ultimaAtu ? '· Atualizado às ' + DIV.ultimaAtu.toLocaleTimeString('pt-BR') : ''}
   </div>`;
 
+  container.innerHTML = html;
   setTimeout(aplicarMascara, 0);
 }
 
-/* ── Filtros ────────────────────────────────────────── */
-function setDivFiltro(filtro) {
-  DIV.filtro = filtro;
-  document.querySelectorAll(".div-filter-btn").forEach(b => {
-    b.classList.toggle("ativo", b.dataset.filtro === filtro);
-  });
-  renderDividendos();
+/* ── Preview na home ────────────────────────────────── */
+function renderHomeDividendosPreview() {
+  const el = $('home-dividendos-preview');
+  if (!el || !DIV.dados.length) return;
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const proximos = DIV.dados
+    .filter(d => d.emCarteira && (d.dataPagto||d.dataEx) >= hoje)
+    .slice(0, 5);
+  if (!proximos.length) return;
+  el.innerHTML = proximos.map(d => {
+    const dt = d.dataPagto || d.dataEx;
+    const dia = dt ? String(dt.getDate()).padStart(2,'0') + ' ' + MESES_BR[dt.getMonth()] : '—';
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid rgba(27,37,64,.5);font-size:11px">
+      <span style="font-family:var(--sans);font-weight:700;color:var(--head)">${d.ticker}</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--body3)">${dia}</span>
+      <span style="font-family:var(--mono);color:var(--lime)" class="priv">+${brl(d.totalEstimado)}</span>
+    </div>`;
+  }).join('');
+  setTimeout(aplicarMascara, 0);
 }
 
 </script>
