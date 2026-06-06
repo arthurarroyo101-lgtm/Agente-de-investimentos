@@ -5269,128 +5269,200 @@ function renderHomeDividendosPreview() {
    CALENDÁRIO DE DIVIDENDOS — COMPLETO
 ═══════════════════════════════════════════════════════ */
 
+/* ═══════════════════════════════════════════════════════
+   CALENDÁRIO DE DIVIDENDOS — DADOS REAIS DO INVESTIDOR10
+═══════════════════════════════════════════════════════ */
+
 const DIV = {
-  dados:      [],       // todos os proventos carregados
+  dados:      [],       // proventos reais buscados do Investidor10
   visao:      "todas",  // "todas" | "carteira"
   periodo:    "todos",  // "todos" | "proximos" | "passados"
-  dataCOM:    true,     // true = ordenar/exibir por Data COM; false = Data Pagamento
+  dataCOM:    true,     // true = ordenar por Data COM; false = Data Pagamento
   carregando: false,
   ultimaAtu:  null,
+  erros:      [],       // tickers que falharam
 };
 
-/* ── Meses ──────────────────────────────────────────── */
 const MESES_BR   = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 const MESES_FULL = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho",
                     "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 
-/* ── Base completa B3 com histórico de proventos ────── */
-const B3_PROVENTOS_BASE = [
-  // PETR4
-  {ticker:"PETR4",nome:"Petrobras PN",     tipo:"DIV",dataEx:"2024-11-14",dataPagto:"2024-12-09",valor:0.4893},
-  {ticker:"PETR4",nome:"Petrobras PN",     tipo:"DIV",dataEx:"2025-02-19",dataPagto:"2025-03-14",valor:0.4532},
-  {ticker:"PETR4",nome:"Petrobras PN",     tipo:"DIV",dataEx:"2025-05-21",dataPagto:"2025-06-16",valor:0.5124},
-  {ticker:"PETR4",nome:"Petrobras PN",     tipo:"DIV",dataEx:"2025-08-20",dataPagto:"2025-09-15",valor:0.4800},
-  // VALE3
-  {ticker:"VALE3",nome:"Vale",             tipo:"DIV",dataEx:"2024-10-10",dataPagto:"2024-10-31",valor:0.4482},
-  {ticker:"VALE3",nome:"Vale",             tipo:"DIV",dataEx:"2025-03-12",dataPagto:"2025-04-01",valor:0.5200},
-  {ticker:"VALE3",nome:"Vale",             tipo:"DIV",dataEx:"2025-09-10",dataPagto:"2025-10-01",valor:0.5000},
-  // ITUB4
-  {ticker:"ITUB4",nome:"Itaú Unibanco",   tipo:"JCP",dataEx:"2025-01-15",dataPagto:"2025-02-28",valor:0.0750},
-  {ticker:"ITUB4",nome:"Itaú Unibanco",   tipo:"JCP",dataEx:"2025-04-14",dataPagto:"2025-05-30",valor:0.0780},
-  {ticker:"ITUB4",nome:"Itaú Unibanco",   tipo:"JCP",dataEx:"2025-07-14",dataPagto:"2025-08-29",valor:0.0800},
-  {ticker:"ITUB4",nome:"Itaú Unibanco",   tipo:"JCP",dataEx:"2025-10-14",dataPagto:"2025-11-28",valor:0.0800},
-  // BBDC4
-  {ticker:"BBDC4",nome:"Bradesco PN",     tipo:"JCP",dataEx:"2025-02-04",dataPagto:"2025-03-12",valor:0.0140},
-  {ticker:"BBDC4",nome:"Bradesco PN",     tipo:"JCP",dataEx:"2025-05-05",dataPagto:"2025-06-11",valor:0.0140},
-  {ticker:"BBDC4",nome:"Bradesco PN",     tipo:"JCP",dataEx:"2025-08-04",dataPagto:"2025-09-10",valor:0.0140},
-  {ticker:"BBDC4",nome:"Bradesco PN",     tipo:"JCP",dataEx:"2025-11-04",dataPagto:"2025-12-10",valor:0.0140},
-  // ABEV3
-  {ticker:"ABEV3",nome:"Ambev",           tipo:"DIV",dataEx:"2025-02-27",dataPagto:"2025-03-18",valor:0.0500},
-  {ticker:"ABEV3",nome:"Ambev",           tipo:"DIV",dataEx:"2025-08-28",dataPagto:"2025-09-16",valor:0.0480},
-  // WEGE3
-  {ticker:"WEGE3",nome:"WEG",             tipo:"DIV",dataEx:"2025-01-30",dataPagto:"2025-02-18",valor:0.0590},
-  {ticker:"WEGE3",nome:"WEG",             tipo:"DIV",dataEx:"2025-04-30",dataPagto:"2025-05-19",valor:0.0610},
-  {ticker:"WEGE3",nome:"WEG",             tipo:"DIV",dataEx:"2025-07-31",dataPagto:"2025-08-19",valor:0.0630},
-  {ticker:"WEGE3",nome:"WEG",             tipo:"DIV",dataEx:"2025-10-30",dataPagto:"2025-11-18",valor:0.0640},
-  // BBAS3
-  {ticker:"BBAS3",nome:"Banco do Brasil", tipo:"JCP",dataEx:"2025-01-29",dataPagto:"2025-03-12",valor:0.2100},
-  {ticker:"BBAS3",nome:"Banco do Brasil", tipo:"JCP",dataEx:"2025-04-28",dataPagto:"2025-06-11",valor:0.2400},
-  {ticker:"BBAS3",nome:"Banco do Brasil", tipo:"JCP",dataEx:"2025-07-28",dataPagto:"2025-09-10",valor:0.2200},
-  {ticker:"BBAS3",nome:"Banco do Brasil", tipo:"DIV",dataEx:"2025-10-28",dataPagto:"2025-12-10",valor:0.1800},
-  // CXSE3
-  {ticker:"CXSE3",nome:"Caixa Seguridade",tipo:"DIV",dataEx:"2025-02-19",dataPagto:"2025-03-15",valor:0.2200},
-  {ticker:"CXSE3",nome:"Caixa Seguridade",tipo:"DIV",dataEx:"2025-05-20",dataPagto:"2025-06-15",valor:0.2400},
-  {ticker:"CXSE3",nome:"Caixa Seguridade",tipo:"DIV",dataEx:"2025-08-19",dataPagto:"2025-09-15",valor:0.2600},
-  {ticker:"CXSE3",nome:"Caixa Seguridade",tipo:"DIV",dataEx:"2025-11-18",dataPagto:"2025-12-15",valor:0.2500},
-  // TAEE4
-  {ticker:"TAEE4",nome:"Taesa",           tipo:"JCP",dataEx:"2025-04-09",dataPagto:"2025-04-30",valor:0.2100},
-  {ticker:"TAEE4",nome:"Taesa",           tipo:"DIV",dataEx:"2025-08-12",dataPagto:"2025-08-29",valor:0.4700},
-  // EGIE3
-  {ticker:"EGIE3",nome:"Engie Brasil",    tipo:"DIV",dataEx:"2025-03-11",dataPagto:"2025-04-01",valor:1.1200},
-  {ticker:"EGIE3",nome:"Engie Brasil",    tipo:"DIV",dataEx:"2025-09-10",dataPagto:"2025-10-01",valor:1.0800},
-  // SUZB3
-  {ticker:"SUZB3",nome:"Suzano",          tipo:"DIV",dataEx:"2025-03-20",dataPagto:"2025-04-10",valor:0.3500},
-  {ticker:"SUZB3",nome:"Suzano",          tipo:"DIV",dataEx:"2025-09-18",dataPagto:"2025-10-09",valor:0.3200},
-  // PRIO3
-  {ticker:"PRIO3",nome:"PRIO",            tipo:"DIV",dataEx:"2025-05-14",dataPagto:"2025-06-03",valor:0.1800},
-  {ticker:"PRIO3",nome:"PRIO",            tipo:"DIV",dataEx:"2025-11-12",dataPagto:"2025-12-02",valor:0.1700},
-  // GGBR4
-  {ticker:"GGBR4",nome:"Gerdau PN",      tipo:"DIV",dataEx:"2025-02-18",dataPagto:"2025-03-06",valor:0.2300},
-  {ticker:"GGBR4",nome:"Gerdau PN",      tipo:"JCP",dataEx:"2025-08-19",dataPagto:"2025-09-05",valor:0.1100},
-  // LREN3
-  {ticker:"LREN3",nome:"Lojas Renner",   tipo:"DIV",dataEx:"2025-04-02",dataPagto:"2025-04-23",valor:0.1040},
-  {ticker:"LREN3",nome:"Lojas Renner",   tipo:"DIV",dataEx:"2025-10-01",dataPagto:"2025-10-22",valor:0.1040},
-  // EQTL3
-  {ticker:"EQTL3",nome:"Equatorial",     tipo:"JCP",dataEx:"2025-03-25",dataPagto:"2025-04-14",valor:0.0780},
-  {ticker:"EQTL3",nome:"Equatorial",     tipo:"JCP",dataEx:"2025-09-24",dataPagto:"2025-10-13",valor:0.0810},
-  // RADL3
-  {ticker:"RADL3",nome:"Raia Drogasil",  tipo:"DIV",dataEx:"2025-02-05",dataPagto:"2025-02-24",valor:0.2700},
-  {ticker:"RADL3",nome:"Raia Drogasil",  tipo:"DIV",dataEx:"2025-08-06",dataPagto:"2025-08-25",valor:0.2800},
-  // SBSP3
-  {ticker:"SBSP3",nome:"Sabesp",         tipo:"DIV",dataEx:"2025-04-16",dataPagto:"2025-05-07",valor:0.9700},
-  // CCRO3
-  {ticker:"CCRO3",nome:"CCR",            tipo:"DIV",dataEx:"2025-03-27",dataPagto:"2025-04-16",valor:0.1300},
-  {ticker:"CCRO3",nome:"CCR",            tipo:"DIV",dataEx:"2025-09-25",dataPagto:"2025-10-15",valor:0.1200},
-  // RENT3
-  {ticker:"RENT3",nome:"Localiza",       tipo:"JCP",dataEx:"2025-03-18",dataPagto:"2025-04-07",valor:0.1600},
-  {ticker:"RENT3",nome:"Localiza",       tipo:"JCP",dataEx:"2025-09-17",dataPagto:"2025-10-06",valor:0.1600},
-  // TOTS3
-  {ticker:"TOTS3",nome:"Totvs",          tipo:"DIV",dataEx:"2025-02-11",dataPagto:"2025-03-03",valor:0.3500},
-  {ticker:"TOTS3",nome:"Totvs",          tipo:"DIV",dataEx:"2025-08-12",dataPagto:"2025-09-01",valor:0.3600},
-  // HYPE3
-  {ticker:"HYPE3",nome:"Hypera",         tipo:"DIV",dataEx:"2025-01-09",dataPagto:"2025-01-28",valor:0.6000},
-  {ticker:"HYPE3",nome:"Hypera",         tipo:"DIV",dataEx:"2025-07-09",dataPagto:"2025-07-28",valor:0.6200},
-  // JBSS3
-  {ticker:"JBSS3",nome:"JBS",            tipo:"DIV",dataEx:"2025-04-14",dataPagto:"2025-05-06",valor:0.8100},
-  // CSAN3
-  {ticker:"CSAN3",nome:"Cosan",          tipo:"DIV",dataEx:"2025-05-21",dataPagto:"2025-06-10",valor:0.1500},
-  // B3SA3
-  {ticker:"B3SA3",nome:"B3 S.A.",        tipo:"JCP",dataEx:"2025-04-29",dataPagto:"2025-06-16",valor:0.0900},
-  {ticker:"B3SA3",nome:"B3 S.A.",        tipo:"JCP",dataEx:"2025-10-29",dataPagto:"2025-12-15",valor:0.0900},
-  // VBBR3
-  {ticker:"VBBR3",nome:"Vibra Energia",  tipo:"DIV",dataEx:"2025-03-06",dataPagto:"2025-03-25",valor:0.4200},
-  // EMBR3
-  {ticker:"EMBR3",nome:"Embraer",        tipo:"DIV",dataEx:"2025-05-07",dataPagto:"2025-05-27",valor:0.2000},
-  // PETR3
-  {ticker:"PETR3",nome:"Petrobras ON",   tipo:"DIV",dataEx:"2025-02-19",dataPagto:"2025-03-14",valor:0.4532},
-  {ticker:"PETR3",nome:"Petrobras ON",   tipo:"DIV",dataEx:"2025-05-21",dataPagto:"2025-06-16",valor:0.5124},
-  {ticker:"PETR3",nome:"Petrobras ON",   tipo:"DIV",dataEx:"2025-08-20",dataPagto:"2025-09-15",valor:0.4800},
-];
-
-/* ── Parse date string YYYY-MM-DD ─────────────────── */
-function parseISO(str) {
+/* ── Helpers de data ────────────────────────────────── */
+function parseDateBR(str) {
   if (!str) return null;
-  const [y,m,d] = str.split('-').map(Number);
-  return new Date(y, m-1, d);
+  const m = String(str).trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!m) return null;
+  return new Date(+m[3], +m[2] - 1, +m[1]);
 }
-
-/* ── Tipo label ─────────────────────────────────────── */
-function tipoProvento(raw) {
-  const s = (raw||'').toUpperCase();
-  if (s.includes('JCP')||s.includes('JUROS')) return 'JCP';
-  if (s.includes('RENDIMENTO')||s.includes('RDTO')) return 'RDTO';
+function parseDateISO(str) {
+  if (!str) return null;
+  const m = String(str).trim().match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return null;
+  return new Date(+m[1], +m[2] - 1, +m[3]);
+}
+function tipoLabel(raw) {
+  const s = (raw || '').toUpperCase();
+  if (s.includes('JCP') || s.includes('JUROS')) return 'JCP';
+  if (s.includes('RENDIMENTO') || s.includes('RDTO')) return 'RDTO';
   return 'DIV';
 }
+
+/* ── Busca Investidor10 JSON API ────────────────────── */
+async function fetchInv10API(ticker) {
+  // Investidor10 exposes a JSON endpoint for dividends per stock
+  const url = `https://corsproxy.io/?https://investidor10.com.br/api/dividendos/acoes/?stock=${ticker}&order=data_com&direction=desc`;
+  const r = await fetch(url, {
+    headers: { 'Accept': 'application/json', 'Origin': 'https://investidor10.com.br' },
+    signal: AbortSignal.timeout(15000),
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  const json = await r.json();
+  // Expected shape: { data: [{data_com, data_pagamento, tipo, valor, ...}] }
+  // or array directly
+  const rows = Array.isArray(json) ? json : (json.data || json.results || json.dividendos || []);
+  return rows.map(row => ({
+    dataEx:       parseDateBR(row.data_com)    || parseDateISO(row.data_com)    || parseDateISO(row.dataEx),
+    dataPagto:    parseDateBR(row.data_pagamento) || parseDateISO(row.data_pagamento) || parseDateISO(row.dataPagto),
+    tipo:         tipoLabel(row.tipo || row.type || ''),
+    valor:        parseFloat(String(row.valor || row.value || row.amount || 0).replace(',', '.')),
+  })).filter(r => r.valor > 0);
+}
+
+/* ── Busca Investidor10 HTML (fallback) ─────────────── */
+async function fetchInv10HTML(ticker) {
+  const url = `https://corsproxy.io/?https://investidor10.com.br/acoes/${ticker.toLowerCase()}/`;
+  const r = await fetch(url, {
+    headers: {
+      'Accept': 'text/html',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    },
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  const html = await r.text();
+
+  const results = [];
+
+  // Strategy 1: look for JSON data embedded in <script> tags (Next.js / SPA pattern)
+  const scriptMatches = html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi);
+  for (const sm of scriptMatches) {
+    const script = sm[1];
+    // Look for dividend array patterns
+    const jsonMatch = script.match(/"(?:dividendos?|proventos?|dividends?)"\s*:\s*(\[[\s\S]*?\])/i);
+    if (jsonMatch) {
+      try {
+        const arr = JSON.parse(jsonMatch[1]);
+        arr.forEach(item => {
+          const v = parseFloat(String(item.valor || item.value || item.amount || 0).replace(',', '.'));
+          if (v > 0) {
+            results.push({
+              dataEx:    parseDateBR(item.data_com || item.dataEx || item.date || '')
+                      || parseDateISO(item.data_com || item.dataEx || item.date || ''),
+              dataPagto: parseDateBR(item.data_pagamento || item.dataPagto || item.paymentDate || '')
+                      || parseDateISO(item.data_pagamento || item.dataPagto || item.paymentDate || ''),
+              tipo:      tipoLabel(item.tipo || item.type || ''),
+              valor:     v,
+            });
+          }
+        });
+        if (results.length) return results.filter(r => r.valor > 0);
+      } catch(e) {}
+    }
+  }
+
+  // Strategy 2: parse HTML table — look for rows with two dates and a currency value
+  // Investidor10 table structure: <td>dd/mm/yyyy</td> ... <td>TIPO</td> ... <td>R$ X,XXXX</td> ... <td>dd/mm/yyyy</td>
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+
+  // Try to find the dividends table by heading keywords
+  const tables = doc.querySelectorAll('table');
+  for (const table of tables) {
+    const headers = [...table.querySelectorAll('th')].map(th => th.textContent.trim().toLowerCase());
+    const isDivTable = headers.some(h => h.includes('com') || h.includes('pagamento') || h.includes('provento') || h.includes('valor'));
+    if (!isDivTable) continue;
+
+    const rows = table.querySelectorAll('tbody tr');
+    for (const row of rows) {
+      const cells = [...row.querySelectorAll('td')].map(td => td.textContent.trim());
+      if (cells.length < 3) continue;
+      // Find date and value cells
+      const dates = cells.filter(c => /^\d{2}\/\d{2}\/\d{4}$/.test(c));
+      const vals  = cells.filter(c => /^[\d.,]+$/.test(c.replace(/[R$\s]/g, '')));
+      if (dates.length >= 1 && vals.length >= 1) {
+        const v = parseFloat(vals[0].replace(/[R$\s.]/g, '').replace(',', '.'));
+        if (v > 0 && v < 1000) {
+          const typeCell = cells.find(c => /div|jcp|juros|rend/i.test(c)) || '';
+          results.push({
+            dataEx:    parseDateBR(dates[0]),
+            dataPagto: dates[1] ? parseDateBR(dates[1]) : null,
+            tipo:      tipoLabel(typeCell),
+            valor:     v,
+          });
+        }
+      }
+    }
+    if (results.length) break;
+  }
+
+  // Strategy 3: regex scan for date-value pairs in the raw HTML
+  if (!results.length) {
+    // Pattern: dd/mm/yyyy ... (optional R$) number,number
+    const rx = /(\d{2}\/\d{2}\/\d{4})[^<]{0,200}?(\d+[.,]\d{4})(?!\d)/g;
+    let m;
+    const seen = new Set();
+    while ((m = rx.exec(html)) !== null && results.length < 40) {
+      const v = parseFloat(m[2].replace('.', '').replace(',', '.'));
+      const key = `${m[1]}-${v}`;
+      if (v > 0 && v < 200 && !seen.has(key)) {
+        seen.add(key);
+        results.push({
+          dataEx:    parseDateBR(m[1]),
+          dataPagto: null,
+          tipo:      'DIV',
+          valor:     v,
+        });
+      }
+    }
+  }
+
+  return results.filter(r => r.valor > 0);
+}
+
+/* ── Busca principal para um ticker ─────────────────── */
+async function fetchProventosUm(ticker) {
+  // Try JSON API first, fall back to HTML scrape
+  try {
+    const res = await fetchInv10API(ticker);
+    if (res.length > 0) return { ok: true, rows: res, source: 'api' };
+  } catch(e) {}
+
+  try {
+    const res = await fetchInv10HTML(ticker);
+    if (res.length > 0) return { ok: true, rows: res, source: 'html' };
+  } catch(e) {}
+
+  return { ok: false, rows: [], source: 'none' };
+}
+
+/* ── Lista de tickers B3 para visão "todas" ──────────── */
+const B3_TICKERS_INFO = {
+  "PETR4":{"nome":"Petrobras PN"},   "PETR3":{"nome":"Petrobras ON"},
+  "VALE3":{"nome":"Vale"},           "ITUB4":{"nome":"Itaú Unibanco"},
+  "BBDC4":{"nome":"Bradesco PN"},    "ABEV3":{"nome":"Ambev"},
+  "WEGE3":{"nome":"WEG"},            "B3SA3":{"nome":"B3 S.A."},
+  "BBAS3":{"nome":"Banco do Brasil"},"CXSE3":{"nome":"Caixa Seguridade"},
+  "TAEE4":{"nome":"Taesa"},          "EGIE3":{"nome":"Engie Brasil"},
+  "SUZB3":{"nome":"Suzano"},         "PRIO3":{"nome":"PRIO"},
+  "GGBR4":{"nome":"Gerdau PN"},      "LREN3":{"nome":"Lojas Renner"},
+  "EQTL3":{"nome":"Equatorial"},     "RADL3":{"nome":"Raia Drogasil"},
+  "SBSP3":{"nome":"Sabesp"},         "CCRO3":{"nome":"CCR"},
+  "RENT3":{"nome":"Localiza"},       "TOTS3":{"nome":"Totvs"},
+  "HYPE3":{"nome":"Hypera"},         "JBSS3":{"nome":"JBS"},
+  "CSAN3":{"nome":"Cosan"},          "B3SA3":{"nome":"B3 S.A."},
+  "VBBR3":{"nome":"Vibra Energia"},  "EMBR3":{"nome":"Embraer"},
+  "RDOR3":{"nome":"Rede D'Or"},      "ITSA4":{"nome":"Itaúsa"},
+};
 
 /* ── Carregar dividendos ─────────────────────────────── */
 async function carregarDividendos(forcar = false) {
@@ -5398,84 +5470,67 @@ async function carregarDividendos(forcar = false) {
   if (!forcar && DIV.dados.length > 0) { renderDividendos(); return; }
 
   DIV.carregando = true;
-  DIV.dados = [];
-  renderDivLoading('Carregando proventos do Investidor10…');
+  DIV.dados  = [];
+  DIV.erros  = [];
 
-  // Build set from base data
-  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  // Decide which tickers to fetch
+  const carteiraTickers = CARTEIRA.map(a => ({
+    ticker: a.ticker, nome: a.nome, cotas: a.cotas, emCarteira: true
+  }));
 
-  B3_PROVENTOS_BASE.forEach(item => {
-    const ativoCart = CARTEIRA.find(a => a.ticker === item.ticker);
-    DIV.dados.push({
-      ticker:        item.ticker,
-      nome:          item.nome,
-      tipo:          tipoProvento(item.tipo),
-      dataEx:        parseISO(item.dataEx),
-      dataPagto:     parseISO(item.dataPagto),
-      valorPorAcao:  item.valor,
-      emCarteira:    !!ativoCart,
-      cotas:         ativoCart ? ativoCart.cotas : 0,
-      totalEstimado: ativoCart ? item.valor * ativoCart.cotas : 0,
-    });
-  });
+  // Extra tickers for "todas" view — only ones not in carteira
+  const cartSet = new Set(CARTEIRA.map(a => a.ticker));
+  const extraTickers = Object.entries(B3_TICKERS_INFO)
+    .filter(([tk]) => !cartSet.has(tk))
+    .map(([tk, info]) => ({ ticker: tk, nome: info.nome, cotas: 0, emCarteira: false }));
 
-  // Try to fetch live data from Investidor10 for portfolio tickers
-  for (const ativo of CARTEIRA) {
-    renderDivLoading(`Buscando dados ao vivo para ${ativo.ticker}…`);
-    try {
-      const url = `https://corsproxy.io/?https://investidor10.com.br/acoes/${ativo.ticker.toLowerCase()}/`;
-      const timeout = new Promise((_,rej) => setTimeout(()=>rej(new Error('T')),12000));
-      const req = fetch(url).then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); }).then(html => {
-        // Extract dividend table rows
-        const rows = [];
-        const rowRx = /(\d{2}\/\d{2}\/\d{4})[^<]*(?:<[^>]*>){1,6}([^<]{1,30})<(?:[^<]*<){1,4}R?\$?\s*([\d.,]+)[^<]*<(?:[^<]*<){1,6}(\d{2}\/\d{2}\/\d{4})/g;
-        let m;
-        while ((m = rowRx.exec(html)) !== null && rows.length < 20) {
-          const v = parseFloat(m[3].replace(/\./g,'').replace(',','.'));
-          if (v > 0 && v < 200) {
-            const dEx = parseBR(m[1]), dPg = parseBR(m[4]);
-            if (dEx) rows.push({ dataEx: dEx, dataPagto: dPg||dEx, tipo: tipoProvento(m[2]), valor: v });
-          }
-        }
-        if (rows.length > 0) {
-          // Remove base entries for this ticker and add live ones
-          DIV.dados = DIV.dados.filter(d => d.ticker !== ativo.ticker);
-          rows.forEach(r => {
-            DIV.dados.push({
-              ticker: ativo.ticker, nome: ativo.nome,
-              tipo: r.tipo, dataEx: r.dataEx, dataPagto: r.dataPagto,
-              valorPorAcao: r.valor, emCarteira: true,
-              cotas: ativo.cotas, totalEstimado: r.valor * ativo.cotas,
-            });
-          });
-        }
+  const allTargets = [...carteiraTickers, ...extraTickers];
+  const total = allTargets.length;
+
+  for (let i = 0; i < total; i++) {
+    const { ticker, nome, cotas, emCarteira } = allTargets[i];
+    renderDivLoading(`Buscando ${ticker} no Investidor10… (${i+1}/${total})`);
+
+    const { ok, rows } = await fetchProventosUm(ticker);
+
+    if (ok && rows.length > 0) {
+      rows.forEach(r => {
+        DIV.dados.push({
+          ticker,
+          nome,
+          tipo:          r.tipo,
+          dataEx:        r.dataEx,
+          dataPagto:     r.dataPagto || r.dataEx,
+          valorPorAcao:  r.valor,
+          emCarteira,
+          cotas,
+          totalEstimado: emCarteira ? r.valor * cotas : 0,
+        });
       });
-      await Promise.race([req, timeout]);
-    } catch(e) { /* use base data */ }
-    await new Promise(r => setTimeout(r, 250));
+    } else {
+      if (emCarteira) DIV.erros.push(ticker);
+    }
+
+    // Small delay to avoid rate limiting
+    if (i < total - 1) await new Promise(res => setTimeout(res, 400));
   }
 
-  DIV.dados.sort((a,b) => {
-    const da = DIV.dataCOM ? a.dataEx : a.dataPagto;
-    const db = DIV.dataCOM ? b.dataEx : b.dataPagto;
-    return (da||new Date(0)) - (db||new Date(0));
+  // Sort
+  DIV.dados.sort((a, b) => {
+    const da = DIV.dataCOM ? (a.dataEx || a.dataPagto) : (a.dataPagto || a.dataEx);
+    const db = DIV.dataCOM ? (b.dataEx || b.dataPagto) : (b.dataPagto || b.dataEx);
+    return (da || new Date(0)) - (db || new Date(0));
   });
 
   DIV.carregando = false;
-  DIV.ultimaAtu = new Date();
-  const el = $('div-upd');
-  if (el) el.textContent = 'Atualizado ' + DIV.ultimaAtu.toLocaleTimeString('pt-BR');
+  DIV.ultimaAtu  = new Date();
+  const upd = $('div-upd');
+  if (upd) upd.textContent = 'Atualizado ' + DIV.ultimaAtu.toLocaleTimeString('pt-BR');
+
   renderDividendos();
 }
 
-function parseBR(str) {
-  if (!str) return null;
-  const m = String(str).match(/(\d{2})\/(\d{2})\/(\d{4})/);
-  if (!m) return null;
-  return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
-}
-
-/* ── Controles UI ───────────────────────────────────── */
+/* ── Controles ──────────────────────────────────────── */
 function setDivVisao(v) {
   DIV.visao = v;
   document.querySelectorAll('#div-seg-visao .div-seg-btn').forEach(b => {
@@ -5484,7 +5539,6 @@ function setDivVisao(v) {
   });
   renderDividendos();
 }
-
 function setDivPeriodo(p) {
   DIV.periodo = p;
   document.querySelectorAll('#div-seg-periodo .div-seg-btn').forEach(b => {
@@ -5492,23 +5546,21 @@ function setDivPeriodo(p) {
   });
   renderDividendos();
 }
-
 function toggleDateMode() {
   DIV.dataCOM = !DIV.dataCOM;
   const btn = $('div-toggle-com');
   const lbl = $('div-toggle-lbl');
   if (btn) btn.classList.toggle('ativo', DIV.dataCOM);
-  if (lbl) lbl.textContent = DIV.dataCOM ? 'Exibindo: Data COM' : 'Exibindo: Data Pagamento';
-  // Re-sort
-  DIV.dados.sort((a,b) => {
-    const da = DIV.dataCOM ? a.dataEx : a.dataPagto;
-    const db = DIV.dataCOM ? b.dataEx : b.dataPagto;
-    return (da||new Date(0)) - (db||new Date(0));
+  if (lbl) lbl.textContent = DIV.dataCOM ? 'Ordenando por: Data COM' : 'Ordenando por: Data Pagamento';
+  DIV.dados.sort((a, b) => {
+    const da = DIV.dataCOM ? (a.dataEx||a.dataPagto) : (a.dataPagto||a.dataEx);
+    const db = DIV.dataCOM ? (b.dataEx||b.dataPagto) : (b.dataPagto||b.dataEx);
+    return (da || new Date(0)) - (db || new Date(0));
   });
   renderDividendos();
 }
 
-/* ── Render loading ─────────────────────────────────── */
+/* ── Loading ────────────────────────────────────────── */
 function renderDivLoading(msg) {
   const el = $('div-table-container');
   if (!el) return;
@@ -5518,67 +5570,78 @@ function renderDivLoading(msg) {
 /* ── Render principal ───────────────────────────────── */
 function renderDividendos() {
   const hoje = new Date(); hoje.setHours(0,0,0,0);
-  const em30 = new Date(hoje.getTime() + 30 * 86400000);
+  const em30  = new Date(hoje.getTime() + 30 * 86400000);
 
-  // Apply filters
+  // Apply view + period filters
   let dados = [...DIV.dados];
-
-  if (DIV.visao === 'carteira') {
-    dados = dados.filter(d => d.emCarteira);
-  }
+  if (DIV.visao === 'carteira') dados = dados.filter(d => d.emCarteira);
 
   if (DIV.periodo === 'proximos') {
     dados = dados.filter(d => {
-      const dt = DIV.dataCOM ? d.dataEx : d.dataPagto;
+      const dt = DIV.dataCOM ? (d.dataEx||d.dataPagto) : (d.dataPagto||d.dataEx);
       return dt && dt >= hoje;
     });
   } else if (DIV.periodo === 'passados') {
     dados = dados.filter(d => {
-      const dt = DIV.dataCOM ? d.dataEx : d.dataPagto;
+      const dt = DIV.dataCOM ? (d.dataEx||d.dataPagto) : (d.dataPagto||d.dataEx);
       return dt && dt < hoje;
     });
   }
 
-  // Stats (always from full data filtered by carteira)
-  const dadosCart = DIV.dados.filter(d => d.emCarteira);
-  const proxCart  = dadosCart.filter(d => {
+  // Stats (cart only)
+  const cart = DIV.dados.filter(d => d.emCarteira);
+  const proxCart = cart.filter(d => {
     const dt = d.dataPagto || d.dataEx;
     return dt && dt >= hoje && dt <= em30;
   });
-  const totalProx = proxCart.reduce((s,d) => s + d.totalEstimado, 0);
-
-  const anoAtual = hoje.getFullYear();
-  const totalAnual = dadosCart.filter(d => {
+  const totalProx  = proxCart.reduce((s,d) => s + d.totalEstimado, 0);
+  const totalAnual = cart.filter(d => {
     const dt = d.dataPagto || d.dataEx;
-    return dt && dt.getFullYear() === anoAtual;
+    return dt && dt.getFullYear() === hoje.getFullYear();
   }).reduce((s,d) => s + d.totalEstimado, 0);
 
   const proxGeral = dados.find(d => {
-    const dt = DIV.dataCOM ? d.dataEx : d.dataPagto;
+    const dt = DIV.dataCOM ? (d.dataEx||d.dataPagto) : (d.dataPagto||d.dataEx);
     return dt && dt >= hoje;
   });
-  const diasProx = proxGeral ? Math.ceil(((DIV.dataCOM ? proxGeral.dataEx : proxGeral.dataPagto) - hoje) / 86400000) : null;
+  const diasProx = proxGeral
+    ? Math.ceil(((DIV.dataCOM ? (proxGeral.dataEx||proxGeral.dataPagto) : (proxGeral.dataPagto||proxGeral.dataEx)) - hoje) / 86400000)
+    : null;
 
-  // Update stats
   const empresas = new Set(DIV.dados.map(d => d.ticker)).size;
-  if ($('div-stat-proximo'))       $('div-stat-proximo').textContent = proxGeral ? (proxGeral.emCarteira ? '+' + brl(proxGeral.totalEstimado) : proxGeral.ticker) : '—';
-  if ($('div-stat-dias'))          $('div-stat-dias').textContent    = diasProx != null ? `em ${diasProx} dia${diasProx===1?'':'s'}` : '—';
-  if ($('div-stat-proximos-total'))$('div-stat-proximos-total').textContent = brl(totalProx);
-  if ($('div-stat-anual'))         $('div-stat-anual').textContent   = brl(totalAnual);
-  if ($('div-stat-empresas'))      $('div-stat-empresas').textContent = empresas + ' empresa' + (empresas===1?'':'s');
+  if ($('div-stat-proximo'))        $('div-stat-proximo').textContent        = proxGeral ? (proxGeral.emCarteira ? '+' + brl(proxGeral.totalEstimado) : proxGeral.ticker) : '—';
+  if ($('div-stat-dias'))           $('div-stat-dias').textContent           = diasProx != null ? `em ${diasProx} dia${diasProx===1?'':'s'}` : '—';
+  if ($('div-stat-proximos-total')) $('div-stat-proximos-total').textContent = brl(totalProx);
+  if ($('div-stat-anual'))          $('div-stat-anual').textContent          = brl(totalAnual);
+  if ($('div-stat-empresas'))       $('div-stat-empresas').textContent       = empresas + ' empresa' + (empresas===1?'':'s');
 
   const container = $('div-table-container');
   if (!container) return;
 
+  // Error notice for portfolio tickers that failed
+  let errHtml = '';
+  if (DIV.erros.length > 0) {
+    errHtml = `<div style="padding:10px 16px;background:rgba(255,204,0,.07);border:1px solid rgba(255,204,0,.2);border-radius:6px;font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:12px">
+      ⚠ Não foi possível carregar dados do Investidor10 para: <strong>${DIV.erros.join(', ')}</strong>
+      — verifique sua conexão ou tente atualizar novamente.
+    </div>`;
+  }
+
   if (!dados.length) {
-    container.innerHTML = `<div class="div-empty">📭 Nenhum provento encontrado com os filtros aplicados.</div>`;
+    container.innerHTML = errHtml + `<div class="div-empty">
+      <div style="font-size:36px;margin-bottom:14px">📭</div>
+      Nenhum provento encontrado com os filtros aplicados.
+      <div style="font-size:11px;font-family:var(--mono);margin-top:8px;color:var(--body3)">
+        ${DIV.dados.length === 0 ? 'Clique em ↻ Atualizar para buscar dados do Investidor10.' : 'Tente mudar o filtro de período ou visão.'}
+      </div>
+    </div>`;
     return;
   }
 
-  // Group by month using the active date
+  // Group by month using active date
   const grupos = {};
   dados.forEach(d => {
-    const dt = DIV.dataCOM ? d.dataEx : d.dataPagto;
+    const dt = DIV.dataCOM ? (d.dataEx||d.dataPagto) : (d.dataPagto||d.dataEx);
     if (!dt) return;
     const key = `${dt.getFullYear()}-${String(dt.getMonth()).padStart(2,'0')}`;
     if (!grupos[key]) grupos[key] = { dt, itens: [], totalCart: 0 };
@@ -5586,80 +5649,51 @@ function renderDividendos() {
     if (d.emCarteira) grupos[key].totalCart += d.totalEstimado;
   });
 
-  const colDateCOM  = DIV.dataCOM ? 'Data COM (EX)' : 'Data COM (EX)';
-  const colDatePag  = 'Data Pagamento';
-  const dateHdr     = DIV.dataCOM ? `<th>Data COM</th><th>Data Pagamento</th>` : `<th>Data Pagamento</th><th>Data COM</th>`;
-
-  let html = `<div class="div-table-wrap">
-  <table class="div-table">
-    <thead>
-      <tr>
-        <th>Empresa</th>
-        <th>Tipo</th>
-        ${dateHdr}
-        <th class="right">R$ / Ação</th>
-        <th class="right hide-sm">Cotas</th>
-        <th class="right">Estimado</th>
-        <th></th>
-      </tr>
-    </thead>
+  let html = errHtml + `<div class="div-table-wrap"><table class="div-table">
+    <thead><tr>
+      <th>Empresa</th>
+      <th>Tipo</th>
+      <th>${DIV.dataCOM ? 'Data COM' : 'Data Pagamento'}</th>
+      <th>${DIV.dataCOM ? 'Data Pagamento' : 'Data COM'}</th>
+      <th class="right">R$ / Ação</th>
+      <th class="right hide-sm">Cotas</th>
+      <th class="right">Estimado</th>
+      <th></th>
+    </tr></thead>
     <tbody>`;
 
   const chaves = Object.keys(grupos).sort();
   chaves.forEach(key => {
     const { dt, itens, totalCart } = grupos[key];
     const nomeMes = MESES_FULL[dt.getMonth()] + ' ' + dt.getFullYear();
-    const isPastMonth = new Date(dt.getFullYear(), dt.getMonth()+1, 1) <= hoje;
     const totalStr = totalCart > 0 ? `estimado carteira: ${brl(totalCart)}` : '';
 
-    // Month separator row
     html += `<tr class="div-month-row">
-      <td colspan="8">
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <span class="div-month-label-cell">${nomeMes}</span>
-          <span class="div-month-total-cell">${totalStr}</span>
-        </div>
-      </td>
-    </tr>`;
+      <td colspan="8"><div style="display:flex;align-items:center;justify-content:space-between">
+        <span class="div-month-label-cell">${nomeMes}</span>
+        <span class="div-month-total-cell">${totalStr}</span>
+      </div></td></tr>`;
 
     itens.forEach(d => {
-      const dataPrimaria   = DIV.dataCOM ? d.dataEx   : d.dataPagto;
-      const dataSecundaria = DIV.dataCOM ? d.dataPagto : d.dataEx;
-      const fmtPri  = dataPrimaria  ? dataPrimaria.toLocaleDateString('pt-BR')  : '—';
-      const fmtSec  = dataSecundaria ? dataSecundaria.toLocaleDateString('pt-BR') : '—';
-
-      const isPast = dataPrimaria && dataPrimaria < hoje;
-      const isProx = !isPast && dataPrimaria && (dataPrimaria - hoje) < 30*86400000;
-
-      const rowCls = [
-        isPast       ? 'row-passado'   : '',
-        isProx       ? 'row-proximo'   : '',
-        d.emCarteira ? 'row-em-carteira' : '',
-      ].filter(Boolean).join(' ');
-
-      const badgeProx = isProx ? `<span class="div-badge-prox">⚡ Próximo</span>` : '';
-      const badgeCart = d.emCarteira ? `<span class="div-badge-cart">💼 ${d.cotas} cotas</span>` : '';
-      const chips = [badgeCart, badgeProx].filter(Boolean).join(' ');
-
-      const tipoLabel = d.tipo === 'JCP' ? 'Juros s/ Cap.' : d.tipo === 'RDTO' ? 'Rendimento' : 'Dividendo';
+      const dtPri = DIV.dataCOM ? (d.dataEx||d.dataPagto) : (d.dataPagto||d.dataEx);
+      const dtSec = DIV.dataCOM ? (d.dataPagto||d.dataEx) : (d.dataEx||d.dataPagto);
+      const fmtPri = dtPri ? dtPri.toLocaleDateString('pt-BR') : '—';
+      const fmtSec = dtSec ? dtSec.toLocaleDateString('pt-BR') : '—';
+      const isPast = dtPri && dtPri < hoje;
+      const isProx = !isPast && dtPri && (dtPri - hoje) < 30 * 86400000;
+      const rowCls = [isPast?'row-passado':'', isProx?'row-proximo':'', d.emCarteira?'row-em-carteira':''].filter(Boolean).join(' ');
+      const badgeCart = d.emCarteira ? `<span class="div-badge-cart">💼 ${d.cotas}</span>` : '';
+      const badgeProx = isProx       ? `<span class="div-badge-prox">⚡ Próximo</span>` : '';
 
       html += `<tr class="${rowCls}">
-        <td>
-          <div class="div-tk">${d.ticker}</div>
-          <div class="div-nm">${d.nome}</div>
-        </td>
+        <td><div class="div-tk">${d.ticker}</div><div class="div-nm">${d.nome}</div></td>
         <td><span class="div-tipo-chip ${d.tipo}">${d.tipo}</span></td>
-        <td>
-          <div class="div-date-cell">${fmtPri}</div>
-        </td>
-        <td>
-          <div class="div-date-cell">${fmtSec}</div>
-          <div class="div-date-sub">${DIV.dataCOM ? 'pagamento' : 'data COM'}</div>
-        </td>
+        <td><div class="div-date-cell">${fmtPri}</div></td>
+        <td><div class="div-date-cell">${fmtSec}</div><div class="div-date-sub">${DIV.dataCOM ? 'pagamento' : 'data COM'}</div></td>
         <td class="right"><span class="div-val">R$ ${d.valorPorAcao.toFixed(4)}</span></td>
         <td class="right hide-sm">${d.emCarteira ? `<span class="priv">${d.cotas}</span>` : '<span style="color:var(--body3)">—</span>'}</td>
         <td class="right">${d.emCarteira ? `<span class="div-total-val priv">+${brl(d.totalEstimado)}</span>` : '<span style="color:var(--body3)">—</span>'}</td>
-        <td style="white-space:nowrap">${chips}</td>
+        <td style="white-space:nowrap;padding-right:12px">${[badgeCart,badgeProx].filter(Boolean).join(' ')}</td>
       </tr>`;
     });
   });
@@ -5667,7 +5701,7 @@ function renderDividendos() {
   html += `</tbody></table></div>
   <div class="div-fonte">
     Fonte: <a href="https://investidor10.com.br" target="_blank" rel="noopener">Investidor10.com.br</a>
-    · Dados de referência + busca ao vivo para ativos da carteira
+    · Apenas dados reais encontrados no site · Nenhum valor inventado
     ${DIV.ultimaAtu ? '· Atualizado às ' + DIV.ultimaAtu.toLocaleTimeString('pt-BR') : ''}
   </div>`;
 
@@ -5685,7 +5719,7 @@ function renderHomeDividendosPreview() {
     .slice(0, 5);
   if (!proximos.length) return;
   el.innerHTML = proximos.map(d => {
-    const dt = d.dataPagto || d.dataEx;
+    const dt  = d.dataPagto || d.dataEx;
     const dia = dt ? String(dt.getDate()).padStart(2,'0') + ' ' + MESES_BR[dt.getMonth()] : '—';
     return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid rgba(27,37,64,.5);font-size:11px">
       <span style="font-family:var(--sans);font-weight:700;color:var(--head)">${d.ticker}</span>
