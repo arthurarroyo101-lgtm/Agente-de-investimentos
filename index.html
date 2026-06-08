@@ -1554,18 +1554,239 @@ tbody tr:hover td:last-child::after {
 .page { display: none; }
 .page.active { display: block; }
 
+
 /* ═══════════════════════════════════════════════════════
-   HOME PAGE
+   HOME PAGE — REDESIGN
 ═══════════════════════════════════════════════════════ */
+
+/* Layout wrapper */
 .home-wrap {
   max-width: 1440px; margin: 0 auto;
-  padding: 20px 20px 40px;
-  display: flex; flex-direction: column; gap: 20px;
+  padding: 20px 20px 60px;
+  display: flex; flex-direction: column; gap: 24px;
 }
+
+/* Section block */
+.home-section-block {
+  display: flex; flex-direction: column; gap: 12px;
+}
+.home-section-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+}
+.home-section-title {
+  font-family: var(--sans); font-size: 12px; font-weight: 800;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--cyan);
+  white-space: nowrap;
+}
+
+/* Portfolio summary in header */
+.home-cart-resumo {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 11px; color: var(--body2);
+  flex-wrap: wrap;
+}
+.hcr-item strong { color: var(--head); font-weight: 700; }
+.hcr-sep { color: var(--wire2); }
+.hcr-btn { padding: 5px 14px !important; font-size: 10px !important; }
+
+/* ── PORTFOLIO CARDS (Minha Carteira) ── */
+.cart-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.cart-card {
+  background: var(--ink2);
+  border: 1px solid var(--wire);
+  border-radius: 10px;
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: all .18s;
+  position: relative;
+  overflow: hidden;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.cart-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: var(--cyan);
+  transition: background .2s, box-shadow .2s;
+}
+.cart-card:hover {
+  border-color: rgba(79,172,254,.35);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,.35);
+}
+.cart-card:hover::before {
+  background: var(--cyan);
+  box-shadow: 0 0 12px rgba(79,172,254,.4);
+}
+.cart-card.alert-card { border-color: rgba(255,45,85,.3); background: rgba(255,45,85,.03); }
+.cart-card.alert-card::before { background: var(--red); }
+.cart-card.alert-card:hover { border-color: rgba(255,45,85,.5); }
+.cart-card.pos-card::before { background: var(--lime); }
+.cart-card.neg-card::before { background: var(--red2); }
+
+/* Card top row */
+.cc-top {
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+.cc-tkr {
+  font-family: var(--sans); font-size: 18px; font-weight: 800;
+  letter-spacing: .04em; color: var(--head); line-height: 1;
+}
+.cc-nome {
+  font-family: var(--sans); font-size: 10px; color: var(--body3);
+  font-weight: 500; margin-top: 3px;
+}
+.cc-alert-icon {
+  font-size: 16px; flex-shrink: 0;
+}
+
+/* Price row */
+.cc-price-row {
+  display: flex; align-items: baseline; gap: 8px;
+}
+.cc-preco {
+  font-family: var(--mono); font-size: 20px; font-weight: 700;
+  color: var(--head); letter-spacing: -.02em;
+}
+.cc-var-dia {
+  font-family: var(--mono); font-size: 11px; font-weight: 600;
+  padding: 2px 7px; border-radius: 3px;
+}
+.cc-var-dia.pos { background: rgba(184,255,69,.12); color: var(--lime); }
+.cc-var-dia.neg { background: rgba(255,45,85,.1);  color: var(--red2); }
+.cc-var-dia.neu { color: var(--body3); }
+
+/* Stats grid */
+.cc-stats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--wire);
+}
+.cc-stat {}
+.cc-stat-lbl {
+  font-family: var(--sans); font-size: 8px; font-weight: 800;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--body3);
+  margin-bottom: 2px;
+}
+.cc-stat-val {
+  font-family: var(--mono); font-size: 12px; font-weight: 600;
+  color: var(--head);
+}
+.cc-stat-val.pos { color: var(--lime); }
+.cc-stat-val.neg { color: var(--red2); }
+
+/* P&L bar */
+.cc-pnl-bar {
+  height: 3px; background: var(--wire); border-radius: 2px; overflow: hidden;
+}
+.cc-pnl-fill {
+  height: 100%; border-radius: 2px;
+  transition: width .6s cubic-bezier(.4,0,.2,1);
+}
+
+/* Skeleton */
+.cart-card-skel {
+  background: var(--ink2); border: 1px solid var(--wire);
+  border-radius: 10px; height: 160px;
+  background: linear-gradient(90deg, var(--ink2) 25%, var(--ink3) 50%, var(--ink2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+/* ── TWO COLUMN LAYOUT ── */
+.home-two-col {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+  align-items: start;
+}
+.home-main-col { display: flex; flex-direction: column; gap: 24px; }
+.home-side-col  { display: flex; flex-direction: column; gap: 14px; position: sticky; top: 100px; }
+
+/* Side cards */
+.home-side-card {
+  background: var(--ink2); border: 1px solid var(--wire);
+  border-radius: 8px; overflow: hidden;
+}
+.home-side-head {
+  padding: 10px 16px; border-bottom: 1px solid var(--wire);
+  font-family: var(--sans); font-size: 10px; font-weight: 800;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--blue);
+  background: rgba(27,37,64,.4);
+}
+
+/* B3/FII mini cards */
+.b3-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 8px;
+}
+.b3-mini {
+  background: var(--ink2); border: 1px solid var(--wire);
+  border-radius: 8px; padding: 10px 12px;
+  cursor: pointer; transition: all .14s;
+  position: relative; overflow: hidden;
+}
+.b3-mini::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 2px; background: transparent; transition: background .14s;
+}
+.b3-mini:hover { border-color: var(--wire2); background: var(--ink3); }
+.b3-mini:hover::before { background: var(--cyan); }
+.b3-mini.em-carteira { border-color: rgba(184,255,69,.25); }
+.b3-mini.em-carteira::before { background: var(--lime); }
+.b3-mini.pos-day { }
+.b3-mini.neg-day { }
+
+.bm-ticker {
+  font-family: var(--sans); font-size: 13px; font-weight: 800;
+  letter-spacing: .04em; color: var(--head); display: block;
+}
+.bm-nome {
+  font-family: var(--sans); font-size: 9px; color: var(--body3);
+  font-weight: 500; display: block; margin-top: 1px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.bm-preco {
+  font-family: var(--mono); font-size: 13px; font-weight: 700;
+  color: var(--head); display: block; margin-top: 8px;
+}
+.bm-var {
+  font-family: var(--mono); font-size: 10px;
+  display: block; margin-top: 2px;
+}
+.bm-badge {
+  font-family: var(--sans); font-size: 8px; font-weight: 800;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 1px 5px; border-radius: 2px; margin-top: 5px; display: inline-block;
+}
+.bm-badge-cart { background: rgba(184,255,69,.15); color: var(--lime); }
+.b3-loading {
+  grid-column: 1/-1; text-align: center; padding: 20px;
+  color: var(--body3); font-family: var(--mono); font-size: 11px;
+}
+.b3-toolbar {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.b3-search-in {
+  background: var(--ink3); border: 1px solid var(--wire);
+  color: var(--head); font-family: var(--mono);
+  font-size: 11px; padding: 6px 10px;
+  border-radius: 4px; width: 120px; transition: border-color .15s;
+}
+.b3-search-in::placeholder { color: var(--body3); }
+.b3-search-in:focus { outline: none; border-color: var(--cyan); }
+
+/* Mercado strip */
 .mercado-strip {
   display: grid; grid-template-columns: repeat(4,1fr);
   gap: 1px; background: var(--wire);
-  border-radius: 6px; overflow: hidden;
+  border-radius: 8px; overflow: hidden;
 }
 .mercado-cell {
   background: var(--ink2); padding: 14px 18px;
@@ -1584,139 +1805,19 @@ tbody tr:hover td:last-child::after {
 .mercado-val   { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--head); letter-spacing: -.02em; line-height: 1; }
 .mercado-var   { font-family: var(--mono); font-size: 11px; margin-top: 2px; }
 
-.home-grid {
-  display: grid; grid-template-columns: 1fr 320px;
-  gap: 20px; align-items: start;
+/* Responsive */
+@media (max-width: 1100px) {
+  .home-two-col { grid-template-columns: 1fr; }
+  .home-side-col { position: static; }
+  .mercado-strip { grid-template-columns: repeat(2,1fr); }
 }
-.home-col-l, .home-col-r { display: flex; flex-direction: column; gap: 20px; }
-
-.home-resumo {
-  display: grid; grid-template-columns: repeat(4,1fr);
-  gap: 1px; background: var(--wire);
-  border-radius: 8px; overflow: hidden;
+@media (max-width: 700px) {
+  .cart-cards { grid-template-columns: 1fr 1fr; }
+  .b3-grid    { grid-template-columns: repeat(auto-fill, minmax(100px,1fr)); }
 }
-.home-resumo-cell { background: var(--ink2); padding: 18px 16px; }
-.hrc-label { font-family: var(--sans); font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--body3); margin-bottom: 6px; }
-.hrc-val   { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--head); letter-spacing: -.02em; }
-
-.ativos-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(195px,1fr)); gap: 10px;
-}
-.ativo-card {
-  background: var(--ink2); border: 1px solid var(--wire);
-  border-radius: 8px; padding: 16px;
-  cursor: pointer; transition: all .15s;
-  position: relative; overflow: hidden;
-}
-.ativo-card::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-  width: 3px; background: var(--wire2); transition: background .2s;
-}
-.ativo-card:hover { border-color: var(--wire2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
-.ativo-card:hover::before { background: var(--cyan); }
-.ativo-card.home-alert::before { background: var(--red); }
-.ativo-card.home-alert { border-color: rgba(255,45,85,.25); background: rgba(255,45,85,.03); }
-.ac-ticker { font-family: var(--sans); font-size: 16px; font-weight: 800; letter-spacing: .04em; color: var(--head); }
-.ac-nome   { font-family: var(--sans); font-size: 10px; color: var(--body3); font-weight: 500; margin-top: 2px; }
-.ac-preco  { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--head); letter-spacing: -.02em; margin: 10px 0; }
-.ac-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid var(--wire); font-family: var(--mono); font-size: 10px; color: var(--body2); }
-.ac-pnl    { font-size: 12px; font-weight: 700; }
-
-.fundos-home-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-}
-.fundo-card-home {
-  background: var(--ink2); border: 1px solid var(--wire);
-  border-radius: 8px; padding: 16px; transition: all .15s;
-  position: relative; overflow: hidden;
-}
-.fundo-card-home::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-  width: 3px; background: var(--blue);
-}
-.fundo-card-home:hover { border-color: var(--wire2); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
-.fch-nome  { font-family: var(--sans); font-size: 14px; font-weight: 800; color: var(--head); margin-bottom: 3px; }
-.fch-tipo  { font-family: var(--sans); font-size: 9px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--body3); }
-.fch-valor { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--cyan); margin: 10px 0 6px; letter-spacing: -.01em; }
-.fch-row   { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; color: var(--body2); margin-top: 4px; }
-
-.home-side-card { background: var(--ink2); border: 1px solid var(--wire); border-radius: 8px; overflow: hidden; }
-.home-side-head { padding: 10px 16px; border-bottom: 1px solid var(--wire); font-family: var(--sans); font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--blue); background: rgba(27,37,64,.4); }
-
-.home-section-title { font-family: var(--sans); font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--cyan); display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.home-section-title::after { content: ''; flex: 1; height: 1px; background: var(--wire); }
-
-@media (max-width: 1100px) { .home-grid { grid-template-columns: 1fr; } .mercado-strip { grid-template-columns: repeat(2,1fr); } .home-resumo { grid-template-columns: repeat(2,1fr); } }
-@media (max-width: 620px)  { .ativos-grid { grid-template-columns: 1fr 1fr; } .fundos-home-grid { grid-template-columns: 1fr; } }
-
-
-/* ── PRINCIPAIS AÇÕES DA B3 ─────────────────────────── */
-.b3-toolbar {
-  display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
-}
-.b3-search-in {
-  background: var(--ink3); border: 1px solid var(--wire);
-  color: var(--head); font-family: var(--mono);
-  font-size: 12px; font-weight: 700; letter-spacing: .08em;
-  text-transform: uppercase; padding: 7px 12px;
-  border-radius: 4px; width: 130px; transition: border-color .15s;
-}
-.b3-search-in::placeholder { text-transform: none; font-weight: 400; color: var(--body3); letter-spacing: 0; }
-.b3-search-in:focus { outline: none; border-color: var(--cyan); }
-
-.b3-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
-  gap: 8px;
-}
-.b3-mini {
-  background: var(--ink2); border: 1px solid var(--wire);
-  border-radius: 6px; padding: 10px 12px;
-  cursor: pointer; transition: all .14s;
-  position: relative; overflow: hidden;
-}
-.b3-mini::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-  width: 2px; background: transparent; transition: background .14s;
-}
-.b3-mini:hover { border-color: var(--wire2); background: var(--ink3); }
-.b3-mini:hover::before { background: var(--cyan); }
-.b3-mini.em-carteira { border-color: rgba(184,255,69,.22); }
-.b3-mini.em-carteira::before { background: var(--lime); }
-.b3-mini.pos-day::after {
-  content: ''; position: absolute; inset: 0;
-  background: rgba(184,255,69,.02); pointer-events: none;
-}
-.b3-mini.neg-day::after {
-  content: ''; position: absolute; inset: 0;
-  background: rgba(255,45,85,.02); pointer-events: none;
-}
-.bm-ticker {
-  font-family: var(--sans); font-size: 13px; font-weight: 800;
-  letter-spacing: .04em; color: var(--head); display: block;
-}
-.bm-nome {
-  font-family: var(--sans); font-size: 9px; color: var(--body3);
-  font-weight: 500; display: block; margin-top: 1px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.bm-preco {
-  font-family: var(--mono); font-size: 13px; font-weight: 700;
-  color: var(--head); display: block; margin-top: 7px;
-}
-.bm-var {
-  font-family: var(--mono); font-size: 10px; display: block; margin-top: 2px;
-}
-.bm-badge {
-  font-family: var(--sans); font-size: 8px; font-weight: 800;
-  letter-spacing: .08em; text-transform: uppercase;
-  padding: 1px 5px; border-radius: 2px; margin-top: 5px; display: inline-block;
-}
-.bm-badge-cart { background: rgba(184,255,69,.15); color: var(--lime); }
-
-.b3-loading {
-  grid-column: 1/-1; text-align: center; padding: 20px;
-  color: var(--body3); font-family: var(--mono); font-size: 11px;
+@media (max-width: 480px) {
+  .cart-cards { grid-template-columns: 1fr; }
+  .mercado-strip { grid-template-columns: 1fr 1fr; }
 }
 
 
@@ -2125,6 +2226,7 @@ tbody tr:hover td:last-child::after {
 <div id="page-home" class="page active">
 <div class="home-wrap">
 
+  <!-- ── Strip de Mercado ── -->
   <div class="mercado-strip" id="mercado-strip">
     <div class="mercado-cell neutral"><div class="mercado-label">Ibovespa</div><div class="mercado-val" id="mc-ibov"><span class="skel" style="width:80px"></span></div><div class="mercado-var" id="mc-ibov-v">—</div></div>
     <div class="mercado-cell neutral"><div class="mercado-label">USD · BRL</div><div class="mercado-val" id="mc-usd"><span class="skel" style="width:60px"></span></div><div class="mercado-var" id="mc-usd-v">—</div></div>
@@ -2132,66 +2234,100 @@ tbody tr:hover td:last-child::after {
     <div class="mercado-cell neutral"><div class="mercado-label">CDI</div><div class="mercado-val">13,15%</div><div class="mercado-var" style="color:var(--body3)">a.a. · estimado</div></div>
   </div>
 
-  <!-- 1. Principais Ações da B3 — PRIMEIRA POSIÇÃO -->
-  <div>
-    <div class="home-section-title">🏛 Principais Ações da B3</div>
-    <div class="b3-toolbar">
-      <input class="b3-search-in" id="b3-search" placeholder="Filtrar ticker ou nome…"
-        oninput="filtrarB3(this.value)">
-      <button class="btn btn-wire" style="padding:6px 14px;font-size:11px"
-        onclick="fetchB3Precos()">↻ Atualizar</button>
-      <span id="b3-upd" style="font-family:var(--mono);font-size:10px;color:var(--body3)"></span>
+  <!-- ── Minha Carteira (cards ricos) ── -->
+  <div class="home-section-block">
+    <div class="home-section-hdr">
+      <div class="home-section-title">📈 Minha Carteira</div>
+      <div class="home-cart-resumo">
+        <span class="hcr-item">Aplicado <strong class="priv" id="hcr-apl">—</strong></span>
+        <span class="hcr-sep">·</span>
+        <span class="hcr-item">Atual <strong class="priv" id="hcr-atu">—</strong></span>
+        <span class="hcr-sep">·</span>
+        <span class="hcr-item">P&amp;L <strong class="priv" id="hcr-pnl">—</strong></span>
+      </div>
+      <button class="btn btn-wire hcr-btn" onclick="setPage('carteira')">Ver detalhes →</button>
     </div>
-    <div class="b3-grid" id="b3-grid">
-      <div class="b3-loading"><span class="spin"></span>&nbsp; Buscando cotações da B3…</div>
-    </div>
-  </div>
-
-  <!-- 2. Principais FIIs da B3 -->
-  <div>
-    <div class="home-section-title">🏢 Principais FIIs da B3</div>
-    <div class="b3-toolbar">
-      <input class="b3-search-in" id="fii-search" placeholder="Filtrar FII ou nome…"
-        oninput="filtrarFII(this.value)">
-      <button class="btn btn-wire" style="padding:6px 14px;font-size:11px"
-        onclick="fetchFIIPrecos()">↻ Atualizar</button>
-      <span id="fii-upd" style="font-family:var(--mono);font-size:10px;color:var(--body3)"></span>
-    </div>
-    <div class="b3-grid" id="fii-grid">
-      <div class="b3-loading"><span class="spin"></span>&nbsp; Buscando cotações de FIIs…</div>
+    <div class="cart-cards" id="home-cart-cards">
+      <div class="cart-card-skel"></div>
+      <div class="cart-card-skel"></div>
+      <div class="cart-card-skel"></div>
     </div>
   </div>
 
-  <!-- 3. Sidebar -->
-  <div class="home-grid" style="grid-template-columns:1fr 320px">
-    <div class="home-col-l"></div>
-    <div class="home-col-r">
+  <!-- ── Layout 2 colunas: Ações B3 + Sidebar ── -->
+  <div class="home-two-col">
+
+    <!-- Coluna principal: Ações B3 -->
+    <div class="home-main-col">
+      <div class="home-section-block">
+        <div class="home-section-hdr">
+          <div class="home-section-title">🏛 Ações da B3</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input class="b3-search-in" id="b3-search" placeholder="Filtrar…" oninput="filtrarB3(this.value)">
+            <button class="btn btn-wire" style="padding:5px 12px;font-size:10px" onclick="fetchB3Precos()">↻</button>
+            <span id="b3-upd" style="font-family:var(--mono);font-size:10px;color:var(--body3)"></span>
+          </div>
+        </div>
+        <div class="b3-grid" id="b3-grid">
+          <div class="b3-loading"><span class="spin"></span>&nbsp; Buscando cotações…</div>
+        </div>
+      </div>
+
+      <!-- FIIs abaixo das ações -->
+      <div class="home-section-block">
+        <div class="home-section-hdr">
+          <div class="home-section-title">🏢 Fundos Imobiliários (FIIs)</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input class="b3-search-in" id="fii-search" placeholder="Filtrar…" oninput="filtrarFII(this.value)">
+            <button class="btn btn-wire" style="padding:5px 12px;font-size:10px" onclick="fetchFIIPrecos()">↻</button>
+            <span id="fii-upd" style="font-family:var(--mono);font-size:10px;color:var(--body3)"></span>
+          </div>
+        </div>
+        <div class="b3-grid" id="fii-grid">
+          <div class="b3-loading"><span class="spin"></span>&nbsp; Buscando FIIs…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="home-side-col">
+
+      <!-- Alertas -->
       <div class="home-side-card">
         <div class="home-side-head">🔴 Alertas <span id="home-alert-cnt" style="display:none;margin-left:6px;background:var(--red);color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;vertical-align:middle"></span></div>
-        <div id="home-alertas-body" style="padding:8px 0;max-height:220px;overflow-y:auto"><div style="text-align:center;padding:24px 16px;color:var(--body3);font-family:var(--sans);font-size:12px">✅ Nenhum alerta</div></div>
+        <div id="home-alertas-body" style="padding:8px 0;max-height:240px;overflow-y:auto">
+          <div style="text-align:center;padding:24px 16px;color:var(--body3);font-family:var(--sans);font-size:12px">✅ Nenhum alerta</div>
+        </div>
       </div>
+
+      <!-- Agente -->
       <div class="home-side-card">
         <div class="home-side-head">⚡ Agente</div>
         <div style="padding:14px 16px;font-family:var(--mono);font-size:11px;color:var(--body2);line-height:2">
           <div>Status <span id="home-mon-status" style="color:var(--red2)">● parado</span></div>
           <div>Último check <span id="home-last-check" class="priv" style="color:var(--head)">—</span></div>
-          <div style="margin-top:10px"><button class="btn btn-lime" style="width:100%;padding:8px" id="home-btn-mon">▶ Iniciar Monitoramento</button></div>
+          <div style="margin-top:10px">
+            <button class="btn btn-lime" style="width:100%;padding:8px" id="home-btn-mon">▶ Iniciar Monitoramento</button>
+          </div>
         </div>
       </div>
+
+      <!-- Próximos Dividendos -->
       <div class="home-side-card">
         <div class="home-side-head">📅 Próximos Dividendos</div>
-        <div id="home-dividendos-preview" style="padding:8px 0;max-height:200px;overflow-y:auto">
+        <div id="home-dividendos-preview" style="padding:8px 0;max-height:220px;overflow-y:auto">
           <div style="text-align:center;padding:20px 16px;color:var(--body3);font-family:var(--sans);font-size:12px">
-            Acesse a aba <strong>Dividendos</strong> para ver o calendário completo
+            Acesse <strong>Dividendos</strong> para ver o calendário
           </div>
         </div>
         <div style="padding:8px 16px;border-top:1px solid var(--wire)">
-          <button class="btn btn-wire" style="width:100%;padding:7px;font-size:11px"
-            onclick="setPage('dividendos')">Ver Calendário Completo →</button>
+          <button class="btn btn-wire" style="width:100%;padding:7px;font-size:11px" onclick="setPage('dividendos')">Ver Calendário →</button>
         </div>
       </div>
+
     </div>
   </div>
+
 </div></div><!-- /page-home -->
 
 
@@ -3027,6 +3163,7 @@ async function atualizarPortfolio() {
   document.getElementById("acoes-upd").textContent  = "atualizado " + timeStr(ST.ultimoCheck);
 
   _log(`Portfolio atualizado. P&L: ${pct(pnlPct)} | ${brl(pnlTotal)}`, "OK");
+  if (typeof renderHomeCarteiraCards !== "undefined" && $("home-cart-cards")) renderHomeCarteiraCards();
   setDot(rows.some(r => r.isAlert) ? "alert" : ST.monitorando ? "live" : "off");
 
   // Verificar alertas
@@ -4617,12 +4754,18 @@ function setPage(nome) {
 /* ═══════════════════════════════════════════════════════
    HOME PAGE
 ═══════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════
+   HOME PAGE — REDESIGN
+═══════════════════════════════════════════════════════ */
+
+/* ── Mercado strip ──────────────────────────────────── */
 async function fetchMercado() {
   const pares = [["%5EBVSP","ibov"], ["BRL%3DX","usd"]];
   for (const [sym, key] of pares) {
     try {
       const url = `${CFG.YF_BASE}/${sym}?interval=1d&range=1d`;
-      const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error("T")), 10000));
+      const timeout = new Promise((_,rej) => setTimeout(()=>rej(new Error("T")), 10000));
       const req = fetch(url).then(r => r.json()).then(d => {
         const meta = d?.chart?.result?.[0]?.meta;
         if (!meta) return;
@@ -4644,51 +4787,183 @@ async function fetchMercado() {
         }
       });
       await Promise.race([req, timeout]);
-    } catch(e) { /* silencioso */ }
+    } catch(e) {}
   }
 }
 
-function renderHomeFundos() {
-  const grid = $("home-fundos-grid");
+/* ── Portfolio cards (Minha Carteira) ───────────────── */
+function renderHomeCarteiraCards() {
+  // Header resumo
+  const aplAcoes = CARTEIRA.reduce((s,a) => s + a.valorAplicado, 0);
+  const aplFundos = FUNDOS.reduce((s,f) => s + f.valorAplicado, 0);
+  const atuAcoes  = CARTEIRA.reduce((s,a) => {
+    const p = ST.cotacoes[a.ticker]?.regularMarketPrice;
+    return s + (p ? p * a.cotas : a.valorAplicado);
+  }, 0);
+  const atuFundos = FUNDOS.reduce((s,f) => s + (f.valorAtual ?? f.valorAplicado), 0);
+  const totalApl  = aplAcoes + aplFundos;
+  const totalAtu  = atuAcoes + atuFundos;
+  const pnlTotal  = totalAtu - totalApl;
+  const pnlCor    = pnlTotal >= 0 ? "var(--lime)" : "var(--red2)";
+  const pnlS      = pnlTotal >= 0 ? "+" : "";
+
+  if ($("hcr-apl")) $("hcr-apl").textContent = brl(totalApl);
+  if ($("hcr-atu")) $("hcr-atu").textContent = brl(totalAtu);
+  if ($("hcr-pnl")) {
+    $("hcr-pnl").textContent = pnlS + brl(pnlTotal);
+    $("hcr-pnl").style.color = pnlCor;
+  }
+
+  const grid = $("home-cart-cards");
   if (!grid) return;
-  grid.innerHTML = FUNDOS.map(f => {
-    const atu  = f.valorAtual ?? f.valorAplicado;
-    const pnl  = atu - f.valorAplicado;
-    const pct  = f.valorAplicado ? (pnl / f.valorAplicado) * 100 : 0;
-    const cor  = pnl >= 0 ? "var(--lime)" : "var(--red2)";
-    const s    = pnl >= 0 ? "+" : "";
-    return `<div class="fundo-card-home">
-      <div class="fch-nome">${f.nome}</div>
-      <div class="fch-tipo">${f.tipo}</div>
-      <div class="fch-valor priv">${brl(atu)}</div>
-      <div class="fch-row"><span>Aplicado</span><span class="priv">${brl(f.valorAplicado)}</span></div>
-      <div class="fch-row"><span>Resultado</span><span class="priv" style="color:${cor}">${s}${brl(pnl)} (${s}${pct.toFixed(2)}%)</span></div>
+
+  if (!CARTEIRA.length && !FUNDOS.length) {
+    grid.innerHTML = `<div style="color:var(--body3);font-family:var(--sans);font-size:13px;padding:16px;grid-column:1/-1">
+      Nenhum ativo na carteira. Use <strong>Buscar Ativo</strong> para adicionar.
     </div>`;
-  }).join("") || '<div style="color:var(--body3);font-size:12px;padding:12px">Nenhum fundo</div>';
+    return;
+  }
+
+  // Ações cards
+  const acoesHTML = CARTEIRA.map(a => {
+    const cot     = ST.cotacoes[a.ticker] || {};
+    const preco   = cot.regularMarketPrice;
+    const varDia  = cot.regularMarketChangePercent;
+    const pm      = a.valorAplicado / a.cotas;
+    const valAtu  = preco != null ? preco * a.cotas : null;
+    const pnl     = valAtu != null ? valAtu - a.valorAplicado : null;
+    const varC    = preco != null ? ((preco - pm) / pm) * 100 : null;
+    const isAlert = varC != null && varC <= -CFG.ALERTA_PCT;
+    const isPosP  = varC != null && varC > 0;
+    const pnlPct  = a.valorAplicado > 0 ? ((valAtu ?? a.valorAplicado) - a.valorAplicado) / a.valorAplicado * 100 : 0;
+
+    // Color classes
+    const cardCls = isAlert ? "cart-card alert-card"
+                  : (isPosP ? "cart-card pos-card" : "cart-card neg-card");
+    const vdCls   = varDia == null ? "neu" : varDia >= 0 ? "pos" : "neg";
+    const vcCor   = varC  == null ? "var(--body3)" : varC  >= 0 ? "var(--lime)" : "var(--red2)";
+    const pnlCor2 = pnl   == null ? "var(--body3)" : pnl   >= 0 ? "var(--lime)" : "var(--red2)";
+
+    // P&L bar width (capped ±30% → 100%)
+    const barPct = Math.min(Math.abs(pnlPct) / 30 * 100, 100).toFixed(1);
+    const barClr = pnlPct >= 0 ? "var(--lime)" : "var(--red2)";
+
+    const vdStr  = varDia != null ? (varDia >= 0 ? "+" : "") + varDia.toFixed(2) + "%" : "—";
+    const vcStr  = varC   != null ? (varC   >= 0 ? "+" : "") + varC.toFixed(2) + "%" : "—";
+    const pnlStr = pnl    != null ? (pnl    >= 0 ? "+" : "") + brl(pnl) : "—";
+    const precoStr = preco != null ? "R$\u00a0" + preco.toFixed(2) : "cotação pendente";
+
+    return `<div class="${cardCls}" onclick="abrirAtivoDetalhe('${a.ticker}')">
+      <div class="cc-top">
+        <div>
+          <div class="cc-tkr">${a.ticker}</div>
+          <div class="cc-nome">${a.nome}</div>
+        </div>
+        ${isAlert ? '<div class="cc-alert-icon">⚠️</div>' : ''}
+      </div>
+      <div class="cc-price-row">
+        <div class="cc-preco priv">${precoStr}</div>
+        <div class="cc-var-dia ${vdCls}">${vdStr}</div>
+      </div>
+      <div class="cc-pnl-bar">
+        <div class="cc-pnl-fill" style="width:${barPct}%;background:${barClr}"></div>
+      </div>
+      <div class="cc-stats">
+        <div class="cc-stat">
+          <div class="cc-stat-lbl">Preço Médio</div>
+          <div class="cc-stat-val priv">R$\u00a0${pm.toFixed(2)}</div>
+        </div>
+        <div class="cc-stat">
+          <div class="cc-stat-lbl">Cotas</div>
+          <div class="cc-stat-val priv">${a.cotas}</div>
+        </div>
+        <div class="cc-stat">
+          <div class="cc-stat-lbl">Var. Compra</div>
+          <div class="cc-stat-val" style="color:${vcCor}">${vcStr}</div>
+        </div>
+        <div class="cc-stat">
+          <div class="cc-stat-lbl">P&amp;L</div>
+          <div class="cc-stat-val priv" style="color:${pnlCor2}">${pnlStr}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+
+  // Fundos cards
+  const fundosHTML = FUNDOS.map(f => {
+    const atu    = f.valorAtual ?? f.valorAplicado;
+    const pnl    = atu - f.valorAplicado;
+    const pnlPct2 = f.valorAplicado > 0 ? (pnl / f.valorAplicado) * 100 : 0;
+    const pnlCor3 = pnl >= 0 ? "var(--lime)" : "var(--red2)";
+    const s      = pnl >= 0 ? "+" : "";
+    const barPct2 = Math.min(Math.abs(pnlPct2) / 30 * 100, 100).toFixed(1);
+    const tipoClr = f.tipo === "Renda Fixa" ? "var(--cyan)"
+                  : f.tipo === "Multimercado" ? "var(--amber)"
+                  : f.tipo === "FII" ? "var(--lime)" : "var(--blue)";
+
+    return `<div class="cart-card ${pnl >= 0 ? 'pos-card' : 'neg-card'}" style="cursor:default">
+      <div class="cc-top">
+        <div>
+          <div class="cc-tkr" style="font-size:14px">${f.nome}</div>
+          <div class="cc-nome" style="color:${tipoClr}">${f.tipo}</div>
+        </div>
+        <div style="font-size:18px">💼</div>
+      </div>
+      <div class="cc-price-row">
+        <div class="cc-preco priv" style="font-size:16px">${brl(atu)}</div>
+      </div>
+      <div class="cc-pnl-bar">
+        <div class="cc-pnl-fill" style="width:${barPct2}%;background:${pnlCor3}"></div>
+      </div>
+      <div class="cc-stats">
+        <div class="cc-stat">
+          <div class="cc-stat-lbl">Aplicado</div>
+          <div class="cc-stat-val priv">${brl(f.valorAplicado)}</div>
+        </div>
+        <div class="cc-stat">
+          <div class="cc-stat-lbl">Resultado</div>
+          <div class="cc-stat-val priv" style="color:${pnlCor3}">${s}${brl(pnl)}</div>
+        </div>
+        <div class="cc-stat">
+          <div class="cc-stat-lbl">Rentabilidade</div>
+          <div class="cc-stat-val" style="color:${pnlCor3}">${s}${pnlPct2.toFixed(2)}%</div>
+        </div>
+        <div class="cc-stat">
+          <div class="cc-stat-lbl">Tipo</div>
+          <div class="cc-stat-val" style="color:${tipoClr}">${f.tipo}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+
+  grid.innerHTML = acoesHTML + fundosHTML;
   setTimeout(aplicarMascara, 0);
 }
 
+/* ── Alertas sidebar ───────────────────────────────── */
 function renderHomeAlertas() {
   const pend = ST.alertas.filter(a => a.status === "pendente");
-  $("home-alert-cnt").textContent    = pend.length;
-  $("home-alert-cnt").style.display  = pend.length > 0 ? "inline-block" : "none";
+  const cnt  = $("home-alert-cnt");
+  if (cnt) { cnt.textContent = pend.length; cnt.style.display = pend.length > 0 ? "inline-block" : "none"; }
   const body = $("home-alertas-body");
+  if (!body) return;
   if (!ST.alertas.length) {
     body.innerHTML = '<div style="text-align:center;padding:24px 16px;color:var(--body3);font-family:var(--sans);font-size:12px">✅ Nenhum alerta</div>';
     return;
   }
-  body.innerHTML = [...ST.alertas].reverse().slice(0,6).map(a => {
+  body.innerHTML = [...ST.alertas].reverse().slice(0, 8).map(a => {
     const isPend = a.status === "pendente";
-    const cor  = isPend ? "var(--red2)" : a.status === "confirmado" ? "var(--lime)" : "var(--body3)";
-    const icon = isPend ? "⚠" : a.status === "confirmado" ? "✅" : "❌";
+    const cor    = isPend ? "var(--red2)" : a.status === "confirmado" ? "var(--lime)" : "var(--body3)";
+    const icon   = isPend ? "⚠" : a.status === "confirmado" ? "✅" : "❌";
     return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid rgba(27,37,64,.5);font-size:11px">
       <span style="font-family:var(--sans);font-weight:700;color:${cor}">${icon} ${a.ticker}</span>
       <span style="font-family:var(--mono);color:var(--red2)">${a.quedaPct.toFixed(2)}%</span>
-      <span style="font-family:var(--mono);color:var(--body3)">${new Date(a.horario).toLocaleTimeString("pt-BR")}</span>
+      <span style="font-family:var(--mono);color:var(--body3);font-size:10px">${new Date(a.horario).toLocaleTimeString("pt-BR")}</span>
     </div>`;
   }).join("");
 }
 
+/* ── Status do agente ───────────────────────────────── */
 function syncHomeStatus() {
   const el  = $("home-mon-status");
   const btn = $("home-btn-mon");
@@ -4696,30 +4971,106 @@ function syncHomeStatus() {
   if (!el) return;
   if (ST.monitorando) {
     el.textContent = "● ativo"; el.style.color = "var(--lime)";
-    btn.textContent = "⏹ Parar Monitoramento"; btn.className = "btn btn-red";
+    if (btn) { btn.textContent = "⏹ Parar Monitoramento"; btn.className = "btn btn-red"; }
   } else {
     el.textContent = "● parado"; el.style.color = "var(--red2)";
-    btn.textContent = "▶ Iniciar Monitoramento"; btn.className = "btn btn-lime";
+    if (btn) { btn.textContent = "▶ Iniciar Monitoramento"; btn.className = "btn btn-lime"; }
   }
   if (lc) lc.textContent = ST.ultimoCheck ? new Date(ST.ultimoCheck).toLocaleTimeString("pt-BR") : "—";
   setTimeout(aplicarMascara, 0);
 }
 
-let _b3Loaded = false;
+/* ── renderHomePage orquestra tudo ──────────────────── */
+let _b3Loaded  = false;
 let _fiiLoaded = false;
+
 function renderHomePage() {
+  renderHomeCarteiraCards();
   renderHomeAlertas();
   syncHomeStatus();
   renderB3Grid();
   renderFIIGrid();
-  if (!_b3Loaded) { _b3Loaded = true; fetchB3Precos(); }
+  if (!_b3Loaded)  { _b3Loaded  = true; fetchB3Precos();  }
   if (!_fiiLoaded) { _fiiLoaded = true; fetchFIIPrecos(); }
+  if (DIV.dados.length > 0) renderHomeDividendosPreview();
 }
 
-document.getElementById("home-btn-mon").addEventListener("click", function() {
-  if (ST.monitorando) pararMonitoramento(); else iniciarMonitoramento();
-  syncHomeStatus();
-});
+/* ── B3 grid ─────────────────────────────────────────── */
+let _b3FetchInProgress = false;
+let _b3FiltroAtual     = "";
+
+async function fetchB3Precos() {
+  if (_b3FetchInProgress) return;
+  _b3FetchInProgress = true;
+  const upd = $("b3-upd");
+  if (upd) upd.textContent = "buscando…";
+  renderB3Grid();
+  const LOTE = 6;
+  for (let i = 0; i < B3_ACOES.length; i += LOTE) {
+    const lote = B3_ACOES.slice(i, i + LOTE);
+    await Promise.allSettled(lote.map(async a => {
+      try {
+        const url = `${CFG.YF_BASE}/${a.ticker}.SA?interval=1d&range=1d`;
+        const timeout = new Promise((_,rej) => setTimeout(()=>rej(new Error("T")), 12000));
+        const req = fetch(url).then(r => r.json()).then(d => {
+          const meta = d?.chart?.result?.[0]?.meta;
+          if (!meta) return;
+          const prev  = meta.chartPreviousClose ?? meta.regularMarketPrice;
+          const preco = meta.regularMarketPrice;
+          B3_CACHE[a.ticker] = { preco, varDia: prev ? ((preco-prev)/prev)*100 : 0 };
+        });
+        await Promise.race([req, timeout]);
+      } catch(e) {}
+    }));
+    renderB3Grid();
+  }
+  if (upd) upd.textContent = "atualizado " + new Date().toLocaleTimeString("pt-BR");
+  _b3FetchInProgress = false;
+}
+
+function renderB3Grid() {
+  const grid = $("b3-grid");
+  if (!grid) return;
+  const filtro = _b3FiltroAtual.toUpperCase();
+  const emCart = new Set(CARTEIRA.filter(a => a.cotas > 0).map(a => a.ticker));
+  const base   = B3_ACOES.filter(a => !emCart.has(a.ticker));
+  const lista  = filtro
+    ? base.filter(a => a.ticker.includes(filtro) || a.nome.toUpperCase().includes(filtro))
+    : base;
+  if (!lista.length) {
+    grid.innerHTML = `<div class="b3-loading">Nenhum ativo para "${filtro}"</div>`;
+    return;
+  }
+  grid.innerHTML = lista.map(a => {
+    const dados  = B3_CACHE[a.ticker];
+    const preco  = dados?.preco;
+    const varDia = dados?.varDia;
+    const posDay = varDia != null && varDia >= 0;
+    const cor    = varDia == null ? "var(--body3)" : posDay ? "var(--lime)" : "var(--red2)";
+    const sinal  = varDia != null ? (varDia >= 0 ? "+" : "") : "";
+    const cls    = ["b3-mini", varDia == null ? "" : posDay ? "pos-day" : "neg-day"].filter(Boolean).join(" ");
+    return `<div class="${cls}" onclick="abrirAtivoB3('${a.ticker}','${a.nome.replace(/'/g,"\\'")}')">
+      <span class="bm-ticker">${a.ticker}</span>
+      <span class="bm-nome">${a.nome}</span>
+      <span class="bm-preco">${preco != null ? "R$\u00a0"+preco.toFixed(2) : '<span style="color:var(--body3);font-size:10px">—</span>'}</span>
+      <span class="bm-var" style="color:${cor}">${varDia != null ? sinal+varDia.toFixed(2)+"% hoje" : ""}</span>
+    </div>`;
+  }).join("");
+  setTimeout(aplicarMascara, 0);
+}
+
+function filtrarB3(txt) { _b3FiltroAtual = txt; renderB3Grid(); }
+
+async function abrirAtivoB3(ticker, nome) {
+  const emCart = CARTEIRA.some(a => a.ticker === ticker);
+  if (emCart) { abrirAtivoDetalhe(ticker); }
+  else {
+    abrirOperar();
+    $("op-search-in").value = ticker;
+    await new Promise(r => setTimeout(r, 80));
+    buscarAtivo();
+  }
+}
 
 
 /* ═══════════════════════════════════════════════════════
@@ -4746,93 +5097,6 @@ const B3_ACOES = [
 
 // Cache: {ticker -> {preco, varDia, atualizado}}
 const B3_CACHE = {};
-let _b3FetchInProgress = false;
-let _b3FiltroAtual = "";
-
-/* ── Fetch em paralelo, lotes de 6 ─────────────────── */
-async function fetchB3Precos() {
-  if (_b3FetchInProgress) return;
-  _b3FetchInProgress = true;
-  $("b3-upd").textContent = "buscando…";
-  renderB3Grid(); // mostra loading
-
-  const LOTE = 6;
-  for (let i = 0; i < B3_ACOES.length; i += LOTE) {
-    const lote = B3_ACOES.slice(i, i + LOTE);
-    await Promise.allSettled(lote.map(async a => {
-      try {
-        const url = `${CFG.YF_BASE}/${a.ticker}.SA?interval=1d&range=1d`;
-        const timeout = new Promise((_,rej) => setTimeout(()=>rej(new Error("T")), 12000));
-        const req = fetch(url).then(r => r.json()).then(d => {
-          const meta = d?.chart?.result?.[0]?.meta;
-          if (!meta) return;
-          const prev  = meta.chartPreviousClose ?? meta.regularMarketPrice;
-          const preco = meta.regularMarketPrice;
-          B3_CACHE[a.ticker] = {
-            preco,
-            varDia: prev ? ((preco - prev) / prev) * 100 : 0,
-          };
-        });
-        await Promise.race([req, timeout]);
-      } catch(e) { /* ignora falhas individuais */ }
-    }));
-    renderB3Grid(); // atualiza progressivamente
-  }
-
-  const hora = new Date().toLocaleTimeString("pt-BR");
-  $("b3-upd").textContent = "atualizado " + hora;
-  _b3FetchInProgress = false;
-}
-
-/* ── Render do grid ─────────────────────────────────── */
-function renderB3Grid() {
-  const grid   = $("b3-grid");
-  const filtro = _b3FiltroAtual.toUpperCase();
-  const emCart = new Set(CARTEIRA.filter(a => a.cotas > 0).map(a => a.ticker));
-  const base   = B3_ACOES.filter(a => !emCart.has(a.ticker));
-  const lista  = filtro
-    ? base.filter(a => a.ticker.includes(filtro) || a.nome.toUpperCase().includes(filtro))
-    : base;
-
-  if (!lista.length) {
-    grid.innerHTML = `<div class="b3-loading">Nenhum ativo encontrado para "${filtro}"</div>`;
-    return;
-  }
-
-  grid.innerHTML = lista.map(a => {
-    const dados     = B3_CACHE[a.ticker];
-    const preco     = dados?.preco;
-    const varDia    = dados?.varDia;
-    const posDay    = varDia != null && varDia >= 0;
-    const cor       = varDia == null ? "var(--body3)" : posDay ? "var(--lime)" : "var(--red2)";
-    const sinal     = varDia != null ? (varDia >= 0 ? "+" : "") : "";
-    const cls       = [
-      "b3-mini",
-      varDia == null ? "" : posDay ? "pos-day" : "neg-day",
-    ].filter(Boolean).join(" ");
-
-    return `<div class="${cls}" onclick="abrirAtivoB3('${a.ticker}','${a.nome.replace(/'/g,"\\'")}')">
-      <span class="bm-ticker">${a.ticker}</span>
-      <span class="bm-nome">${a.nome}</span>
-      <span class="bm-preco">${preco != null ? "R$\u00a0" + preco.toFixed(2) : '<span style="color:var(--body3);font-size:10px">carregando…</span>'}</span>
-      <span class="bm-var" style="color:${cor}">${varDia != null ? sinal + varDia.toFixed(2) + "% hoje" : ""}</span>
-    </div>`;
-  }).join("");
-  setTimeout(aplicarMascara, 0);
-}
-
-/* ── Filtro ─────────────────────────────────────────── */
-function filtrarB3(txt) {
-  _b3FiltroAtual = txt;
-  renderB3Grid();
-}
-
-/* ── Ação: abrir painel de compra/venda ─────────────── */
-function abrirAtivoB3(ticker, nome) {
-  // Sempre abre o painel de detalhe com indicadores
-  abrirDetalheB3(ticker, nome);
-}
-
 
 /* ═══════════════════════════════════════════════════════
    DETALHE DE ATIVO — INDICADORES
