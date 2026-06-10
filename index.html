@@ -2163,6 +2163,187 @@ tbody tr:hover td:last-child::after {
   .div-table tbody td.hide-sm { display: none; }
 }
 
+
+/* ═══════════════════════════════════════════════════════
+   SEARCH BAR & RANKINGS
+═══════════════════════════════════════════════════════ */
+
+/* Search bar */
+.search-bar-wrap {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.search-bar-inner {
+  display: flex; align-items: center; gap: 0;
+  background: var(--ink2);
+  border: 1px solid var(--wire2);
+  border-radius: 8px; overflow: hidden;
+  transition: border-color .15s, box-shadow .15s;
+}
+.search-bar-inner:focus-within {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(79,172,254,.12);
+}
+.search-icon {
+  padding: 0 14px;
+  font-size: 16px; flex-shrink: 0;
+  color: var(--body3);
+}
+.search-bar-in {
+  flex: 1; background: transparent; border: none;
+  color: var(--head); font-family: var(--sans);
+  font-size: 16px; font-weight: 600; letter-spacing: .03em;
+  padding: 14px 0; outline: none;
+}
+.search-bar-in::placeholder { color: var(--body3); font-weight: 400; font-size: 14px; }
+.search-bar-btn {
+  background: var(--cyan); color: var(--ink);
+  font-family: var(--sans); font-size: 12px; font-weight: 800;
+  letter-spacing: .1em; text-transform: uppercase;
+  padding: 0 22px; height: 100%; border: none; cursor: pointer;
+  transition: background .15s; white-space: nowrap; flex-shrink: 0;
+  min-height: 50px;
+}
+.search-bar-btn:hover { background: #79d0f8; }
+.search-bar-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Quick hints */
+.search-hints {
+  display: flex; gap: 7px; flex-wrap: wrap;
+}
+.search-hint-chip {
+  font-family: var(--sans); font-size: 11px; font-weight: 700;
+  letter-spacing: .06em; padding: 5px 12px; border-radius: 20px;
+  background: var(--ink3); border: 1px solid var(--wire2);
+  color: var(--body2); cursor: pointer; transition: all .14s;
+}
+.search-hint-chip:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(79,172,254,.07); }
+
+/* Search result card */
+.search-result-card {
+  background: var(--ink2); border: 1px solid var(--wire);
+  border-radius: 8px; overflow: hidden;
+  animation: fadeIn .2s ease;
+}
+.src-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 16px 20px 12px; border-bottom: 1px solid var(--wire);
+  background: var(--ink3);
+}
+.src-left {}
+.src-ticker { font-family: var(--sans); font-size: 24px; font-weight: 800; letter-spacing: .04em; color: var(--head); }
+.src-nome   { font-family: var(--sans); font-size: 13px; color: var(--body2); margin-top: 3px; }
+.src-right  { text-align: right; }
+.src-preco  { font-family: var(--mono); font-size: 24px; font-weight: 700; color: var(--head); }
+.src-var    { font-family: var(--mono); font-size: 12px; margin-top: 4px; }
+.src-var.pos { color: var(--lime); }
+.src-var.neg { color: var(--red2); }
+.src-stats  {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 1px; background: var(--wire);
+}
+.src-stat   { background: var(--ink2); padding: 12px 16px; }
+.src-stat-lbl { font-family: var(--sans); font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--body3); margin-bottom: 4px; }
+.src-stat-val { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--head); }
+.src-actions { padding: 12px 20px; display: flex; gap: 8px; background: var(--ink2); }
+.src-err { padding: 20px; font-family: var(--mono); font-size: 12px; color: var(--red2); }
+.src-loading { display: flex; align-items: center; gap: 10px; padding: 20px; font-family: var(--mono); font-size: 11px; color: var(--body3); }
+
+/* Ranking tabs */
+.ranking-tabs {
+  display: flex; gap: 0;
+  border: 1px solid var(--wire2); border-radius: 6px; overflow: hidden;
+  flex-wrap: wrap;
+}
+.ranking-tab {
+  font-family: var(--sans); font-size: 11px; font-weight: 800;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: 9px 18px; border: none; background: transparent;
+  color: var(--body2); cursor: pointer; transition: all .14s;
+  border-right: 1px solid var(--wire2); white-space: nowrap;
+}
+.ranking-tab:last-child { border-right: none; }
+.ranking-tab:hover { background: rgba(255,255,255,.04); color: var(--head); }
+.ranking-tab.active { background: rgba(79,172,254,.1); color: var(--cyan); }
+
+/* Ranking table */
+.ranking-table-wrap {
+  background: var(--ink2); border: 1px solid var(--wire);
+  border-radius: 8px; overflow: hidden;
+}
+.ranking-loading {
+  display: flex; align-items: center; gap: 10px;
+  padding: 20px 18px; font-family: var(--mono); font-size: 11px; color: var(--body3);
+}
+.ranking-table {
+  width: 100%; border-collapse: collapse;
+}
+.ranking-table thead th {
+  font-family: var(--sans); font-size: 9px; font-weight: 800;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--body3);
+  padding: 10px 16px; border-bottom: 1px solid var(--wire);
+  background: rgba(27,37,64,.4); text-align: left; white-space: nowrap;
+}
+.ranking-table thead th.right { text-align: right; }
+.ranking-table tbody td {
+  padding: 13px 16px; border-bottom: 1px solid rgba(27,37,64,.6);
+  vertical-align: middle;
+}
+.ranking-table tbody tr:last-child td { border-bottom: none; }
+.ranking-table tbody tr { transition: background .1s; cursor: pointer; }
+.ranking-table tbody tr:hover td { background: rgba(79,172,254,.05); }
+
+/* Rank number */
+.rank-num {
+  font-family: var(--sans); font-size: 18px; font-weight: 800;
+  color: var(--wire2); min-width: 28px; display: inline-block;
+}
+.rank-num.gold   { color: #FFD700; }
+.rank-num.silver { color: #C0C0C0; }
+.rank-num.bronze { color: #CD7F32; }
+
+/* Ticker cell */
+.rank-ticker { font-family: var(--sans); font-size: 14px; font-weight: 800; letter-spacing: .04em; color: var(--head); display: block; }
+.rank-nome   { font-family: var(--sans); font-size: 11px; color: var(--body3); margin-top: 2px; display: block; }
+.rank-in-cart { font-family: var(--sans); font-size: 9px; font-weight: 800; letter-spacing: .08em;
+  padding: 1px 6px; border-radius: 2px; background: rgba(184,255,69,.12); color: var(--lime); margin-top: 3px; display: inline-block; }
+
+/* Value cells */
+.rank-val     { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--head); white-space: nowrap; }
+.rank-val.hl  { color: var(--lime); }
+.rank-sub     { font-family: var(--mono); font-size: 10px; color: var(--body3); margin-top: 2px; display: block; }
+
+/* Bar indicator */
+.rank-bar-wrap { display: flex; align-items: center; gap: 8px; }
+.rank-bar      { flex: 1; height: 4px; background: var(--wire); border-radius: 2px; overflow: hidden; min-width: 60px; }
+.rank-bar-fill { height: 100%; border-radius: 2px; background: var(--cyan); transition: width .5s ease; }
+.rank-bar-fill.gold-bar   { background: linear-gradient(90deg, var(--amber), var(--lime)); }
+.rank-bar-fill.blue-bar   { background: var(--cyan); }
+.rank-bar-fill.red-bar    { background: var(--red2); }
+
+/* Risk badge */
+.risk-badge {
+  font-family: var(--sans); font-size: 10px; font-weight: 800;
+  letter-spacing: .06em; padding: 3px 9px; border-radius: 3px;
+  display: inline-block; white-space: nowrap;
+}
+.risk-baixo  { background: rgba(184,255,69,.12); color: var(--lime); }
+.risk-medio  { background: rgba(255,204,0,.12);  color: var(--amber); }
+.risk-alto   { background: rgba(255,45,85,.12);  color: var(--red2); }
+
+/* Resgate badge */
+.resgate-badge {
+  font-family: var(--sans); font-size: 10px; font-weight: 800;
+  letter-spacing: .04em; padding: 3px 9px; border-radius: 3px;
+  display: inline-block; background: rgba(79,172,254,.1); color: var(--cyan);
+  white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+  .src-stats { grid-template-columns: repeat(2,1fr); }
+  .ranking-tab { padding: 8px 12px; font-size: 10px; }
+  .search-bar-in { font-size: 14px; }
+}
+
 </style>
 </head>
 <body>
@@ -2234,7 +2415,7 @@ tbody tr:hover td:last-child::after {
     <div class="mercado-cell neutral"><div class="mercado-label">CDI</div><div class="mercado-val">13,15%</div><div class="mercado-var" style="color:var(--body3)">a.a. · estimado</div></div>
   </div>
 
-  <!-- ── Minha Carteira (cards ricos) ── -->
+  <!-- ── Minha Carteira ── -->
   <div class="home-section-block">
     <div class="home-section-hdr">
       <div class="home-section-title">📈 Minha Carteira</div>
@@ -2254,40 +2435,86 @@ tbody tr:hover td:last-child::after {
     </div>
   </div>
 
-  <!-- ── Layout 2 colunas: Ações B3 + Sidebar ── -->
+  <!-- ── Layout 2 colunas: conteúdo principal + sidebar ── -->
   <div class="home-two-col">
 
-    <!-- Coluna principal: Ações B3 -->
+    <!-- Coluna principal -->
     <div class="home-main-col">
+
+      <!-- ── Barra de Pesquisa de Ativos ── -->
       <div class="home-section-block">
         <div class="home-section-hdr">
-          <div class="home-section-title">🏛 Ações da B3</div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <input class="b3-search-in" id="b3-search" placeholder="Filtrar…" oninput="filtrarB3(this.value)">
-            <button class="btn btn-wire" style="padding:5px 12px;font-size:10px" onclick="fetchB3Precos()">↻</button>
-            <span id="b3-upd" style="font-family:var(--mono);font-size:10px;color:var(--body3)"></span>
+          <div class="home-section-title">🔍 Pesquisar Ativo</div>
+        </div>
+        <div class="search-bar-wrap">
+          <div class="search-bar-inner">
+            <span class="search-icon">🔍</span>
+            <input
+              class="search-bar-in"
+              id="home-search-in"
+              placeholder="Digite o ticker ou nome do ativo (ex: PETR4, VALE3, MXRF11…)"
+              maxlength="12"
+              oninput="this.value=this.value.toUpperCase();homeSearchInput(this.value)"
+              onkeydown="if(event.key==='Enter') homeSearchBuscar()"
+            >
+            <button class="search-bar-btn" id="home-search-btn" onclick="homeSearchBuscar()">Buscar</button>
+          </div>
+          <div class="search-hints">
+            <span class="search-hint-chip" onclick="homeSearchDireto('PETR4')">PETR4</span>
+            <span class="search-hint-chip" onclick="homeSearchDireto('VALE3')">VALE3</span>
+            <span class="search-hint-chip" onclick="homeSearchDireto('ITUB4')">ITUB4</span>
+            <span class="search-hint-chip" onclick="homeSearchDireto('MXRF11')">MXRF11</span>
+            <span class="search-hint-chip" onclick="homeSearchDireto('BBAS3')">BBAS3</span>
+            <span class="search-hint-chip" onclick="homeSearchDireto('HGLG11')">HGLG11</span>
           </div>
         </div>
-        <div class="b3-grid" id="b3-grid">
-          <div class="b3-loading"><span class="spin"></span>&nbsp; Buscando cotações…</div>
+        <!-- Resultado da busca -->
+        <div id="home-search-result" style="display:none"></div>
+      </div>
+
+      <!-- ── Rankings de Ações ── -->
+      <div class="home-section-block">
+        <div class="home-section-hdr">
+          <div class="home-section-title">🏆 Ranking de Ações B3</div>
+        </div>
+
+        <!-- Tabs dos rankings -->
+        <div class="ranking-tabs" id="ranking-tabs-acoes">
+          <button class="ranking-tab active" data-tab="dividendos" onclick="setRankingTab('acoes','dividendos')">💰 Maiores Dividendos</button>
+          <button class="ranking-tab" data-tab="mktcap" onclick="setRankingTab('acoes','mktcap')">📊 Maior Valor de Mercado</button>
+          <button class="ranking-tab" data-tab="receita" onclick="setRankingTab('acoes','receita')">📈 Maior Receita</button>
+        </div>
+
+        <!-- Tabela de ranking ações -->
+        <div class="ranking-table-wrap">
+          <div id="ranking-acoes-body">
+            <div class="ranking-loading"><span class="spin"></span> Carregando ranking…</div>
+          </div>
         </div>
       </div>
 
-      <!-- FIIs abaixo das ações -->
+      <!-- ── Rankings de Fundos ── -->
       <div class="home-section-block">
         <div class="home-section-hdr">
-          <div class="home-section-title">🏢 Fundos Imobiliários (FIIs)</div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <input class="b3-search-in" id="fii-search" placeholder="Filtrar…" oninput="filtrarFII(this.value)">
-            <button class="btn btn-wire" style="padding:5px 12px;font-size:10px" onclick="fetchFIIPrecos()">↻</button>
-            <span id="fii-upd" style="font-family:var(--mono);font-size:10px;color:var(--body3)"></span>
+          <div class="home-section-title">🏢 Ranking de Fundos Imobiliários (FIIs)</div>
+        </div>
+
+        <!-- Tabs dos rankings FII -->
+        <div class="ranking-tabs" id="ranking-tabs-fiis">
+          <button class="ranking-tab active" data-tab="dividendos" onclick="setRankingTab('fiis','dividendos')">💰 Maior Dividend Yield</button>
+          <button class="ranking-tab" data-tab="resgate" onclick="setRankingTab('fiis','resgate')">⏱ Prazo de Resgate</button>
+          <button class="ranking-tab" data-tab="risco" onclick="setRankingTab('fiis','risco')">⚠ Grau de Risco</button>
+        </div>
+
+        <!-- Tabela de ranking FIIs -->
+        <div class="ranking-table-wrap">
+          <div id="ranking-fiis-body">
+            <div class="ranking-loading"><span class="spin"></span> Carregando ranking…</div>
           </div>
         </div>
-        <div class="b3-grid" id="fii-grid">
-          <div class="b3-loading"><span class="spin"></span>&nbsp; Buscando FIIs…</div>
-        </div>
       </div>
-    </div>
+
+    </div><!-- /home-main-col -->
 
     <!-- Sidebar -->
     <div class="home-side-col">
@@ -2325,10 +2552,11 @@ tbody tr:hover td:last-child::after {
         </div>
       </div>
 
-    </div>
-  </div>
+    </div><!-- /home-side-col -->
+  </div><!-- /home-two-col -->
 
 </div></div><!-- /page-home -->
+
 
 
 <!-- ═══════ DIVIDENDOS PAGE ═══════ -->
@@ -3164,6 +3392,7 @@ async function atualizarPortfolio() {
 
   _log(`Portfolio atualizado. P&L: ${pct(pnlPct)} | ${brl(pnlTotal)}`, "OK");
   if (typeof renderHomeCarteiraCards !== "undefined" && $("home-cart-cards")) renderHomeCarteiraCards();
+  if (typeof renderRankingAcoes !== "undefined") { renderRankingAcoes(); renderRankingFiis(); }
   setDot(rows.some(r => r.isAlert) ? "alert" : ST.monitorando ? "live" : "off");
 
   // Verificar alertas
@@ -4980,97 +5209,18 @@ function syncHomeStatus() {
   setTimeout(aplicarMascara, 0);
 }
 
-/* ── renderHomePage orquestra tudo ──────────────────── */
-let _b3Loaded  = false;
-let _fiiLoaded = false;
-
 function renderHomePage() {
   renderHomeCarteiraCards();
   renderHomeAlertas();
   syncHomeStatus();
-  renderB3Grid();
-  renderFIIGrid();
-  if (!_b3Loaded)  { _b3Loaded  = true; fetchB3Precos();  }
-  if (!_fiiLoaded) { _fiiLoaded = true; fetchFIIPrecos(); }
-  if (DIV.dados.length > 0) renderHomeDividendosPreview();
+  renderRankingAcoes();
+  renderRankingFiis();
+  if (typeof DIV !== "undefined" && DIV.dados.length > 0) renderHomeDividendosPreview();
+  fetchRankingCotacoes();
 }
 
-/* ── B3 grid ─────────────────────────────────────────── */
-let _b3FetchInProgress = false;
-let _b3FiltroAtual     = "";
 
-async function fetchB3Precos() {
-  if (_b3FetchInProgress) return;
-  _b3FetchInProgress = true;
-  const upd = $("b3-upd");
-  if (upd) upd.textContent = "buscando…";
-  renderB3Grid();
-  const LOTE = 6;
-  for (let i = 0; i < B3_ACOES.length; i += LOTE) {
-    const lote = B3_ACOES.slice(i, i + LOTE);
-    await Promise.allSettled(lote.map(async a => {
-      try {
-        const url = `${CFG.YF_BASE}/${a.ticker}.SA?interval=1d&range=1d`;
-        const timeout = new Promise((_,rej) => setTimeout(()=>rej(new Error("T")), 12000));
-        const req = fetch(url).then(r => r.json()).then(d => {
-          const meta = d?.chart?.result?.[0]?.meta;
-          if (!meta) return;
-          const prev  = meta.chartPreviousClose ?? meta.regularMarketPrice;
-          const preco = meta.regularMarketPrice;
-          B3_CACHE[a.ticker] = { preco, varDia: prev ? ((preco-prev)/prev)*100 : 0 };
-        });
-        await Promise.race([req, timeout]);
-      } catch(e) {}
-    }));
-    renderB3Grid();
-  }
-  if (upd) upd.textContent = "atualizado " + new Date().toLocaleTimeString("pt-BR");
-  _b3FetchInProgress = false;
-}
 
-function renderB3Grid() {
-  const grid = $("b3-grid");
-  if (!grid) return;
-  const filtro = _b3FiltroAtual.toUpperCase();
-  const emCart = new Set(CARTEIRA.filter(a => a.cotas > 0).map(a => a.ticker));
-  const base   = B3_ACOES.filter(a => !emCart.has(a.ticker));
-  const lista  = filtro
-    ? base.filter(a => a.ticker.includes(filtro) || a.nome.toUpperCase().includes(filtro))
-    : base;
-  if (!lista.length) {
-    grid.innerHTML = `<div class="b3-loading">Nenhum ativo para "${filtro}"</div>`;
-    return;
-  }
-  grid.innerHTML = lista.map(a => {
-    const dados  = B3_CACHE[a.ticker];
-    const preco  = dados?.preco;
-    const varDia = dados?.varDia;
-    const posDay = varDia != null && varDia >= 0;
-    const cor    = varDia == null ? "var(--body3)" : posDay ? "var(--lime)" : "var(--red2)";
-    const sinal  = varDia != null ? (varDia >= 0 ? "+" : "") : "";
-    const cls    = ["b3-mini", varDia == null ? "" : posDay ? "pos-day" : "neg-day"].filter(Boolean).join(" ");
-    return `<div class="${cls}" onclick="abrirAtivoB3('${a.ticker}','${a.nome.replace(/'/g,"\\'")}')">
-      <span class="bm-ticker">${a.ticker}</span>
-      <span class="bm-nome">${a.nome}</span>
-      <span class="bm-preco">${preco != null ? "R$\u00a0"+preco.toFixed(2) : '<span style="color:var(--body3);font-size:10px">—</span>'}</span>
-      <span class="bm-var" style="color:${cor}">${varDia != null ? sinal+varDia.toFixed(2)+"% hoje" : ""}</span>
-    </div>`;
-  }).join("");
-  setTimeout(aplicarMascara, 0);
-}
-
-function filtrarB3(txt) { _b3FiltroAtual = txt; renderB3Grid(); }
-
-async function abrirAtivoB3(ticker, nome) {
-  const emCart = CARTEIRA.some(a => a.ticker === ticker);
-  if (emCart) { abrirAtivoDetalhe(ticker); }
-  else {
-    abrirOperar();
-    $("op-search-in").value = ticker;
-    await new Promise(r => setTimeout(r, 80));
-    buscarAtivo();
-  }
-}
 
 
 /* ═══════════════════════════════════════════════════════
@@ -5434,7 +5584,7 @@ let _fiiFiltroAtual = "";
 async function fetchFIIPrecos() {
   if (_fiiFetchInProgress) return;
   _fiiFetchInProgress = true;
-  $("fii-upd").textContent = "buscando…";
+  $("fii-upd")?.textContent = "buscando…";
   renderFIIGrid();
 
   const LOTE = 6;
@@ -5460,12 +5610,13 @@ async function fetchFIIPrecos() {
     renderFIIGrid();
   }
 
-  $("fii-upd").textContent = "atualizado " + new Date().toLocaleTimeString("pt-BR");
+  $("fii-upd")?.textContent = "atualizado " + new Date().toLocaleTimeString("pt-BR");
   _fiiFetchInProgress = false;
 }
 
 function renderFIIGrid() {
   const grid   = $("fii-grid");
+  if (!grid) return;
   const filtro = _fiiFiltroAtual.toUpperCase();
   const emCart = new Set(FUNDOS.map(f => f.nome.toUpperCase().trim()));
 
@@ -5487,7 +5638,7 @@ function renderFIIGrid() {
     const sinal  = varDia != null ? (varDia >= 0 ? "+" : "") : "";
     const cls    = ["b3-mini", varDia == null ? "" : posDay ? "pos-day" : "neg-day"].filter(Boolean).join(" ");
 
-    return `<div class="${cls}" onclick="abrirDetalheB3('${a.ticker}','${a.nome.replace(/'/g,"\\'")}')">
+    return `<div class="${cls}" onclick="abrirDetalheB3('${a.ticker}','${a.nome.replace(/[^A-Za-zÀ-ÿ0-9 .()-]/g,'')}')">
       <span class="bm-ticker">${a.ticker}</span>
       <span class="bm-nome">${a.nome}</span>
       <span class="bm-preco">${preco != null ? "R$\u00a0" + preco.toFixed(2) : '<span style="color:var(--body3);font-size:10px">carregando\u2026</span>'}</span>
@@ -5534,8 +5685,428 @@ function renderHomeDividendosPreview() {
 ═══════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════
-   CALENDÁRIO DE DIVIDENDOS — DADOS REAIS DO INVESTIDOR10
+   PESQUISA DE ATIVOS — HOME
 ═══════════════════════════════════════════════════════ */
+
+let _homeSearchTimer = null;
+
+function homeSearchInput(val) {
+  clearTimeout(_homeSearchTimer);
+  if (!val.trim()) {
+    const res = $('home-search-result');
+    if (res) res.style.display = 'none';
+    return;
+  }
+  _homeSearchTimer = setTimeout(() => homeSearchBuscar(), 600);
+}
+
+function homeSearchDireto(ticker) {
+  const inp = $('home-search-in');
+  if (inp) inp.value = ticker;
+  homeSearchBuscar();
+}
+
+async function homeSearchBuscar() {
+  const raw    = ($('home-search-in')?.value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+  const res    = $('home-search-result');
+  const btn    = $('home-search-btn');
+  if (!raw || !res) return;
+
+  res.style.display = 'block';
+  res.innerHTML = `<div class="search-result-card"><div class="src-loading"><div class="div-spin"></div> Buscando ${raw}…</div></div>`;
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+
+  try {
+    const symbol = raw.includes('.') ? raw : raw + '.SA';
+    const url    = `${CFG.YF_BASE}/${symbol}?interval=1d&range=1d`;
+    const timeout = new Promise((_,rej) => setTimeout(()=>rej(new Error('Timeout')), 12000));
+    const req     = fetch(url).then(r => { if(!r.ok) throw new Error('not_found'); return r.json(); });
+    const data    = await Promise.race([req, timeout]);
+
+    const meta = data?.chart?.result?.[0]?.meta;
+    if (!meta || !meta.regularMarketPrice) throw new Error('not_found');
+
+    const preco   = meta.regularMarketPrice;
+    const prev    = meta.chartPreviousClose ?? meta.previousClose ?? preco;
+    const varPct  = prev ? ((preco - prev) / prev) * 100 : 0;
+    const nome    = meta.shortName || meta.longName || raw;
+    const varCls  = varPct >= 0 ? 'pos' : 'neg';
+    const varStr  = (varPct >= 0 ? '+' : '') + varPct.toFixed(2) + '%';
+
+    // Extra info from meta
+    const high52  = meta.fiftyTwoWeekHigh;
+    const low52   = meta.fiftyTwoWeekLow;
+    const mktCap  = meta.marketCap;
+    const volume  = meta.regularMarketVolume;
+
+    const fmtMktCap = mktCap
+      ? mktCap >= 1e12 ? 'R$\u00a0' + (mktCap/1e12).toFixed(2) + 'T'
+      : mktCap >= 1e9  ? 'R$\u00a0' + (mktCap/1e9).toFixed(1)  + 'B'
+      : 'R$\u00a0' + (mktCap/1e6).toFixed(0) + 'M'
+      : '—';
+    const fmtVol = volume
+      ? volume >= 1e6 ? (volume/1e6).toFixed(1) + 'M' : (volume/1e3).toFixed(0) + 'K'
+      : '—';
+
+    const emCart = CARTEIRA.some(a => a.ticker === raw);
+    const cartBadge = emCart ? `<span class="rank-in-cart">💼 Em carteira</span>` : '';
+
+    res.innerHTML = `<div class="search-result-card">
+      <div class="src-head">
+        <div class="src-left">
+          <div class="src-ticker">${raw}</div>
+          <div class="src-nome">${nome}</div>
+          ${cartBadge}
+        </div>
+        <div class="src-right">
+          <div class="src-preco">R$\u00a0${preco.toFixed(2)}</div>
+          <div class="src-var ${varCls}">${varStr} hoje</div>
+        </div>
+      </div>
+      <div class="src-stats">
+        <div class="src-stat">
+          <div class="src-stat-lbl">Mín. 52 sem.</div>
+          <div class="src-stat-val">${low52 ? 'R$\u00a0' + low52.toFixed(2) : '—'}</div>
+        </div>
+        <div class="src-stat">
+          <div class="src-stat-lbl">Máx. 52 sem.</div>
+          <div class="src-stat-val">${high52 ? 'R$\u00a0' + high52.toFixed(2) : '—'}</div>
+        </div>
+        <div class="src-stat">
+          <div class="src-stat-lbl">Vol. hoje</div>
+          <div class="src-stat-val">${fmtVol}</div>
+        </div>
+        <div class="src-stat">
+          <div class="src-stat-lbl">Valor de Mercado</div>
+          <div class="src-stat-val">${fmtMktCap}</div>
+        </div>
+      </div>
+      <div class="src-actions">
+        <button class="btn btn-lime" style="padding:8px 20px;font-size:11px"
+          onclick="abrirAtivoB3('${raw}','${nome.replace(/[^A-Za-z0-9 ]/g,'').trim()}')">
+          ${emCart ? '📊 Ver Detalhe' : '📥 Comprar'}
+        </button>
+        <button class="btn btn-wire" style="padding:8px 16px;font-size:11px"
+          onclick="homeSearchFechar()">✕ Fechar</button>
+      </div>
+    </div>`;
+
+    _log(`Busca: ${raw} = R$\u00a0${preco.toFixed(2)} (${varStr})`, 'OK');
+  } catch(e) {
+    res.innerHTML = `<div class="search-result-card">
+      <div class="src-err">❌ Ativo "${raw}" não encontrado. Verifique o ticker e tente novamente.</div>
+    </div>`;
+    _log(`Busca: ${raw} não encontrado`, 'AVISO');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Buscar'; }
+  }
+}
+
+function homeSearchFechar() {
+  const res = $('home-search-result');
+  if (res) { res.style.display = 'none'; res.innerHTML = ''; }
+  const inp = $('home-search-in');
+  if (inp) inp.value = '';
+}
+
+/* ═══════════════════════════════════════════════════════
+   RANKINGS
+═══════════════════════════════════════════════════════ */
+
+// State
+let _rankingAcoesTab = 'dividendos';
+let _rankingFiisTab  = 'dividendos';
+
+/* ── Dados curados dos rankings ─────────────────────── */
+
+// Top 10 ações por dividendos (DY médio histórico)
+const RANK_DIVIDENDOS = [
+  {ticker:'TAEE4', nome:'Taesa',              dy:12.8,  payout:'95%',  tipo:'Energia'},
+  {ticker:'CXSE3', nome:'Caixa Seguridade',   dy:11.4,  payout:'90%',  tipo:'Seguros'},
+  {ticker:'BBAS3', nome:'Banco do Brasil',    dy:10.2,  payout:'40%',  tipo:'Bancos'},
+  {ticker:'EGIE3', nome:'Engie Brasil',       dy:9.8,   payout:'100%', tipo:'Energia'},
+  {ticker:'ITUB4', nome:'Itaú Unibanco',      dy:8.5,   payout:'55%',  tipo:'Bancos'},
+  {ticker:'BBDC4', nome:'Bradesco PN',        dy:8.1,   payout:'50%',  tipo:'Bancos'},
+  {ticker:'PETR4', nome:'Petrobras PN',       dy:7.9,   payout:'45%',  tipo:'Petróleo'},
+  {ticker:'VALE3', nome:'Vale',               dy:7.4,   payout:'35%',  tipo:'Mineração'},
+  {ticker:'GGBR4', nome:'Gerdau PN',          dy:6.8,   payout:'30%',  tipo:'Siderurgia'},
+  {ticker:'ABEV3', nome:'Ambev',              dy:6.2,   payout:'80%',  tipo:'Bebidas'},
+];
+
+// Top 10 ações por valor de mercado (Market Cap)
+const RANK_MKTCAP = [
+  {ticker:'VALE3', nome:'Vale',               cap:'R$ 260B', capNum:260},
+  {ticker:'PETR4', nome:'Petrobras PN',       cap:'R$ 490B', capNum:490},
+  {ticker:'ITUB4', nome:'Itaú Unibanco',      cap:'R$ 310B', capNum:310},
+  {ticker:'BBDC4', nome:'Bradesco PN',        cap:'R$ 155B', capNum:155},
+  {ticker:'ABEV3', nome:'Ambev',              cap:'R$ 200B', capNum:200},
+  {ticker:'WEGE3', nome:'WEG',                cap:'R$ 150B', capNum:150},
+  {ticker:'BBAS3', nome:'Banco do Brasil',    cap:'R$ 145B', capNum:145},
+  {ticker:'RDOR3', nome:"Rede D'Or",          cap:'R$ 90B',  capNum:90},
+  {ticker:'SUZB3', nome:'Suzano',             cap:'R$ 85B',  capNum:85},
+  {ticker:'JBSS3', nome:'JBS',                cap:'R$ 80B',  capNum:80},
+];
+
+// Top 10 por receita (Receita Líquida Anual)
+const RANK_RECEITA = [
+  {ticker:'PETR4', nome:'Petrobras PN',       rec:'R$ 518B', recNum:518},
+  {ticker:'VALE3', nome:'Vale',               rec:'R$ 220B', recNum:220},
+  {ticker:'JBSS3', nome:'JBS',                rec:'R$ 430B', recNum:430},
+  {ticker:'ITUB4', nome:'Itaú Unibanco',      rec:'R$ 180B', recNum:180},
+  {ticker:'BBDC4', nome:'Bradesco PN',        rec:'R$ 160B', recNum:160},
+  {ticker:'ABEV3', nome:'Ambev',              rec:'R$ 90B',  recNum:90},
+  {ticker:'BBAS3', nome:'Banco do Brasil',    rec:'R$ 200B', recNum:200},
+  {ticker:'VBBR3', nome:'Vibra Energia',      rec:'R$ 130B', recNum:130},
+  {ticker:'CSAN3', nome:'Cosan',              rec:'R$ 110B', recNum:110},
+  {ticker:'SUZB3', nome:'Suzano',             rec:'R$ 40B',  recNum:40},
+];
+
+// FIIs por Dividend Yield
+const RANK_FII_DY = [
+  {ticker:'MXRF11', nome:'Maxi Renda',         dy:13.1, tipo:'Papel',    segmento:'CRI/CRA'},
+  {ticker:'IRDM11', nome:'Iridium Recebíveis', dy:12.8, tipo:'Papel',    segmento:'CRI'},
+  {ticker:'KNCR11', nome:'Kinea Recebíveis',   dy:12.5, tipo:'Papel',    segmento:'CRI'},
+  {ticker:'HGLG11', nome:'CSHG Logística',     dy:11.2, tipo:'Tijolo',   segmento:'Logística'},
+  {ticker:'BTLG11', nome:'BTG Logística',      dy:10.9, tipo:'Tijolo',   segmento:'Logística'},
+  {ticker:'VISC11', nome:'Vinci Shopping',     dy:10.4, tipo:'Tijolo',   segmento:'Shopping'},
+  {ticker:'XPML11', nome:'XP Malls',           dy:10.2, tipo:'Tijolo',   segmento:'Shopping'},
+  {ticker:'KNRI11', nome:'Kinea Renda Imob.',  dy:9.8,  tipo:'Híbrido',  segmento:'Híbrido'},
+  {ticker:'XPLG11', nome:'XP Log',             dy:9.5,  tipo:'Tijolo',   segmento:'Logística'},
+  {ticker:'BCFF11', nome:'BTG Fdo. de Fundos', dy:9.1,  tipo:'FOF',      segmento:'Multisegmento'},
+];
+
+// FIIs por prazo de resgate
+const RANK_FII_RESGATE = [
+  {ticker:'MXRF11', nome:'Maxi Renda',         prazo:'D+0',  tipo:'Aberto',  liquidez:'Alta'},
+  {ticker:'KNRI11', nome:'Kinea Renda Imob.',  prazo:'D+0',  tipo:'Aberto',  liquidez:'Alta'},
+  {ticker:'HGLG11', nome:'CSHG Logística',     prazo:'D+0',  tipo:'Aberto',  liquidez:'Alta'},
+  {ticker:'XPLG11', nome:'XP Log',             prazo:'D+0',  tipo:'Aberto',  liquidez:'Alta'},
+  {ticker:'VISC11', nome:'Vinci Shopping',     prazo:'D+0',  tipo:'Aberto',  liquidez:'Alta'},
+  {ticker:'XPML11', nome:'XP Malls',           prazo:'D+0',  tipo:'Aberto',  liquidez:'Alta'},
+  {ticker:'BTLG11', nome:'BTG Logística',      prazo:'D+0',  tipo:'Aberto',  liquidez:'Alta'},
+  {ticker:'BCFF11', nome:'BTG Fdo. de Fundos', prazo:'D+0',  tipo:'Aberto',  liquidez:'Média'},
+  {ticker:'IRDM11', nome:'Iridium Recebíveis', prazo:'D+0',  tipo:'Aberto',  liquidez:'Média'},
+  {ticker:'KNCR11', nome:'Kinea Recebíveis',   prazo:'D+0',  tipo:'Aberto',  liquidez:'Média'},
+];
+
+// FIIs por grau de risco
+const RANK_FII_RISCO = [
+  {ticker:'KNCR11', nome:'Kinea Recebíveis',   risco:'Baixo',  nota:'AAA', motivo:'CRI grau investimento'},
+  {ticker:'KNRI11', nome:'Kinea Renda Imob.',  risco:'Baixo',  nota:'AA+', motivo:'Portfólio diversificado'},
+  {ticker:'HGLG11', nome:'CSHG Logística',     risco:'Baixo',  nota:'AA',  motivo:'Contratos longos'},
+  {ticker:'BTLG11', nome:'BTG Logística',      risco:'Baixo',  nota:'AA',  motivo:'Gestão institucional'},
+  {ticker:'XPLG11', nome:'XP Log',             risco:'Médio',  nota:'A+',  motivo:'Concentração locatária'},
+  {ticker:'VISC11', nome:'Vinci Shopping',     risco:'Médio',  nota:'A',   motivo:'Risco varejo'},
+  {ticker:'XPML11', nome:'XP Malls',           risco:'Médio',  nota:'A',   motivo:'Risco varejo'},
+  {ticker:'BCFF11', nome:'BTG Fdo. de Fundos', risco:'Médio',  nota:'A-',  motivo:'FOF — risco indireto'},
+  {ticker:'MXRF11', nome:'Maxi Renda',         risco:'Médio',  nota:'B+',  motivo:'CRI misto'},
+  {ticker:'IRDM11', nome:'Iridium Recebíveis', risco:'Médio',  nota:'B+',  motivo:'CRI high yield'},
+];
+
+/* ── Render rankings ────────────────────────────────── */
+
+function setRankingTab(secao, tab) {
+  if (secao === 'acoes') {
+    _rankingAcoesTab = tab;
+    document.querySelectorAll('#ranking-tabs-acoes .ranking-tab').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === tab);
+    });
+    renderRankingAcoes();
+  } else {
+    _rankingFiisTab = tab;
+    document.querySelectorAll('#ranking-tabs-fiis .ranking-tab').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === tab);
+    });
+    renderRankingFiis();
+  }
+}
+
+function rankNumCls(i) {
+  return i === 0 ? 'rank-num gold' : i === 1 ? 'rank-num silver' : i === 2 ? 'rank-num bronze' : 'rank-num';
+}
+
+function renderRankingAcoes() {
+  const el = $('ranking-acoes-body');
+  if (!el) return;
+
+  const cartSet = new Set(CARTEIRA.map(a => a.ticker));
+  const tab     = _rankingAcoesTab;
+
+  let rows, colHdr, colVal;
+
+  if (tab === 'dividendos') {
+    rows   = RANK_DIVIDENDOS;
+    colHdr = 'Dividend Yield';
+    colVal = r => {
+      const maxDY = Math.max(...RANK_DIVIDENDOS.map(x => x.dy));
+      const bar   = (r.dy / maxDY * 100).toFixed(1);
+      return `<div class="rank-bar-wrap">
+        <span class="rank-val hl">${r.dy.toFixed(1)}%</span>
+        <div class="rank-bar"><div class="rank-bar-fill gold-bar" style="width:${bar}%"></div></div>
+      </div>
+      <span class="rank-sub">Payout: ${r.payout} · ${r.tipo}</span>`;
+    };
+  } else if (tab === 'mktcap') {
+    rows = [...RANK_MKTCAP].sort((a,b) => b.capNum - a.capNum);
+    colHdr = 'Valor de Mercado';
+    colVal = r => {
+      const maxC = Math.max(...RANK_MKTCAP.map(x => x.capNum));
+      const bar  = (r.capNum / maxC * 100).toFixed(1);
+      return `<div class="rank-bar-wrap">
+        <span class="rank-val">${r.cap}</span>
+        <div class="rank-bar"><div class="rank-bar-fill blue-bar" style="width:${bar}%"></div></div>
+      </div>`;
+    };
+  } else {
+    rows = [...RANK_RECEITA].sort((a,b) => b.recNum - a.recNum);
+    colHdr = 'Receita Líquida Anual';
+    colVal = r => {
+      const maxR = Math.max(...RANK_RECEITA.map(x => x.recNum));
+      const bar  = (r.recNum / maxR * 100).toFixed(1);
+      return `<div class="rank-bar-wrap">
+        <span class="rank-val">${r.rec}</span>
+        <div class="rank-bar"><div class="rank-bar-fill blue-bar" style="width:${bar}%"></div></div>
+      </div>`;
+    };
+  }
+
+  el.innerHTML = `<table class="ranking-table">
+    <thead><tr>
+      <th style="width:36px">#</th>
+      <th>Empresa</th>
+      <th>${colHdr}</th>
+      <th style="width:80px;text-align:center">Cotação</th>
+    </tr></thead>
+    <tbody>
+      ${rows.map((r, i) => {
+        const cot     = ST.cotacoes[r.ticker] || {};
+        const preco   = cot.regularMarketPrice;
+        const varDia  = cot.regularMarketChangePercent;
+        const varCor  = varDia == null ? 'var(--body3)' : varDia >= 0 ? 'var(--lime)' : 'var(--red2)';
+        const varStr  = varDia != null ? (varDia >= 0 ? '+' : '') + varDia.toFixed(2) + '%' : '—';
+        const inCart  = cartSet.has(r.ticker);
+        return `<tr onclick="abrirAtivoB3('${r.ticker}','${r.nome.replace(/[^A-Za-zÀ-ÿ0-9 .]/g,'')}')">
+          <td><span class="${rankNumCls(i)}">${i+1}</span></td>
+          <td>
+            <span class="rank-ticker">${r.ticker}</span>
+            <span class="rank-nome">${r.nome}</span>
+            ${inCart ? '<span class="rank-in-cart">💼 Na carteira</span>' : ''}
+          </td>
+          <td>${colVal(r)}</td>
+          <td style="text-align:right">
+            <span class="rank-val" style="font-size:12px">${preco ? 'R$\u00a0'+preco.toFixed(2) : '—'}</span>
+            <span class="rank-sub" style="color:${varCor}">${varStr}</span>
+          </td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+  </table>`;
+}
+
+function renderRankingFiis() {
+  const el  = $('ranking-fiis-body');
+  if (!el) return;
+
+  const tab = _rankingFiisTab;
+  let rows, colHdr, colVal;
+
+  if (tab === 'dividendos') {
+    rows   = RANK_FII_DY;
+    colHdr = 'Dividend Yield (anual)';
+    colVal = r => {
+      const maxDY = Math.max(...RANK_FII_DY.map(x => x.dy));
+      const bar   = (r.dy / maxDY * 100).toFixed(1);
+      return `<div class="rank-bar-wrap">
+        <span class="rank-val hl">${r.dy.toFixed(1)}%</span>
+        <div class="rank-bar"><div class="rank-bar-fill gold-bar" style="width:${bar}%"></div></div>
+      </div>
+      <span class="rank-sub">${r.tipo} · ${r.segmento}</span>`;
+    };
+  } else if (tab === 'resgate') {
+    rows   = RANK_FII_RESGATE;
+    colHdr = 'Prazo de Resgate · Liquidez';
+    colVal = r => {
+      const liqCor = r.liquidez === 'Alta' ? 'var(--lime)' : r.liquidez === 'Média' ? 'var(--amber)' : 'var(--red2)';
+      return `<span class="resgate-badge">⏱ ${r.prazo}</span>
+        <span class="rank-sub" style="color:${liqCor};margin-top:4px">Liquidez ${r.liquidez} · ${r.tipo}</span>`;
+    };
+  } else {
+    rows   = RANK_FII_RISCO;
+    colHdr = 'Grau de Risco · Nota';
+    colVal = r => {
+      const cls = r.risco === 'Baixo' ? 'risk-baixo' : r.risco === 'Médio' ? 'risk-medio' : 'risk-alto';
+      return `<span class="risk-badge ${cls}">⚠ ${r.risco}</span>
+        <span class="rank-sub" style="margin-top:4px">Nota: <strong>${r.nota}</strong> · ${r.motivo}</span>`;
+    };
+  }
+
+  el.innerHTML = `<table class="ranking-table">
+    <thead><tr>
+      <th style="width:36px">#</th>
+      <th>Fundo</th>
+      <th>${colHdr}</th>
+      <th style="width:80px;text-align:center">Cotação</th>
+    </tr></thead>
+    <tbody>
+      ${rows.map((r, i) => {
+        const cot    = ST.cotacoes[r.ticker] || {};
+        const preco  = cot.regularMarketPrice;
+        const varDia = cot.regularMarketChangePercent;
+        const varCor = varDia == null ? 'var(--body3)' : varDia >= 0 ? 'var(--lime)' : 'var(--red2)';
+        const varStr = varDia != null ? (varDia >= 0 ? '+' : '') + varDia.toFixed(2) + '%' : '—';
+        return `<tr onclick="abrirAtivoB3('${r.ticker}','${r.nome.replace(/[^A-Za-zÀ-ÿ0-9 .]/g,'')}')">
+          <td><span class="${rankNumCls(i)}">${i+1}</span></td>
+          <td>
+            <span class="rank-ticker">${r.ticker}</span>
+            <span class="rank-nome">${r.nome}</span>
+          </td>
+          <td>${colVal(r)}</td>
+          <td style="text-align:right">
+            <span class="rank-val" style="font-size:12px">${preco ? 'R$\u00a0'+preco.toFixed(2) : '—'}</span>
+            <span class="rank-sub" style="color:${varCor}">${varStr}</span>
+          </td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+  </table>`;
+}
+
+/* ── Fetch cotações para os rankings ────────────────── */
+async function fetchRankingCotacoes() {
+  const allTickers = [
+    ...new Set([
+      ...RANK_DIVIDENDOS, ...RANK_MKTCAP, ...RANK_RECEITA,
+      ...RANK_FII_DY, ...RANK_FII_RESGATE, ...RANK_FII_RISCO,
+    ].map(r => r.ticker))
+  ];
+  // Filter out already cached
+  const needed = allTickers.filter(tk => !ST.cotacoes[tk]);
+  const LOTE = 6;
+  for (let i = 0; i < needed.length; i += LOTE) {
+    const lote = needed.slice(i, i + LOTE);
+    await Promise.allSettled(lote.map(async ticker => {
+      try {
+        const url     = `${CFG.YF_BASE}/${ticker}.SA?interval=1d&range=1d`;
+        const timeout = new Promise((_,rej) => setTimeout(()=>rej(new Error('T')), 10000));
+        const req     = fetch(url).then(r => r.json()).then(d => {
+          const meta = d?.chart?.result?.[0]?.meta;
+          if (!meta) return;
+          const prev   = meta.chartPreviousClose ?? meta.regularMarketPrice;
+          const preco  = meta.regularMarketPrice;
+          ST.cotacoes[ticker] = {
+            regularMarketPrice:         preco,
+            regularMarketChangePercent: prev ? ((preco-prev)/prev)*100 : 0,
+          };
+        });
+        await Promise.race([req, timeout]);
+      } catch(e) {}
+    }));
+    // Refresh tables as data comes in
+    renderRankingAcoes();
+    renderRankingFiis();
+  }
+}
+
 
 const DIV = {
   dados:      [],       // proventos reais buscados do Investidor10
@@ -5993,6 +6564,7 @@ function renderHomeDividendosPreview() {
   }).join('');
   setTimeout(aplicarMascara, 0);
 }
+
 
 </script>
 </body>
