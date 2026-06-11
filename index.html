@@ -5584,7 +5584,7 @@ let _fiiFiltroAtual = "";
 async function fetchFIIPrecos() {
   if (_fiiFetchInProgress) return;
   _fiiFetchInProgress = true;
-  $("fii-upd")?.textContent = "buscando…";
+  if($("fii-upd")) $("fii-upd").textContent = "buscando…";
   renderFIIGrid();
 
   const LOTE = 6;
@@ -5610,7 +5610,7 @@ async function fetchFIIPrecos() {
     renderFIIGrid();
   }
 
-  $("fii-upd")?.textContent = "atualizado " + new Date().toLocaleTimeString("pt-BR");
+  if($("fii-upd")) $("fii-upd").textContent = "atualizado " + new Date().toLocaleTimeString("pt-BR");
   _fiiFetchInProgress = false;
 }
 
@@ -6544,26 +6544,6 @@ function renderDividendos() {
   setTimeout(aplicarMascara, 0);
 }
 
-/* ── Preview na home ────────────────────────────────── */
-function renderHomeDividendosPreview() {
-  const el = $('home-dividendos-preview');
-  if (!el || !DIV.dados.length) return;
-  const hoje = new Date(); hoje.setHours(0,0,0,0);
-  const proximos = DIV.dados
-    .filter(d => d.emCarteira && (d.dataPagto||d.dataEx) >= hoje)
-    .slice(0, 5);
-  if (!proximos.length) return;
-  el.innerHTML = proximos.map(d => {
-    const dt  = d.dataPagto || d.dataEx;
-    const dia = dt ? String(dt.getDate()).padStart(2,'0') + ' ' + MESES_BR[dt.getMonth()] : '—';
-    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid rgba(27,37,64,.5);font-size:11px">
-      <span style="font-family:var(--sans);font-weight:700;color:var(--head)">${d.ticker}</span>
-      <span style="font-family:var(--mono);font-size:10px;color:var(--body3)">${dia}</span>
-      <span style="font-family:var(--mono);color:var(--lime)" class="priv">+${brl(d.totalEstimado)}</span>
-    </div>`;
-  }).join('');
-  setTimeout(aplicarMascara, 0);
-}
 
 
 </script>
