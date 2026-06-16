@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer-when-downgrade">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>B3 Agent · Rico (XP)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3219,6 +3220,12 @@ tbody tr:hover td:last-child::after {
 /* ── CONFIG ──────────────────────────────────────── */
 const CFG = {
   YF_BASE:         "https://corsproxy.io/?https://query1.finance.yahoo.com/v8/finance/chart",
+  PROXIES: [
+    "https://corsproxy.io/?",
+    "https://api.codetabs.com/v1/proxy?quest=",
+    "https://thingproxy.freeboard.io/fetch/",
+  ],
+  PROXY_IDX: 0,
   DISCORD_WEBHOOK: "",
   ALERTA_PCT:      5.0,
   INTERVALO_SEG:   60,
@@ -3290,7 +3297,11 @@ async function fetchCotacoes(tickers) {
 
   for (const ticker of tickers) {
     const symbol = ticker + ".SA";
-    const url    = `${CFG.YF_BASE}/${symbol}?interval=1d&range=1d&corsproxy_origin=morningstar`;
+    // Try proxies in order until one works
+    const proxyUrl = (CFG.PROXIES[CFG.PROXY_IDX] || CFG.PROXIES[0]);
+    const url = proxyUrl.includes('codetabs') || proxyUrl.includes('thingproxy')
+      ? `${proxyUrl}https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1d`
+      : `${CFG.YF_BASE}/${symbol}?interval=1d&range=1d&corsproxy_origin=morningstar`;
 
     const timeout = new Promise((_, reject) =>
       setTimeout(() => reject(new Error("Timeout")), 15000)
@@ -3317,7 +3328,12 @@ async function fetchCotacoes(tickers) {
     try {
       await Promise.race([req, timeout]);
     } catch(e) {
-      _log(`Erro ao buscar ${ticker}: ${e.message}`, "ERRO");
+      // Rotate proxy on failure
+      CFG.PROXY_IDX = (CFG.PROXY_IDX + 1) % CFG.PROXIES.length;
+      CFG.YF_BASE = CFG.PROXIES[CFG.PROXY_IDX].includes('codetabs') || CFG.PROXIES[CFG.PROXY_IDX].includes('thingproxy')
+        ? CFG.PROXIES[CFG.PROXY_IDX] + 'https://query1.finance.yahoo.com/v8/finance/chart'
+        : "https://corsproxy.io/?https://query1.finance.yahoo.com/v8/finance/chart";
+      _log(`Erro ao buscar ${ticker}: ${e.message} — tentando proxy alternativo`, "AVISO");
     }
   }
 
@@ -3432,8 +3448,10 @@ function renderTopo(apl, atu, pnl) {
 }
 
 function renderAcoes(rows) {
-  if (!rows.length) {
-    $("acoes-body").innerHTML = `<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--body3)">Sem dados</td></tr>`;
+  if (!rows || !rows.length) {
+    $("acoes-body").innerHTML = `<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--body3)">
+      <span class="skel" style="width:180px;height:14px"></span>
+    </td></tr>`;
     return;
   }
   $("acoes-body").innerHTML = rows.map(({ativo, preco, pm, varCompra, varDia, valorAtu, pnl, isAlert}) => `
@@ -4971,9 +4989,16 @@ setTimeout(renderHomePage, 450);
 function setPage(nome) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.querySelectorAll(".page-tab").forEach(t => t.classList.remove("active"));
-  $("page-" + nome).classList.add("active");
-  $("tab-"  + nome).classList.add("active");
+  const pageEl = $("page-" + nome);
+  const tabEl  = $("tab-"  + nome);
+  if (pageEl) pageEl.classList.add("active");
+  if (tabEl)  tabEl.classList.add("active");
   if (nome === "home") renderHomePage();
+  if (nome === "carteira") {
+    // Refresh portfolio data when switching to carteira tab
+    if (!ST.ultimoCheck) atualizarPortfolio();
+    else { renderAcoes([]); setTimeout(atualizarPortfolio, 100); }
+  }
   if (nome === "dividendos") {
     if (DIV.dados.length === 0) carregarDividendos();
     else renderDividendos();
