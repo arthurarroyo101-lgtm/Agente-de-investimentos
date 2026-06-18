@@ -2345,6 +2345,127 @@ tbody tr:hover td:last-child::after {
   .search-bar-in { font-size: 14px; }
 }
 
+
+/* ── CHART CSS ── */
+/* ═══════════════════════════════════════════════════════
+   GRÁFICO DE LINHAS — ATIVO
+═══════════════════════════════════════════════════════ */
+.chart-panel-body {
+  flex: 1; overflow-y: auto; display: flex; flex-direction: column;
+  padding: 16px 20px; gap: 14px;
+}
+
+/* Period selector */
+.chart-periods {
+  display: flex; gap: 4px; flex-wrap: wrap;
+}
+.chart-period-btn {
+  font-family: var(--sans); font-size: 11px; font-weight: 800;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 5px 12px; border-radius: 4px;
+  border: 1px solid var(--wire2); background: transparent;
+  color: var(--body2); cursor: pointer; transition: all .14s;
+}
+.chart-period-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+.chart-period-btn.active { border-color: var(--cyan); background: rgba(79,172,254,.1); color: var(--cyan); }
+
+/* Chart container */
+.chart-wrap {
+  position: relative;
+  background: var(--ink3);
+  border: 1px solid var(--wire);
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 12px 0 8px;
+}
+.chart-canvas {
+  display: block;
+  width: 100%;
+  height: 260px;
+}
+.chart-loading {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; height: 260px;
+  font-family: var(--mono); font-size: 11px; color: var(--body3);
+}
+.chart-error {
+  display: flex; align-items: center; justify-content: center;
+  height: 260px;
+  font-family: var(--mono); font-size: 11px; color: var(--red2);
+  text-align: center; padding: 20px;
+}
+
+/* Tooltip */
+.chart-tooltip {
+  position: absolute;
+  background: var(--ink2);
+  border: 1px solid var(--wire2);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: var(--mono); font-size: 11px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .1s;
+  white-space: nowrap;
+  z-index: 10;
+  box-shadow: 0 4px 16px rgba(0,0,0,.4);
+}
+.chart-tooltip.show { opacity: 1; }
+.chart-tt-date { color: var(--body3); font-size: 10px; margin-bottom: 4px; }
+.chart-tt-price { color: var(--head); font-size: 13px; font-weight: 700; }
+.chart-tt-var { font-size: 11px; }
+.chart-tt-var.pos { color: var(--lime); }
+.chart-tt-var.neg { color: var(--red2); }
+
+/* Summary bar below chart */
+.chart-summary {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 1px; background: var(--wire);
+  border-radius: 6px; overflow: hidden;
+}
+.chart-sum-cell {
+  background: var(--ink2); padding: 10px 14px;
+}
+.chart-sum-lbl {
+  font-family: var(--sans); font-size: 8px; font-weight: 800;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--body3);
+  margin-bottom: 4px;
+}
+.chart-sum-val {
+  font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--head);
+}
+.chart-sum-val.pos { color: var(--lime); }
+.chart-sum-val.neg { color: var(--red2); }
+
+/* sd-panel chart tab */
+.sd-chart-body {
+  flex: 1; overflow-y: auto; display: flex; flex-direction: column;
+  padding: 16px 20px; gap: 14px; display: none;
+}
+.sd-chart-body.show { display: flex; }
+
+/* sd-panel nav tabs */
+.sd-nav {
+  display: flex; border-bottom: 1px solid var(--wire);
+  background: var(--ink2); flex-shrink: 0;
+}
+.sd-nav-tab {
+  flex: 1; padding: 11px 8px;
+  font-family: var(--sans); font-size: 11px; font-weight: 800;
+  letter-spacing: .08em; text-transform: uppercase;
+  cursor: pointer; border: none; background: transparent;
+  color: var(--body2); border-bottom: 2px solid transparent;
+  transition: all .14s; display: flex; align-items: center;
+  justify-content: center; gap: 5px;
+}
+.sd-nav-tab:hover { color: var(--head); }
+.sd-nav-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+@media (max-width: 620px) {
+  .chart-summary { grid-template-columns: 1fr 1fr; }
+  .chart-canvas { height: 200px; }
+}
+
 </style>
 </head>
 <body>
@@ -2793,6 +2914,7 @@ tbody tr:hover td:last-child::after {
   <div class="op-panel-nav" id="op-panel-nav">
     <button class="op-nav-tab active" id="nav-negociar" onclick="setAbaPanel('negociar')">📊 Negociar</button>
     <button class="op-nav-tab"        id="nav-noticias" onclick="setAbaPanel('noticias')">📰 Notícias</button>
+    <button class="op-nav-tab"        id="nav-grafico"  onclick="setAbaPanel('grafico')">📈 Gráfico</button>
   </div>
 
   <!-- Compra / Venda tabs -->
@@ -2810,6 +2932,15 @@ tbody tr:hover td:last-child::after {
     <div class="news-list" id="news-list" style="display:none"></div>
     <div class="news-empty" id="news-empty" style="display:none">Nenhuma notícia encontrada</div>
     <div class="news-footer" id="news-footer" style="display:none">Fonte: Yahoo Finance · clique para abrir a matéria</div>
+  </div>
+
+  <!-- Gráfico body no op-panel -->
+  <div class="sd-chart-body" id="op-chart-body">
+    <div class="chart-periods" id="op-chart-periods"></div>
+    <div class="chart-wrap" id="op-chart-wrap">
+      <div class="chart-loading"><div class="div-spin"></div> Selecione um período</div>
+    </div>
+    <div class="chart-summary" id="op-chart-summary"></div>
   </div>
 
   <!-- Corpo scrollável -->
@@ -3179,9 +3310,24 @@ tbody tr:hover td:last-child::after {
     Carregando indicadores…
   </div>
 
+  <!-- Tabs de navegação sd-panel -->
+  <div class="sd-nav" id="sd-nav" style="display:none">
+    <button class="sd-nav-tab active" data-sdtab="metricas" onclick="setSdTab('metricas')">📊 Indicadores</button>
+    <button class="sd-nav-tab"        data-sdtab="chart"    onclick="setSdTab('chart')">📈 Gráfico</button>
+  </div>
+
   <!-- Corpo métricas -->
   <div class="sd-body" id="sd-body" style="display:none">
     <div class="sd-metrics-grid" id="sd-metrics-grid"></div>
+  </div>
+
+  <!-- Corpo gráfico -->
+  <div class="sd-chart-body" id="sd-chart-body">
+    <div class="chart-periods" id="sd-chart-periods"></div>
+    <div class="chart-wrap" id="sd-chart-wrap">
+      <div class="chart-loading"><div class="div-spin"></div> Clique em um período para carregar</div>
+    </div>
+    <div class="chart-summary" id="sd-chart-summary"></div>
   </div>
 
   <!-- Erro -->
@@ -6569,6 +6715,459 @@ function renderDividendos() {
   setTimeout(aplicarMascara, 0);
 }
 
+
+
+
+
+/* ── CHART MODULE ── */
+/* ═══════════════════════════════════════════════════════
+   GRÁFICO DE LINHAS — VARIAÇÃO DE ATIVOS
+═══════════════════════════════════════════════════════ */
+
+const CHART_STATE = {
+  ticker:  null,
+  periodo: '1d',
+  dados:   [],
+  canvas:  null,
+  ctx:     null,
+};
+
+const PERIODOS = [
+  { key:'1d',  label:'1D',  range:'1d',  interval:'5m'  },
+  { key:'5d',  label:'5D',  range:'5d',  interval:'15m' },
+  { key:'1mo', label:'1M',  range:'1mo', interval:'1d'  },
+  { key:'1y',  label:'1A',  range:'1y',  interval:'1wk' },
+  { key:'5y',  label:'5A',  range:'5y',  interval:'1mo' },
+  { key:'10y', label:'10A', range:'10y', interval:'3mo' },
+];
+
+/* ── Formata data para tooltip ─────────────────────── */
+function fmtDate(ts, range) {
+  const d = new Date(ts * 1000);
+  if (range === '1d' || range === '5d')
+    return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  return d.toLocaleDateString('pt-BR');
+}
+
+/* ── Busca dados históricos via Yahoo Finance ──────── */
+async function fetchChartData(ticker, range, interval) {
+  const symbol = ticker.endsWith('.SA') ? ticker : ticker + '.SA';
+  const proxies = [
+    `https://corsproxy.io/?https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=${interval}&range=${range}`,
+    `https://corsproxy.io/?https://query2.finance.yahoo.com/v8/finance/chart/${symbol}?interval=${interval}&range=${range}`,
+  ];
+  for (const url of proxies) {
+    try {
+      const timeout = new Promise((_,rej) => setTimeout(()=>rej(new Error('T')), 12000));
+      const req = fetch(url).then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); });
+      const data = await Promise.race([req, timeout]);
+      const result = data?.chart?.result?.[0];
+      if (!result) continue;
+      const timestamps = result.timestamp || [];
+      const closes    = result.indicators?.quote?.[0]?.close || [];
+      const pairs = timestamps
+        .map((t, i) => ({ t, c: closes[i] }))
+        .filter(p => p.c != null && p.c > 0);
+      if (pairs.length > 2) return pairs;
+    } catch(e) {}
+  }
+  return null;
+}
+
+/* ── Abre chart no painel de detalhe ───────────────── */
+async function abrirGrafico(ticker, containerId, summaryId) {
+  CHART_STATE.ticker  = ticker;
+  CHART_STATE.periodo = '1mo'; // default 1 mês
+
+  const container = $(containerId);
+  if (!container) return;
+
+  // Render period buttons
+  renderPeriodBtns(containerId, ticker);
+
+  // Load initial period
+  await loadChartPeriod(ticker, CHART_STATE.periodo, containerId, summaryId);
+}
+
+function renderPeriodBtns(containerId, ticker) {
+  const container = $(containerId);
+  if (!container) return;
+
+  const periosDiv = container.querySelector('.chart-periods');
+  if (!periosDiv) return;
+
+  periosDiv.innerHTML = PERIODOS.map(p =>
+    `<button class="chart-period-btn${p.key === CHART_STATE.periodo ? ' active' : ''}"
+      onclick="loadChartPeriod('${ticker}','${p.key}','${containerId}','${containerId.replace('body','summary')}')"
+    >${p.label}</button>`
+  ).join('');
+}
+
+async function loadChartPeriod(ticker, periodoKey, containerId, summaryId) {
+  CHART_STATE.periodo = periodoKey;
+  const p = PERIODOS.find(x => x.key === periodoKey) || PERIODOS[2];
+
+  // Update active button
+  const container = $(containerId);
+  if (!container) return;
+  container.querySelectorAll('.chart-period-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent === p.label);
+  });
+
+  // Show loading
+  const wrap = container.querySelector('.chart-wrap');
+  if (wrap) wrap.innerHTML = `<div class="chart-loading"><div class="div-spin"></div> Carregando gráfico…</div>`;
+
+  const dados = await fetchChartData(ticker, p.range, p.interval);
+
+  if (!dados || dados.length < 2) {
+    if (wrap) wrap.innerHTML = `<div class="chart-error">⚠ Dados indisponíveis para este período.<br>Verifique sua conexão.</div>`;
+    return;
+  }
+
+  CHART_STATE.dados = dados;
+  renderLineChart(dados, p, wrap, ticker, summaryId);
+}
+
+/* ── Renderiza o gráfico com Canvas ───────────────── */
+function renderLineChart(dados, periodo, wrap, ticker, summaryId) {
+  if (!wrap) return;
+
+  const primeiro = dados[0].c;
+  const ultimo   = dados[dados.length - 1].c;
+  const minC     = Math.min(...dados.map(d => d.c));
+  const maxC     = Math.max(...dados.map(d => d.c));
+  const pct      = ((ultimo - primeiro) / primeiro) * 100;
+  const isPos    = pct >= 0;
+  const lineColor = isPos ? '#b8ff45' : '#ff2d55';
+  const fillColor = isPos ? 'rgba(184,255,69,0.06)' : 'rgba(255,45,85,0.06)';
+
+  wrap.innerHTML = `
+    <canvas class="chart-canvas" id="chart-canvas-main"></canvas>
+    <div class="chart-tooltip" id="chart-tooltip">
+      <div class="chart-tt-date" id="chart-tt-date"></div>
+      <div class="chart-tt-price" id="chart-tt-price"></div>
+      <div class="chart-tt-var" id="chart-tt-var"></div>
+    </div>`;
+
+  const canvas = wrap.querySelector('#chart-canvas-main');
+  if (!canvas) return;
+
+  // Set pixel dimensions
+  const W = canvas.offsetWidth  || 400;
+  const H = 260;
+  canvas.width  = W * window.devicePixelRatio;
+  canvas.height = H * window.devicePixelRatio;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+  const PAD = { top: 20, right: 20, bottom: 32, left: 64 };
+  const w = W - PAD.left - PAD.right;
+  const h = H - PAD.top  - PAD.bottom;
+  const range = maxC - minC || 1;
+  const padding = range * 0.08;
+  const yMin = minC - padding;
+  const yMax = maxC + padding;
+
+  const toX = i => PAD.left + (i / (dados.length - 1)) * w;
+  const toY = c => PAD.top  + h - ((c - yMin) / (yMax - yMin)) * h;
+
+  // ── Background grid ──
+  ctx.strokeStyle = 'rgba(27,37,64,0.8)';
+  ctx.lineWidth = 1;
+  const yTicks = 5;
+  ctx.font = '10px IBM Plex Mono, monospace';
+  ctx.fillStyle = '#4a6080';
+  ctx.textAlign = 'right';
+  for (let i = 0; i <= yTicks; i++) {
+    const val = yMin + (yMax - yMin) * (i / yTicks);
+    const y   = toY(val);
+    ctx.beginPath();
+    ctx.moveTo(PAD.left, y);
+    ctx.lineTo(PAD.left + w, y);
+    ctx.stroke();
+    ctx.fillText('R$\u00a0' + val.toFixed(2), PAD.left - 6, y + 4);
+  }
+
+  // ── X axis labels ──
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#4a6080';
+  const xLabelCount = Math.min(6, dados.length);
+  for (let i = 0; i < xLabelCount; i++) {
+    const idx = Math.round(i * (dados.length - 1) / (xLabelCount - 1));
+    const d   = new Date(dados[idx].t * 1000);
+    let lbl;
+    if (periodo.range === '1d' || periodo.range === '5d')
+      lbl = d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+    else
+      lbl = d.toLocaleDateString('pt-BR', {day:'2-digit', month:'short'});
+    ctx.fillText(lbl, toX(idx), H - PAD.bottom + 16);
+  }
+
+  // ── Zero/reference line ──
+  const y0 = toY(primeiro);
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(PAD.left, y0);
+  ctx.lineTo(PAD.left + w, y0);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── Area fill ──
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(dados[0].c));
+  dados.forEach((d, i) => ctx.lineTo(toX(i), toY(d.c)));
+  ctx.lineTo(toX(dados.length - 1), PAD.top + h);
+  ctx.lineTo(toX(0), PAD.top + h);
+  ctx.closePath();
+  ctx.fillStyle = fillColor;
+  ctx.fill();
+
+  // ── Line ──
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(dados[0].c));
+  dados.forEach((d, i) => ctx.lineTo(toX(i), toY(d.c)));
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  // ── Last price dot ──
+  const lastX = toX(dados.length - 1);
+  const lastY = toY(ultimo);
+  ctx.beginPath();
+  ctx.arc(lastX, lastY, 4, 0, Math.PI * 2);
+  ctx.fillStyle = lineColor;
+  ctx.fill();
+  ctx.strokeStyle = '#06080f';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // ── Tooltip on hover ──
+  const tooltip  = wrap.querySelector('#chart-tooltip');
+  const ttDate   = wrap.querySelector('#chart-tt-date');
+  const ttPrice  = wrap.querySelector('#chart-tt-price');
+  const ttVar    = wrap.querySelector('#chart-tt-var');
+
+  canvas.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mx   = e.clientX - rect.left;
+    const idx  = Math.max(0, Math.min(dados.length - 1,
+      Math.round((mx - PAD.left) / w * (dados.length - 1))));
+    if (mx < PAD.left || mx > PAD.left + w) {
+      tooltip.classList.remove('show'); return;
+    }
+    const pt   = dados[idx];
+    const varP = ((pt.c - primeiro) / primeiro) * 100;
+    const s    = varP >= 0 ? '+' : '';
+    ttDate.textContent  = fmtDate(pt.t, periodo.range);
+    ttPrice.textContent = 'R$\u00a0' + pt.c.toFixed(2);
+    ttVar.textContent   = s + varP.toFixed(2) + '%';
+    ttVar.className     = 'chart-tt-var ' + (varP >= 0 ? 'pos' : 'neg');
+
+    // Position tooltip
+    let left = mx + 12;
+    if (left + 160 > W) left = mx - 170;
+    const top = Math.max(8, toY(pt.c) - 40);
+    tooltip.style.left = left + 'px';
+    tooltip.style.top  = top + 'px';
+    tooltip.classList.add('show');
+
+    // Draw crosshair
+    ctx.clearRect(0, 0, W * window.devicePixelRatio, H * window.devicePixelRatio);
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    // Redraw everything (simplified: just redraw after clearing)
+    drawChart(ctx, dados, PAD, w, h, yMin, yMax, primeiro, lineColor, fillColor, W, H, periodo);
+
+    // Crosshair
+    const cx = toX(idx);
+    const cy = toY(pt.c);
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(cx, PAD.top); ctx.lineTo(cx, PAD.top + h); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(PAD.left, cy); ctx.lineTo(PAD.left + w, cy); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI*2);
+    ctx.fillStyle = lineColor; ctx.fill();
+    ctx.strokeStyle = '#06080f'; ctx.lineWidth = 1.5; ctx.stroke();
+  });
+
+  canvas.addEventListener('mouseleave', () => {
+    tooltip.classList.remove('show');
+    drawChart(ctx, dados, PAD, w, h, yMin, yMax, primeiro, lineColor, fillColor, W, H, periodo);
+  });
+
+  // Store draw fn for redraw on hover
+  canvas._drawFn = () => drawChart(ctx, dados, PAD, w, h, yMin, yMax, primeiro, lineColor, fillColor, W, H, periodo);
+
+  // ── Summary bar ──
+  if (summaryId) {
+    const sumEl = $(summaryId);
+    if (sumEl) {
+      const highDate = dados.reduce((a,b) => b.c > a.c ? b : a);
+      const lowDate  = dados.reduce((a,b) => b.c < a.c ? b : a);
+      const sinal    = isPos ? '+' : '';
+      sumEl.innerHTML = `
+        <div class="chart-sum-cell">
+          <div class="chart-sum-lbl">Abertura</div>
+          <div class="chart-sum-val">R$\u00a0${primeiro.toFixed(2)}</div>
+        </div>
+        <div class="chart-sum-cell">
+          <div class="chart-sum-lbl">Variação</div>
+          <div class="chart-sum-val ${isPos?'pos':'neg'}">${sinal}${pct.toFixed(2)}%</div>
+        </div>
+        <div class="chart-sum-cell">
+          <div class="chart-sum-lbl">Máxima</div>
+          <div class="chart-sum-val">R$\u00a0${maxC.toFixed(2)}</div>
+        </div>
+        <div class="chart-sum-cell">
+          <div class="chart-sum-lbl">Mínima</div>
+          <div class="chart-sum-val">R$\u00a0${minC.toFixed(2)}</div>
+        </div>`;
+    }
+  }
+}
+
+/* ── Função de desenho reutilizável ─────────────────── */
+function drawChart(ctx, dados, PAD, w, h, yMin, yMax, primeiro, lineColor, fillColor, W, H, periodo) {
+  ctx.clearRect(0, 0, W, H);
+
+  const toX = i => PAD.left + (i / (dados.length - 1)) * w;
+  const toY = c => PAD.top  + h - ((c - yMin) / (yMax - yMin)) * h;
+
+  // Grid
+  ctx.strokeStyle = 'rgba(27,37,64,0.8)';
+  ctx.lineWidth = 1;
+  ctx.font = '10px IBM Plex Mono, monospace';
+  ctx.fillStyle = '#4a6080';
+  ctx.textAlign = 'right';
+  for (let i = 0; i <= 5; i++) {
+    const val = yMin + (yMax - yMin) * (i / 5);
+    const y   = toY(val);
+    ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(PAD.left + w, y); ctx.stroke();
+    ctx.fillText('R$\u00a0' + val.toFixed(2), PAD.left - 6, y + 4);
+  }
+
+  // X labels
+  ctx.textAlign = 'center'; ctx.fillStyle = '#4a6080';
+  const n = Math.min(6, dados.length);
+  for (let i = 0; i < n; i++) {
+    const idx = Math.round(i * (dados.length - 1) / (n - 1));
+    const d   = new Date(dados[idx].t * 1000);
+    const lbl = (periodo.range === '1d' || periodo.range === '5d')
+      ? d.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'})
+      : d.toLocaleDateString('pt-BR', {day:'2-digit', month:'short'});
+    ctx.fillText(lbl, toX(idx), H - PAD.bottom + 16);
+  }
+
+  // Reference line
+  const y0 = toY(primeiro);
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(PAD.left, y0); ctx.lineTo(PAD.left + w, y0); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Fill
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(dados[0].c));
+  dados.forEach((d,i) => ctx.lineTo(toX(i), toY(d.c)));
+  ctx.lineTo(toX(dados.length-1), PAD.top + h);
+  ctx.lineTo(toX(0), PAD.top + h);
+  ctx.closePath(); ctx.fillStyle = fillColor; ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(dados[0].c));
+  dados.forEach((d,i) => ctx.lineTo(toX(i), toY(d.c)));
+  ctx.strokeStyle = lineColor; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.stroke();
+
+  // Last dot
+  const lastX = toX(dados.length - 1);
+  const lastY = toY(dados[dados.length-1].c);
+  ctx.beginPath(); ctx.arc(lastX, lastY, 4, 0, Math.PI*2);
+  ctx.fillStyle = lineColor; ctx.fill();
+  ctx.strokeStyle = '#06080f'; ctx.lineWidth = 1.5; ctx.stroke();
+}
+
+/* ── Integração com sd-panel (ativo qualquer) ──────── */
+function abrirGraficoSD(ticker) {
+  // Show chart tab in sd-panel
+  const chartBody = $('sd-chart-body');
+  const metricsBody = $('sd-body');
+  if (!chartBody) return;
+
+  chartBody.classList.add('show');
+  if (metricsBody) metricsBody.style.display = 'none';
+
+  // Set active tab
+  document.querySelectorAll('.sd-nav-tab').forEach(t => t.classList.remove('active'));
+  const chartTab = document.querySelector('[data-sdtab="chart"]');
+  if (chartTab) chartTab.classList.add('active');
+
+  abrirGrafico(ticker, 'sd-chart-body', 'sd-chart-summary');
+}
+
+function setSdTab(tab) {
+  const chartBody   = $('sd-chart-body');
+  const metricsBody = $('sd-body');
+  document.querySelectorAll('.sd-nav-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.sdtab === tab));
+  if (tab === 'chart') {
+    if (chartBody)   chartBody.classList.add('show');
+    if (metricsBody) metricsBody.style.display = 'none';
+    if (CHART_STATE.ticker !== $('sd-ticker')?.textContent?.trim()) {
+      abrirGrafico($('sd-ticker')?.textContent?.trim(), 'sd-chart-body', 'sd-chart-summary');
+    }
+  } else {
+    if (chartBody)   chartBody.classList.remove('show');
+    if (metricsBody) metricsBody.style.display = '';
+  }
+}
+
+/* ── Integração com op-panel (ativo da carteira) ───── */
+function abrirGraficoOP(ticker) {
+  const chartBody = $('op-chart-body');
+  if (!chartBody) return;
+
+  // Set active tab
+  document.querySelectorAll('.op-nav-tab').forEach(t => t.classList.remove('active'));
+  const chartTab = document.getElementById('nav-grafico');
+  if (chartTab) chartTab.classList.add('active');
+
+  // Hide other panels
+  const tabs = ['op-tabs-wrap','op-body','op-news-body'];
+  tabs.forEach(id => { const el = $(id); if (el) el.style.display = 'none'; });
+  chartBody.classList.add('show');
+
+  abrirGrafico(ticker, 'op-chart-body', 'op-chart-summary');
+}
+
+function setAbaPanel(aba) {
+  const isNeg   = aba === 'negociar';
+  const isNews  = aba === 'noticias';
+  const isChart = aba === 'grafico';
+
+  $('nav-negociar')?.classList.toggle('active', isNeg);
+  $('nav-noticias')?.classList.toggle('active', isNews);
+  $('nav-grafico')?.classList.toggle('active', isChart);
+
+  $('op-tabs-wrap')  && ($('op-tabs-wrap').style.display   = isNeg ? '' : 'none');
+  $('op-body')       && ($('op-body').style.display        = isNeg ? 'flex' : 'none');
+  $('op-news-body')  && $('op-news-body').classList.toggle('show', isNews);
+  const cb = $('op-chart-body');
+  if (cb) cb.classList.toggle('show', isChart);
+  if ($('op-success')) $('op-success').style.display = 'none';
+
+  if (isChart && CHART_STATE.ticker !== OP.tickerAtual) {
+    CHART_STATE.ticker = OP.tickerAtual;
+    if (OP.tickerAtual) abrirGrafico(OP.tickerAtual, 'op-chart-body', 'op-chart-summary');
+  }
+  if (isNews && OP.tickerAtual) buscarNoticias(OP.tickerAtual);
+}
 
 
 </script>
