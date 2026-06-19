@@ -2509,7 +2509,6 @@ tbody tr:hover td:last-child::after {
     <button class="chat-btn" id="btn-chat">🤖 Assistente</button>
     <button class="btn-privacy" id="btn-privacy"><span id="privacy-icon">👁</span><span id="privacy-lbl">Ocultar</span></button>
     <button class="btn btn-wire" id="btn-check">⚡ Verificar</button>
-    <button class="btn btn-wire" id="btn-operar" style="letter-spacing:.06em">🔍 Buscar Ativo</button>
     <button class="btn btn-lime" id="btn-monitor" style="display:none">▶ Iniciar</button>
     <div class="topbar-avatar" id="btn-profile" title="Meu Perfil" onclick="abrirPerfil()">?</div>
   </div>
@@ -3919,7 +3918,6 @@ $id("btn-mon-main").addEventListener("click", () => {
 $id("btn-monitor").addEventListener("click", () => {
   ST.monitorando ? pararMonitoramento() : iniciarMonitoramento();
 });
-$id("btn-operar").addEventListener("click", () => abrirOperar());
 $id("btn-chat").addEventListener("click", () => abrirChat());
 $id("chat-backdrop").addEventListener("click", () => fecharChat());
 
