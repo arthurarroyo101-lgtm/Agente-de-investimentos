@@ -2466,6 +2466,151 @@ tbody tr:hover td:last-child::after {
   .chart-canvas { height: 200px; }
 }
 
+
+/* ── NOTIF CSS ── */
+
+/* ═══════════════════════════════════════════════════════
+   PAINEL DE NOTIFICAÇÕES
+═══════════════════════════════════════════════════════ */
+.notif-btn {
+  position: relative;
+  width: 36px; height: 36px; border-radius: 8px;
+  background: transparent; border: 1px solid var(--wire2);
+  color: var(--body2); cursor: pointer; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 17px; transition: all .15s; flex-shrink: 0;
+}
+.notif-btn:hover { border-color: var(--amber); color: var(--amber); background: rgba(255,204,0,.06); }
+.notif-btn.has-alert { border-color: var(--red); color: var(--red); animation: pls .8s ease-in-out infinite; }
+.notif-badge {
+  position: absolute; top: -5px; right: -5px;
+  background: var(--red); color: #fff;
+  font-family: var(--mono); font-size: 9px; font-weight: 700;
+  min-width: 16px; height: 16px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 3px; border: 2px solid var(--ink);
+  display: none;
+}
+
+/* Painel dropdown */
+.notif-panel {
+  position: fixed;
+  top: 58px; right: 14px;
+  width: 360px;
+  background: var(--ink2);
+  border: 1px solid var(--wire2);
+  border-radius: 10px;
+  z-index: 700;
+  box-shadow: 0 16px 48px rgba(0,0,0,.6);
+  display: none;
+  flex-direction: column;
+  max-height: calc(100vh - 80px);
+  overflow: hidden;
+  animation: slideDown .2s cubic-bezier(.34,1.56,.64,1);
+}
+.notif-panel.open { display: flex; }
+@keyframes slideDown { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:none} }
+
+/* Header do painel */
+.notif-ph {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--wire);
+  background: var(--ink3);
+  border-radius: 10px 10px 0 0;
+  flex-shrink: 0;
+}
+.notif-ph-title {
+  font-family: var(--sans); font-size: 12px; font-weight: 800;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--head);
+}
+.notif-ph-close {
+  background: transparent; border: none; color: var(--body2);
+  font-size: 14px; cursor: pointer; padding: 4px; line-height: 1;
+  border-radius: 4px; transition: color .12s;
+}
+.notif-ph-close:hover { color: var(--head); }
+
+/* Seções do painel */
+.notif-scroll { overflow-y: auto; flex: 1; }
+
+.notif-section { border-bottom: 1px solid var(--wire); }
+.notif-section:last-child { border-bottom: none; }
+
+.notif-section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px 8px;
+  font-family: var(--sans); font-size: 10px; font-weight: 800;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--blue); background: rgba(27,37,64,.3);
+}
+.notif-section-action {
+  font-family: var(--sans); font-size: 10px; font-weight: 700;
+  letter-spacing: .06em; color: var(--body3); cursor: pointer;
+  text-decoration: none; transition: color .12s;
+}
+.notif-section-action:hover { color: var(--cyan); }
+
+/* Agente status */
+.notif-agent {
+  padding: 12px 16px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.notif-agent-stat {
+  background: var(--ink3); border: 1px solid var(--wire);
+  border-radius: 6px; padding: 8px 12px;
+}
+.notif-agent-lbl {
+  font-family: var(--sans); font-size: 8px; font-weight: 800;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--body3);
+  margin-bottom: 4px;
+}
+.notif-agent-val {
+  font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--head);
+}
+.notif-agent-btn {
+  grid-column: 1/-1;
+  font-family: var(--sans); font-size: 11px; font-weight: 800;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 8px; border-radius: 5px; border: none; cursor: pointer;
+  transition: all .14s; width: 100%;
+}
+.notif-agent-btn.start { background: var(--lime); color: var(--ink); }
+.notif-agent-btn.start:hover { background: var(--lime2); }
+.notif-agent-btn.stop  { background: transparent; border: 1px solid rgba(255,45,85,.5); color: var(--red); }
+.notif-agent-btn.stop:hover  { background: rgba(255,45,85,.08); }
+
+/* Alertas list items */
+.notif-alert-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 16px; border-bottom: 1px solid rgba(27,37,64,.5);
+  font-size: 12px;
+}
+.notif-alert-item:last-child { border-bottom: none; }
+.notif-alert-tk { font-family: var(--sans); font-weight: 800; color: var(--red2); }
+.notif-alert-pct { font-family: var(--mono); color: var(--red2); font-size: 11px; }
+.notif-alert-hr  { font-family: var(--mono); color: var(--body3); font-size: 10px; }
+.notif-empty { padding: 14px 16px; font-family: var(--sans); font-size: 12px; color: var(--body3); text-align: center; }
+
+/* Dividendos preview */
+.notif-div-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 16px; border-bottom: 1px solid rgba(27,37,64,.4);
+  font-size: 11px;
+}
+.notif-div-item:last-child { border-bottom: none; }
+.notif-div-tk { font-family: var(--sans); font-weight: 700; color: var(--head); }
+.notif-div-dt { font-family: var(--mono); color: var(--body3); font-size: 10px; }
+.notif-div-val { font-family: var(--mono); color: var(--lime); }
+
+/* Backdrop (fecha ao clicar fora) */
+.notif-backdrop {
+  position: fixed; inset: 0; z-index: 699;
+  display: none;
+}
+.notif-backdrop.open { display: block; }
+
 </style>
 </head>
 <body>
@@ -2510,9 +2655,74 @@ tbody tr:hover td:last-child::after {
     <button class="btn-privacy" id="btn-privacy"><span id="privacy-icon">👁</span><span id="privacy-lbl">Ocultar</span></button>
     <button class="btn btn-wire" id="btn-check">⚡ Verificar</button>
     <button class="btn btn-lime" id="btn-monitor" style="display:none">▶ Iniciar</button>
+    <button class="notif-btn" id="btn-notif" title="Notificações" onclick="toggleNotif()">
+      🔔
+      <span class="notif-badge" id="notif-badge"></span>
+    </button>
     <div class="topbar-avatar" id="btn-profile" title="Meu Perfil" onclick="abrirPerfil()">?</div>
   </div>
 </header>
+
+<!-- ═══════ BACKDROP NOTIFICAÇÕES ═══════ -->
+<div class="notif-backdrop" id="notif-backdrop" onclick="fecharNotif()"></div>
+
+<!-- ═══════ PAINEL NOTIFICAÇÕES ═══════ -->
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-ph">
+    <div class="notif-ph-title">🔔 Central de Notificações</div>
+    <button class="notif-ph-close" onclick="fecharNotif()">✕</button>
+  </div>
+  <div class="notif-scroll">
+
+    <!-- Seção Agente -->
+    <div class="notif-section">
+      <div class="notif-section-head">⚡ Agente de Monitoramento</div>
+      <div class="notif-agent">
+        <div class="notif-agent-stat">
+          <div class="notif-agent-lbl">Status</div>
+          <div class="notif-agent-val" id="np-status">● parado</div>
+        </div>
+        <div class="notif-agent-stat">
+          <div class="notif-agent-lbl">Último check</div>
+          <div class="notif-agent-val priv" id="np-last-check">—</div>
+        </div>
+        <div class="notif-agent-stat">
+          <div class="notif-agent-lbl">Próximo check</div>
+          <div class="notif-agent-val" id="np-next-check">—</div>
+        </div>
+        <div class="notif-agent-stat">
+          <div class="notif-agent-lbl">Gatilho</div>
+          <div class="notif-agent-val" id="np-gatilho">5%</div>
+        </div>
+        <button class="notif-agent-btn start" id="np-mon-btn"
+          onclick="toggleMonitoramentoNotif()">▶ Iniciar Monitoramento</button>
+      </div>
+    </div>
+
+    <!-- Seção Alertas -->
+    <div class="notif-section">
+      <div class="notif-section-head">
+        🔴 Alertas
+        <a class="notif-section-action" onclick="fecharNotif();setPage('carteira')">Ver carteira →</a>
+      </div>
+      <div id="np-alertas-body">
+        <div class="notif-empty">✅ Nenhum alerta ativo</div>
+      </div>
+    </div>
+
+    <!-- Seção Dividendos -->
+    <div class="notif-section">
+      <div class="notif-section-head">
+        📅 Próximos Dividendos
+        <a class="notif-section-action" onclick="fecharNotif();setPage('dividendos')">Ver calendário →</a>
+      </div>
+      <div id="np-dividendos-body">
+        <div class="notif-empty">Clique em Dividendos para carregar</div>
+      </div>
+    </div>
+
+  </div>
+</div>
 
 <!-- ═══════ COUNTDOWN BAR ═══════ -->
 <div class="countdown-bar"><div class="countdown-fill" id="cdown" style="width:100%"></div></div>
@@ -2557,7 +2767,7 @@ tbody tr:hover td:last-child::after {
   </div>
 
   <!-- ── Layout 2 colunas: conteúdo principal + sidebar ── -->
-  <div class="home-two-col">
+  <div class="home-two-col" style="grid-template-columns:1fr">
 
     <!-- Coluna principal -->
     <div class="home-main-col">
@@ -2638,42 +2848,7 @@ tbody tr:hover td:last-child::after {
     </div><!-- /home-main-col -->
 
     <!-- Sidebar -->
-    <div class="home-side-col">
-
-      <!-- Alertas -->
-      <div class="home-side-card">
-        <div class="home-side-head">🔴 Alertas <span id="home-alert-cnt" style="display:none;margin-left:6px;background:var(--red);color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;vertical-align:middle"></span></div>
-        <div id="home-alertas-body" style="padding:8px 0;max-height:240px;overflow-y:auto">
-          <div style="text-align:center;padding:24px 16px;color:var(--body3);font-family:var(--sans);font-size:12px">✅ Nenhum alerta</div>
-        </div>
-      </div>
-
-      <!-- Agente -->
-      <div class="home-side-card">
-        <div class="home-side-head">⚡ Agente</div>
-        <div style="padding:14px 16px;font-family:var(--mono);font-size:11px;color:var(--body2);line-height:2">
-          <div>Status <span id="home-mon-status" style="color:var(--red2)">● parado</span></div>
-          <div>Último check <span id="home-last-check" class="priv" style="color:var(--head)">—</span></div>
-          <div style="margin-top:10px">
-            <button class="btn btn-lime" style="width:100%;padding:8px" id="home-btn-mon">▶ Iniciar Monitoramento</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Próximos Dividendos -->
-      <div class="home-side-card">
-        <div class="home-side-head">📅 Próximos Dividendos</div>
-        <div id="home-dividendos-preview" style="padding:8px 0;max-height:220px;overflow-y:auto">
-          <div style="text-align:center;padding:20px 16px;color:var(--body3);font-family:var(--sans);font-size:12px">
-            Acesse <strong>Dividendos</strong> para ver o calendário
-          </div>
-        </div>
-        <div style="padding:8px 16px;border-top:1px solid var(--wire)">
-          <button class="btn btn-wire" style="width:100%;padding:7px;font-size:11px" onclick="setPage('dividendos')">Ver Calendário →</button>
-        </div>
-      </div>
-
-    </div><!-- /home-side-col -->
+    
   </div><!-- /home-two-col -->
 
 </div></div><!-- /page-home -->
@@ -3552,6 +3727,8 @@ async function atualizarPortfolio() {
   document.getElementById("acoes-upd").textContent  = "atualizado " + timeStr(ST.ultimoCheck);
 
   _log(`Portfolio atualizado. P&L: ${pct(pnlPct)} | ${brl(pnlTotal)}`, "OK");
+  if (typeof renderNotifBadge !== "undefined") renderNotifBadge();
+  if (typeof renderNotifPanel !== "undefined" && $("notif-panel")?.classList.contains("open")) renderNotifPanel();
   if (typeof renderHomeCarteiraCards !== "undefined" && $("home-cart-cards")) renderHomeCarteiraCards();
   if (typeof renderRankingAcoes !== "undefined") { renderRankingAcoes(); renderRankingFiis(); }
   setDot(rows.some(r => r.isAlert) ? "alert" : ST.monitorando ? "live" : "off");
@@ -3753,6 +3930,7 @@ function checarAlerta(ativo, preco, queda) {
   };
 
   ST.alertas.push(alerta);
+  if (typeof renderNotifBadge !== "undefined") renderNotifBadge();
   _log(`GATILHO: ${ativo.ticker} caiu ${queda.toFixed(2)}% vs. preço médio! Sug: ${cotasSug} cotas.`, "ALERTA");
   toast(`⚠ ${ativo.ticker}: queda de ${queda.toFixed(2)}%`, "err");
   notificarDiscord(alerta);
@@ -3832,6 +4010,7 @@ function iniciarMonitoramento() {
 
   setDot("live");
   agendarProximo();
+  if (typeof renderNotifAgente !== "undefined") renderNotifAgente();
   if (typeof syncHomeStatus !== "undefined") syncHomeStatus();
 }
 
@@ -3851,6 +4030,7 @@ function pararMonitoramento() {
   $("next-check").textContent = "—";
 
   setDot("off");
+  if (typeof renderNotifAgente !== "undefined") renderNotifAgente();
   if (typeof syncHomeStatus !== "undefined") syncHomeStatus();
 }
 
@@ -5123,6 +5303,7 @@ _log(`Gatilho: -${CFG.ALERTA_PCT}% sobre preço médio de compra.`, "INFO");
 renderFundos();
 renderAlertas();
 setTimeout(atualizarPortfolio, 400);
+setTimeout(renderNotifBadge, 500);
 setTimeout(aplicarMascara, 500);
 setTimeout(fetchMercado, 600);
 setTimeout(renderHomePage, 450);
@@ -6528,6 +6709,7 @@ async function carregarDividendos(forcar = false) {
 
   DIV.carregando = false;
   DIV.ultimaAtu  = new Date();
+  if (typeof renderNotifDividendos !== "undefined" && $("notif-panel")?.classList.contains("open")) renderNotifDividendos();
   const upd = $('div-upd');
   if (upd) upd.textContent = 'Atualizado ' + DIV.ultimaAtu.toLocaleTimeString('pt-BR');
 
@@ -7165,6 +7347,132 @@ function setAbaPanel(aba) {
     if (OP.tickerAtual) abrirGrafico(OP.tickerAtual, 'op-chart-body', 'op-chart-summary');
   }
   if (isNews && OP.tickerAtual) buscarNoticias(OP.tickerAtual);
+}
+
+
+
+/* ═══════════════════════════════════════════════════════
+   PAINEL DE NOTIFICAÇÕES
+═══════════════════════════════════════════════════════ */
+
+function toggleNotif() {
+  const panel = $('notif-panel');
+  const back  = $('notif-backdrop');
+  if (!panel) return;
+  const isOpen = panel.classList.contains('open');
+  if (isOpen) { fecharNotif(); return; }
+  panel.classList.add('open');
+  if (back) back.classList.add('open');
+  renderNotifPanel();
+}
+
+function fecharNotif() {
+  const panel = $('notif-panel');
+  const back  = $('notif-backdrop');
+  if (panel) panel.classList.remove('open');
+  if (back)  back.classList.remove('open');
+}
+
+function toggleMonitoramentoNotif() {
+  ST.monitorando ? pararMonitoramento() : iniciarMonitoramento();
+}
+
+/* ── Render geral do painel ─────────────────────────── */
+function renderNotifPanel() {
+  renderNotifAgente();
+  renderNotifAlertas();
+  renderNotifDividendos();
+  renderNotifBadge();
+  setTimeout(aplicarMascara, 0);
+}
+
+/* ── Badge no sino ──────────────────────────────────── */
+function renderNotifBadge() {
+  const btn   = $('btn-notif');
+  const badge = $('notif-badge');
+  if (!btn || !badge) return;
+  const pend = ST.alertas.filter(a => a.status === 'pendente').length;
+  if (pend > 0) {
+    badge.textContent = pend;
+    badge.style.display = 'flex';
+    btn.classList.add('has-alert');
+  } else {
+    badge.style.display = 'none';
+    btn.classList.remove('has-alert');
+  }
+}
+
+/* ── Seção Agente ────────────────────────────────────── */
+function renderNotifAgente() {
+  const st  = $('np-status');
+  const lc  = $('np-last-check');
+  const nc  = $('np-next-check');
+  const gt  = $('np-gatilho');
+  const btn = $('np-mon-btn');
+  if (!st) return;
+
+  if (ST.monitorando) {
+    st.textContent = '● ativo'; st.style.color = 'var(--lime)';
+    if (btn) { btn.textContent = '⏹ Parar Monitoramento'; btn.className = 'notif-agent-btn stop'; }
+  } else {
+    st.textContent = '● parado'; st.style.color = 'var(--red2)';
+    if (btn) { btn.textContent = '▶ Iniciar Monitoramento'; btn.className = 'notif-agent-btn start'; }
+  }
+  if (lc) lc.textContent = ST.ultimoCheck ? new Date(ST.ultimoCheck).toLocaleTimeString('pt-BR') : '—';
+  if (nc) nc.textContent = ST.cdownLeft && ST.monitorando ? `em ${ST.cdownLeft}s` : '—';
+  if (gt) gt.textContent = CFG.ALERTA_PCT + '%';
+}
+
+/* ── Seção Alertas ───────────────────────────────────── */
+function renderNotifAlertas() {
+  const body = $('np-alertas-body');
+  if (!body) return;
+  if (!ST.alertas.length) {
+    body.innerHTML = '<div class="notif-empty">✅ Nenhum alerta ativo</div>';
+    return;
+  }
+  body.innerHTML = [...ST.alertas].reverse().slice(0, 10).map(a => {
+    const isPend = a.status === 'pendente';
+    const cor    = isPend ? 'var(--red2)' : a.status === 'confirmado' ? 'var(--lime)' : 'var(--body3)';
+    const icon   = isPend ? '⚠' : a.status === 'confirmado' ? '✅' : '❌';
+    return `<div class="notif-alert-item">
+      <span class="notif-alert-tk" style="color:${cor}">${icon} ${a.ticker}</span>
+      <span class="notif-alert-pct">${a.quedaPct.toFixed(2)}%</span>
+      <span class="notif-alert-hr">${new Date(a.horario).toLocaleTimeString('pt-BR')}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ── Seção Dividendos ────────────────────────────────── */
+function renderNotifDividendos() {
+  const body = $('np-dividendos-body');
+  if (!body) return;
+
+  if (typeof DIV === 'undefined' || !DIV.dados || !DIV.dados.length) {
+    body.innerHTML = '<div class="notif-empty">Acesse a aba Dividendos para carregar</div>';
+    return;
+  }
+
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const proximos = DIV.dados
+    .filter(d => d.emCarteira && (d.dataPagto || d.dataEx) >= hoje)
+    .slice(0, 6);
+
+  if (!proximos.length) {
+    body.innerHTML = '<div class="notif-empty">Nenhum provento futuro na carteira</div>';
+    return;
+  }
+
+  const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  body.innerHTML = proximos.map(d => {
+    const dt  = d.dataPagto || d.dataEx;
+    const dia = dt ? String(dt.getDate()).padStart(2,'0') + ' ' + MESES[dt.getMonth()] : '—';
+    return `<div class="notif-div-item">
+      <span class="notif-div-tk">${d.ticker}</span>
+      <span class="notif-div-dt">${dia}</span>
+      <span class="notif-div-val priv">+${brl(d.totalEstimado)}</span>
+    </div>`;
+  }).join('');
 }
 
 
