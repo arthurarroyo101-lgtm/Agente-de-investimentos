@@ -2865,7 +2865,7 @@ tbody tr:hover td:last-child::after {
       <div class="div-title">📅 Calendário de Proventos</div>
       <div class="div-subtitle">Data COM e data de pagamento · Fonte: Investidor10.com.br · Brapi.dev</div>
     </div>
-    <button class="btn btn-lime" style="padding:8px 18px;font-size:11px;align-self:flex-start"
+    <button class="btn btn-lime" id="div-atualizar-btn" style="padding:8px 18px;font-size:11px;align-self:flex-start"
       onclick="carregarDividendos(true)">↻ Atualizar</button>
   </div>
 
@@ -6495,13 +6495,26 @@ function tipoLabel(raw) {
 /* ── Busca Investidor10 JSON API ────────────────────── */
 async function fetchInv10API(ticker) {
   // Investidor10 exposes a JSON endpoint for dividends per stock
-  const url = `https://corsproxy.io/?https://investidor10.com.br/api/dividendos/acoes/?stock=${ticker}&order=data_com&direction=desc`;
-  const r = await fetch(url, {
-    headers: { 'Accept': 'application/json', 'Origin': 'https://investidor10.com.br' },
-    signal: AbortSignal.timeout(15000),
-  });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  const json = await r.json();
+  const targetUrl = `https://investidor10.com.br/api/dividendos/acoes/?stock=${ticker}&order=data_com&direction=desc`;
+  const proxyAttempts = [
+    `https://corsproxy.io/?${targetUrl}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
+  ];
+
+  let json = null;
+  let lastErr = null;
+  for (const url of proxyAttempts) {
+    try {
+      const r = await fetch(url, {
+        headers: { 'Accept': 'application/json' },
+        signal: AbortSignal.timeout(10000),
+      });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      json = await r.json();
+      break;
+    } catch(e) { lastErr = e; }
+  }
+  if (!json) throw lastErr || new Error('Todos os proxies falharam');
   // Expected shape: { data: [{data_com, data_pagamento, tipo, valor, ...}] }
   // or array directly
   const rows = Array.isArray(json) ? json : (json.data || json.results || json.dividendos || []);
@@ -6515,16 +6528,30 @@ async function fetchInv10API(ticker) {
 
 /* ── Busca Investidor10 HTML (fallback) ─────────────── */
 async function fetchInv10HTML(ticker) {
-  const url = `https://corsproxy.io/?https://investidor10.com.br/acoes/${ticker.toLowerCase()}/`;
-  const r = await fetch(url, {
-    headers: {
-      'Accept': 'text/html',
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-    },
-    signal: AbortSignal.timeout(20000),
-  });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  const html = await r.text();
+  const targetUrl = `https://investidor10.com.br/acoes/${ticker.toLowerCase()}/`;
+  const proxyAttempts = [
+    `https://corsproxy.io/?${targetUrl}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
+    `https://api.codetabs.com/v1/proxy?quest=${targetUrl}`,
+  ];
+
+  let html = null;
+  let lastErr = null;
+  for (const url of proxyAttempts) {
+    try {
+      const r = await fetch(url, {
+        headers: {
+          'Accept': 'text/html',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        },
+        signal: AbortSignal.timeout(15000),
+      });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const text = await r.text();
+      if (text && text.length > 500) { html = text; break; }
+    } catch(e) { lastErr = e; }
+  }
+  if (!html) throw lastErr || new Error('Todos os proxies falharam');
 
   const results = [];
 
@@ -6657,6 +6684,8 @@ async function carregarDividendos(forcar = false) {
   DIV.carregando = true;
   DIV.dados  = [];
   DIV.erros  = [];
+  const atBtn = $('div-atualizar-btn');
+  if (atBtn) { atBtn.disabled = true; atBtn.textContent = '⏳ Buscando…'; }
 
   // Decide which tickers to fetch
   const carteiraTickers = CARTEIRA.map(a => ({
@@ -6669,38 +6698,56 @@ async function carregarDividendos(forcar = false) {
     .filter(([tk]) => !cartSet.has(tk))
     .map(([tk, info]) => ({ ticker: tk, nome: info.nome, cotas: 0, emCarteira: false }));
 
+  // 1ª prioridade: carteira sempre busca primeiro e completo
+  // 2ª prioridade: demais ativos da B3, em lotes paralelos (mais rápido, sem travar)
   const allTargets = [...carteiraTickers, ...extraTickers];
   const total = allTargets.length;
+  let processados = 0;
 
-  for (let i = 0; i < total; i++) {
-    const { ticker, nome, cotas, emCarteira } = allTargets[i];
-    renderDivLoading(`Buscando ${ticker} no Investidor10… (${i+1}/${total})`);
+  renderDivLoading(`Buscando proventos da carteira no Investidor10…`);
 
-    const { ok, rows } = await fetchProventosUm(ticker);
+  const LOTE = 5; // requisições em paralelo por vez
+  for (let i = 0; i < total; i += LOTE) {
+    const lote = allTargets.slice(i, i + LOTE);
 
-    if (ok && rows.length > 0) {
-      rows.forEach(r => {
-        DIV.dados.push({
-          ticker,
-          nome,
-          tipo:          r.tipo,
-          dataEx:        r.dataEx,
-          dataPagto:     r.dataPagto || r.dataEx,
-          valorPorAcao:  r.valor,
-          emCarteira,
-          cotas,
-          totalEstimado: emCarteira ? r.valor * cotas : 0,
-        });
+    await Promise.allSettled(lote.map(async ({ ticker, nome, cotas, emCarteira }) => {
+      try {
+        const { ok, rows } = await fetchProventosUm(ticker);
+        if (ok && rows.length > 0) {
+          rows.forEach(r => {
+            DIV.dados.push({
+              ticker, nome,
+              tipo:          r.tipo,
+              dataEx:        r.dataEx,
+              dataPagto:     r.dataPagto || r.dataEx,
+              valorPorAcao:  r.valor,
+              emCarteira, cotas,
+              totalEstimado: emCarteira ? r.valor * cotas : 0,
+            });
+          });
+        } else if (emCarteira) {
+          DIV.erros.push(ticker);
+        }
+      } catch(e) {
+        if (emCarteira) DIV.erros.push(ticker);
+      }
+    }));
+
+    processados += lote.length;
+    renderDivLoading(`Buscando proventos no Investidor10… (${processados}/${total})`);
+
+    // Atualiza a tabela progressivamente assim que a carteira terminar
+    if (i + LOTE >= carteiraTickers.length && DIV.dados.length > 0) {
+      DIV.dados.sort((a, b) => {
+        const da = DIV.dataCOM ? (a.dataEx || a.dataPagto) : (a.dataPagto || a.dataEx);
+        const db = DIV.dataCOM ? (b.dataEx || b.dataPagto) : (b.dataPagto || b.dataEx);
+        return (da || new Date(0)) - (db || new Date(0));
       });
-    } else {
-      if (emCarteira) DIV.erros.push(ticker);
+      renderDividendos();
     }
-
-    // Small delay to avoid rate limiting
-    if (i < total - 1) await new Promise(res => setTimeout(res, 400));
   }
 
-  // Sort
+  // Sort final
   DIV.dados.sort((a, b) => {
     const da = DIV.dataCOM ? (a.dataEx || a.dataPagto) : (a.dataPagto || a.dataEx);
     const db = DIV.dataCOM ? (b.dataEx || b.dataPagto) : (b.dataPagto || b.dataEx);
@@ -6709,6 +6756,7 @@ async function carregarDividendos(forcar = false) {
 
   DIV.carregando = false;
   DIV.ultimaAtu  = new Date();
+  if (atBtn) { atBtn.disabled = false; atBtn.textContent = '↻ Atualizar'; }
   if (typeof renderNotifDividendos !== "undefined" && $("notif-panel")?.classList.contains("open")) renderNotifDividendos();
   const upd = $('div-upd');
   if (upd) upd.textContent = 'Atualizado ' + DIV.ultimaAtu.toLocaleTimeString('pt-BR');
