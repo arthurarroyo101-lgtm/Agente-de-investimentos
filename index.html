@@ -2611,6 +2611,270 @@ tbody tr:hover td:last-child::after {
 }
 .notif-backdrop.open { display: block; }
 
+
+/* ═══════════════════════════════════════════════════════
+   FINANÇAS PESSOAIS
+═══════════════════════════════════════════════════════ */
+.fin-wrap {
+  max-width: 1440px; margin: 0 auto;
+  padding: 20px 20px 60px;
+  display: flex; flex-direction: column; gap: 22px;
+}
+.fin-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  flex-wrap: wrap; gap: 14px;
+}
+.fin-title { font-family: var(--sans); font-size: 22px; font-weight: 800; letter-spacing: .04em; color: var(--head); }
+.fin-subtitle { font-family: var(--mono); font-size: 11px; color: var(--body3); margin-top: 4px; }
+.fin-header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Resumo strip */
+.fin-resumo {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 1px; background: var(--wire);
+  border-radius: 8px; overflow: hidden;
+}
+.fin-resumo-cell { background: var(--ink2); padding: 16px 18px; position: relative; overflow: hidden; }
+.fin-resumo-cell::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background: linear-gradient(90deg, transparent, var(--wire2), transparent);
+}
+.fin-resumo-cell.pos::before { background: linear-gradient(90deg, transparent, var(--lime), transparent); }
+.fin-resumo-cell.neg::before { background: linear-gradient(90deg, transparent, var(--red), transparent); }
+.fin-resumo-lbl { font-family: var(--sans); font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--body3); margin-bottom: 7px; }
+.fin-resumo-val { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--head); letter-spacing: -.02em; }
+.fin-resumo-val.pos { color: var(--lime); }
+.fin-resumo-val.neg { color: var(--red2); }
+.fin-resumo-sub { font-family: var(--mono); font-size: 10px; color: var(--body3); margin-top: 4px; }
+
+/* Tabs internas */
+.fin-tabs {
+  display: flex; gap: 0; border: 1px solid var(--wire2); border-radius: 6px; overflow: hidden;
+  width: fit-content; flex-wrap: wrap;
+}
+.fin-tab {
+  font-family: var(--sans); font-size: 11px; font-weight: 800;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: 9px 16px; border: none; background: transparent;
+  color: var(--body2); cursor: pointer; transition: all .14s;
+  border-right: 1px solid var(--wire2); white-space: nowrap;
+}
+.fin-tab:last-child { border-right: none; }
+.fin-tab:hover { background: rgba(255,255,255,.04); color: var(--head); }
+.fin-tab.active { background: rgba(184,255,69,.1); color: var(--lime); }
+
+.fin-subpage { display: none; flex-direction: column; gap: 20px; }
+.fin-subpage.active { display: flex; }
+
+/* Contas bancárias */
+.fin-contas-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 12px; }
+.fin-conta-card {
+  background: var(--ink2); border: 1px solid var(--wire); border-radius: 10px;
+  padding: 16px 18px; position: relative; overflow: hidden; transition: all .15s;
+}
+.fin-conta-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background: var(--cor, var(--cyan)); }
+.fin-conta-card:hover { border-color: var(--wire2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
+.fin-conta-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom: 10px; }
+.fin-conta-nome { font-family: var(--sans); font-size: 14px; font-weight: 800; color: var(--head); }
+.fin-conta-tipo { font-family: var(--sans); font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--body3); margin-top: 2px; }
+.fin-conta-icon { font-size: 22px; }
+.fin-conta-saldo { font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--head); letter-spacing: -.02em; margin: 8px 0; }
+.fin-conta-saldo.neg { color: var(--red2); }
+.fin-conta-actions { display:flex; gap:6px; margin-top: 10px; }
+.fin-conta-btn {
+  font-family: var(--sans); font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  padding: 5px 9px; border-radius: 4px; border: 1px solid var(--wire); background: transparent;
+  color: var(--body2); cursor: pointer; transition: all .14s;
+}
+.fin-conta-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+.fin-conta-btn.danger:hover { border-color: var(--red); color: var(--red); }
+.fin-conta-add {
+  background: transparent; border: 1px dashed var(--wire2); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 6px;
+  padding: 24px; cursor: pointer; transition: all .14s; min-height: 120px;
+  font-family: var(--sans); font-size: 12px; font-weight: 700; color: var(--body2);
+}
+.fin-conta-add:hover { border-color: var(--lime); color: var(--lime); }
+
+/* Lista de transações */
+.fin-trans-toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: space-between; }
+.fin-filter-group { display: flex; gap: 6px; flex-wrap: wrap; }
+.fin-filter-chip {
+  font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: .05em;
+  padding: 5px 12px; border-radius: 14px; border: 1px solid var(--wire2);
+  background: transparent; color: var(--body2); cursor: pointer; transition: all .14s;
+}
+.fin-filter-chip:hover { border-color: var(--cyan); color: var(--cyan); }
+.fin-filter-chip.active { border-color: var(--cyan); background: rgba(79,172,254,.1); color: var(--cyan); }
+
+.fin-table-wrap { background: var(--ink2); border:1px solid var(--wire); border-radius: 8px; overflow: hidden; }
+.fin-table { width:100%; border-collapse: collapse; font-size: 12px; }
+.fin-table thead th {
+  font-family: var(--sans); font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--body3); padding: 10px 16px; border-bottom: 1px solid var(--wire);
+  background: rgba(27,37,64,.4); text-align: left; white-space: nowrap;
+}
+.fin-table thead th.right { text-align: right; }
+.fin-table tbody td { padding: 11px 16px; border-bottom: 1px solid rgba(27,37,64,.6); vertical-align: middle; color: var(--body); }
+.fin-table tbody tr:last-child td { border-bottom: none; }
+.fin-table tbody tr:hover td { background: rgba(79,172,254,.04); }
+.fin-table td.right { text-align: right; }
+.fin-cat-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--sans); font-size: 10px; font-weight: 700;
+  padding: 3px 9px; border-radius: 12px; white-space: nowrap;
+}
+.fin-tx-desc { font-family: var(--sans); font-size: 12px; color: var(--head); font-weight: 600; }
+.fin-tx-conta { font-family: var(--mono); font-size: 10px; color: var(--body3); margin-top: 2px; }
+.fin-tx-val { font-family: var(--mono); font-size: 13px; font-weight: 700; }
+.fin-tx-val.pos { color: var(--lime); }
+.fin-tx-val.neg { color: var(--red2); }
+.fin-tx-del {
+  background: transparent; border: none; color: var(--body3); cursor: pointer;
+  font-size: 13px; padding: 4px; border-radius: 4px; transition: color .12s;
+}
+.fin-tx-del:hover { color: var(--red2); }
+.fin-empty-row td { text-align: center; padding: 32px; color: var(--body3); font-family: var(--sans); font-size: 13px; }
+
+/* Form rápido de transação */
+.fin-quick-form {
+  background: var(--ink2); border: 1px solid var(--wire); border-radius: 10px;
+  padding: 16px 18px; display: flex; flex-direction: column; gap: 12px;
+}
+.fin-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fin-form-row.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+.fin-field { display: flex; flex-direction: column; gap: 5px; }
+.fin-flbl { font-family: var(--sans); font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--body3); }
+.fin-in, .fin-select {
+  background: var(--ink3); border: 1px solid var(--wire); color: var(--head);
+  font-family: var(--sans); font-size: 13px; padding: 9px 12px; border-radius: 5px;
+  transition: border-color .15s; width: 100%;
+}
+.fin-in:focus, .fin-select:focus { outline:none; border-color: var(--cyan); }
+.fin-type-toggle { display: flex; border: 1px solid var(--wire2); border-radius: 6px; overflow: hidden; }
+.fin-type-btn {
+  flex: 1; padding: 9px; font-family: var(--sans); font-size: 11px; font-weight: 800;
+  letter-spacing: .08em; text-transform: uppercase; border: none; cursor: pointer;
+  background: transparent; color: var(--body2); transition: all .15s;
+}
+.fin-type-btn.ganho.on { background: rgba(184,255,69,.12); color: var(--lime); }
+.fin-type-btn.gasto.on { background: rgba(255,45,85,.1); color: var(--red2); }
+
+/* Categorias grid */
+.fin-cats-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(160px,1fr)); gap: 10px; }
+.fin-cat-card {
+  background: var(--ink2); border: 1px solid var(--wire); border-radius: 8px;
+  padding: 12px 14px; display: flex; align-items: center; gap: 10px; transition: all .14s; cursor: default;
+}
+.fin-cat-card:hover { border-color: var(--wire2); }
+.fin-cat-icon { font-size: 20px; flex-shrink: 0; }
+.fin-cat-info { flex: 1; min-width: 0; }
+.fin-cat-nome { font-family: var(--sans); font-size: 12px; font-weight: 700; color: var(--head); }
+.fin-cat-total { font-family: var(--mono); font-size: 11px; color: var(--body3); margin-top: 2px; }
+.fin-cat-del { background: transparent; border: none; color: var(--body3); cursor: pointer; font-size: 12px; opacity: 0; transition: opacity .14s; }
+.fin-cat-card:hover .fin-cat-del { opacity: 1; }
+.fin-cat-del:hover { color: var(--red2); }
+.fin-cat-add-card {
+  background: transparent; border: 1px dashed var(--wire2); border-radius: 8px;
+  padding: 12px 14px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  cursor: pointer; transition: all .14s; color: var(--body2); font-family: var(--sans); font-size: 12px; font-weight: 700;
+}
+.fin-cat-add-card:hover { border-color: var(--lime); color: var(--lime); }
+
+/* Gráficos */
+.fin-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.fin-chart-card { background: var(--ink2); border: 1px solid var(--wire); border-radius: 10px; padding: 16px 18px; }
+.fin-chart-title { font-family: var(--sans); font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 14px; }
+.fin-donut-wrap { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.fin-donut-legend { flex: 1; min-width: 140px; display: flex; flex-direction: column; gap: 8px; }
+.fin-legend-item { display: flex; align-items: center; gap: 8px; font-family: var(--sans); font-size: 11px; }
+.fin-legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.fin-legend-label { flex: 1; color: var(--body); }
+.fin-legend-val { font-family: var(--mono); color: var(--head); font-weight: 600; }
+.fin-bars-wrap { display: flex; flex-direction: column; gap: 10px; }
+.fin-bar-row { display: flex; align-items: center; gap: 10px; }
+.fin-bar-month { font-family: var(--mono); font-size: 10px; color: var(--body3); width: 50px; flex-shrink: 0; }
+.fin-bar-track { flex: 1; height: 18px; background: var(--ink3); border-radius: 4px; overflow: hidden; position: relative; display:flex; }
+.fin-bar-seg-ganho { height: 100%; background: var(--lime); opacity: .8; }
+.fin-bar-seg-gasto { height: 100%; background: var(--red2); opacity: .8; }
+.fin-bar-val { font-family: var(--mono); font-size: 10px; color: var(--body2); width: 70px; text-align: right; flex-shrink: 0; }
+
+/* Metas */
+.fin-metas-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(260px,1fr)); gap: 14px; }
+.fin-meta-card {
+  background: var(--ink2); border: 1px solid var(--wire); border-radius: 10px;
+  padding: 16px 18px; display: flex; flex-direction: column; gap: 10px;
+}
+.fin-meta-top { display: flex; align-items: flex-start; justify-content: space-between; }
+.fin-meta-icon { font-size: 24px; }
+.fin-meta-nome { font-family: var(--sans); font-size: 14px; font-weight: 800; color: var(--head); }
+.fin-meta-prazo { font-family: var(--mono); font-size: 10px; color: var(--body3); margin-top: 2px; }
+.fin-meta-del { background: transparent; border: none; color: var(--body3); cursor: pointer; font-size: 13px; }
+.fin-meta-del:hover { color: var(--red2); }
+.fin-meta-valores { display: flex; justify-content: space-between; align-items: baseline; }
+.fin-meta-atual { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--lime); }
+.fin-meta-total { font-family: var(--mono); font-size: 12px; color: var(--body3); }
+.fin-meta-bar { height: 8px; background: var(--ink3); border-radius: 4px; overflow: hidden; }
+.fin-meta-bar-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--lime)); border-radius: 4px; transition: width .5s ease; }
+.fin-meta-pct { font-family: var(--mono); font-size: 11px; color: var(--body2); text-align: right; }
+.fin-meta-actions { display: flex; gap: 6px; margin-top: 4px; }
+.fin-meta-add-btn {
+  flex: 1; font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  padding: 7px; border-radius: 5px; border: 1px solid var(--wire2); background: transparent; color: var(--body2); cursor: pointer; transition: all .14s;
+}
+.fin-meta-add-btn:hover { border-color: var(--lime); color: var(--lime); }
+.fin-meta-card-add {
+  background: transparent; border: 1px dashed var(--wire2); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px;
+  padding: 24px; cursor: pointer; transition: all .14s; min-height: 160px;
+  font-family: var(--sans); font-size: 12px; font-weight: 700; color: var(--body2);
+}
+.fin-meta-card-add:hover { border-color: var(--lime); color: var(--lime); }
+
+/* Home preview card */
+.fin-preview-card { background: var(--ink2); border: 1px solid var(--wire); border-radius: 8px; overflow: hidden; }
+.fin-preview-resumo { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--wire); }
+.fin-preview-cell { background: var(--ink2); padding: 12px 14px; }
+.fin-preview-lbl { font-family: var(--sans); font-size: 8px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--body3); margin-bottom: 4px; }
+.fin-preview-val { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--head); }
+.fin-preview-val.pos { color: var(--lime); }
+.fin-preview-val.neg { color: var(--red2); }
+.fin-preview-body { padding: 10px 16px; }
+.fin-preview-tx { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid rgba(27,37,64,.5); font-size: 11px; }
+.fin-preview-tx:last-child { border-bottom: none; }
+
+/* Modal simples */
+.fin-modal-backdrop {
+  position: fixed; inset: 0; background: rgba(6,8,15,.7); backdrop-filter: blur(3px);
+  z-index: 800; display: none; align-items: center; justify-content: center; padding: 20px;
+}
+.fin-modal-backdrop.open { display: flex; }
+.fin-modal {
+  background: var(--ink2); border: 1px solid var(--wire2); border-radius: 10px;
+  width: 100%; max-width: 420px; max-height: 85vh; overflow-y: auto;
+  box-shadow: 0 24px 64px rgba(0,0,0,.6); animation: slideDown .2s ease;
+}
+.fin-modal-head { display:flex; align-items:center; justify-content:space-between; padding: 16px 20px; border-bottom: 1px solid var(--wire); }
+.fin-modal-title { font-family: var(--sans); font-size: 14px; font-weight: 800; color: var(--head); }
+.fin-modal-close { background: transparent; border:none; color: var(--body2); font-size:16px; cursor:pointer; }
+.fin-modal-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
+.fin-modal-footer { padding: 14px 20px; border-top: 1px solid var(--wire); display: flex; gap: 8px; }
+.fin-color-pick { display: flex; gap: 6px; flex-wrap: wrap; }
+.fin-color-dot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all .12s; }
+.fin-color-dot.sel { border-color: #fff; transform: scale(1.15); }
+.fin-icon-pick { display: flex; gap: 6px; flex-wrap: wrap; }
+.fin-icon-opt { font-size: 18px; padding: 6px 8px; border-radius: 6px; cursor: pointer; border: 1px solid var(--wire); background: var(--ink3); transition: all .12s; }
+.fin-icon-opt.sel { border-color: var(--lime); background: rgba(184,255,69,.1); }
+
+@media (max-width: 900px) {
+  .fin-charts-grid { grid-template-columns: 1fr; }
+  .fin-form-row, .fin-form-row.cols3 { grid-template-columns: 1fr; }
+}
+@media (max-width: 620px) {
+  .fin-resumo { grid-template-columns: 1fr 1fr; }
+  .fin-preview-resumo { grid-template-columns: 1fr; }
+}
+
 </style>
 </head>
 <body>
@@ -2732,6 +2996,7 @@ tbody tr:hover td:last-child::after {
   <button class="page-tab active" id="tab-home"       onclick="setPage('home')">🏠 Visão Geral</button>
   <button class="page-tab"        id="tab-carteira"   onclick="setPage('carteira')">💼 Minha Carteira</button>
   <button class="page-tab"        id="tab-dividendos" onclick="setPage('dividendos')">📅 Dividendos</button>
+  <button class="page-tab"        id="tab-financas"   onclick="setPage('financas')">💰 Finanças</button>
 </nav>
 
 <!-- ═══════ HOME PAGE ═══════ -->
@@ -2841,6 +3106,22 @@ tbody tr:hover td:last-child::after {
         <div class="ranking-table-wrap">
           <div id="ranking-fiis-body">
             <div class="ranking-loading"><span class="spin"></span> Carregando ranking…</div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ── Finanças Pessoais (preview) ── -->
+      <div class="home-section-block">
+        <div class="home-section-hdr">
+          <div class="home-section-title">💰 Finanças Pessoais</div>
+          <button class="btn btn-wire" style="padding:5px 12px;font-size:10px" onclick="setPage('financas')">Abrir →</button>
+        </div>
+        <div class="fin-preview-card" id="home-fin-preview">
+          <div class="fin-preview-body">
+            <div style="text-align:center;padding:14px 8px;color:var(--body3);font-family:var(--sans);font-size:12px">
+              Carregando…
+            </div>
           </div>
         </div>
       </div>
@@ -3073,6 +3354,311 @@ tbody tr:hover td:last-child::after {
   </div>
 </div>
 </div><!-- /page-carteira -->
+
+<!-- ═══════ FINANÇAS PAGE ═══════ -->
+<div id="page-financas" class="page">
+<div class="fin-wrap">
+
+  <div class="fin-header">
+    <div>
+      <div class="fin-title">💰 Finanças Pessoais</div>
+      <div class="fin-subtitle">Gerencie contas, gastos, ganhos e metas financeiras</div>
+    </div>
+    <div class="fin-header-actions">
+      <button class="btn btn-lime" style="padding:8px 16px;font-size:11px" onclick="abrirModalTransacao()">+ Nova Transação</button>
+    </div>
+  </div>
+
+  <!-- Resumo -->
+  <div class="fin-resumo">
+    <div class="fin-resumo-cell" id="fr-saldo-cell">
+      <div class="fin-resumo-lbl">Saldo Total</div>
+      <div class="fin-resumo-val priv" id="fr-saldo">R$\u00a00,00</div>
+      <div class="fin-resumo-sub" id="fr-contas-count">0 contas</div>
+    </div>
+    <div class="fin-resumo-cell pos">
+      <div class="fin-resumo-lbl">Ganhos (mês)</div>
+      <div class="fin-resumo-val pos priv" id="fr-ganhos">R$\u00a00,00</div>
+    </div>
+    <div class="fin-resumo-cell neg">
+      <div class="fin-resumo-lbl">Gastos (mês)</div>
+      <div class="fin-resumo-val neg priv" id="fr-gastos">R$\u00a00,00</div>
+    </div>
+    <div class="fin-resumo-cell" id="fr-saldo-mes-cell">
+      <div class="fin-resumo-lbl">Resultado (mês)</div>
+      <div class="fin-resumo-val priv" id="fr-saldo-mes">R$\u00a00,00</div>
+    </div>
+  </div>
+
+  <!-- Tabs internas -->
+  <div class="fin-tabs" id="fin-tabs">
+    <button class="fin-tab active" data-tab="visao"      onclick="setFinTab('visao')">📊 Visão Geral</button>
+    <button class="fin-tab"        data-tab="transacoes" onclick="setFinTab('transacoes')">📋 Transações</button>
+    <button class="fin-tab"        data-tab="contas"     onclick="setFinTab('contas')">🏦 Contas</button>
+    <button class="fin-tab"        data-tab="categorias" onclick="setFinTab('categorias')">🏷️ Categorias</button>
+    <button class="fin-tab"        data-tab="metas"      onclick="setFinTab('metas')">🎯 Metas</button>
+  </div>
+
+  <!-- ── SUBPÁGINA: VISÃO GERAL (gráficos) ── -->
+  <div class="fin-subpage active" id="fin-sub-visao">
+    <div class="fin-charts-grid">
+      <div class="fin-chart-card">
+        <div class="fin-chart-title">🍩 Gastos por Categoria (mês atual)</div>
+        <div class="fin-donut-wrap" id="fin-donut-wrap">
+          <div style="color:var(--body3);font-family:var(--sans);font-size:12px;padding:20px">Sem gastos registrados este mês</div>
+        </div>
+      </div>
+      <div class="fin-chart-card">
+        <div class="fin-chart-title">📈 Ganhos vs Gastos (últimos 6 meses)</div>
+        <div class="fin-bars-wrap" id="fin-bars-wrap">
+          <div style="color:var(--body3);font-family:var(--sans);font-size:12px;padding:20px">Sem dados suficientes</div>
+        </div>
+      </div>
+    </div>
+    <div class="fin-chart-card">
+      <div class="fin-chart-title">🏆 Maiores Gastos por Categoria</div>
+      <div id="fin-top-cats"></div>
+    </div>
+  </div>
+
+  <!-- ── SUBPÁGINA: TRANSAÇÕES ── -->
+  <div class="fin-subpage" id="fin-sub-transacoes">
+    <div class="fin-trans-toolbar">
+      <div class="fin-filter-group" id="fin-filter-tipo">
+        <button class="fin-filter-chip active" data-filtro="todos" onclick="setFinFiltro('todos')">Todos</button>
+        <button class="fin-filter-chip" data-filtro="ganho" onclick="setFinFiltro('ganho')">💰 Ganhos</button>
+        <button class="fin-filter-chip" data-filtro="gasto" onclick="setFinFiltro('gasto')">💸 Gastos</button>
+      </div>
+      <select class="fin-select" id="fin-filter-conta" style="width:auto" onchange="renderTransacoes()">
+        <option value="">Todas as contas</option>
+      </select>
+    </div>
+    <div class="fin-table-wrap">
+      <table class="fin-table">
+        <thead><tr>
+          <th>Data</th><th>Descrição</th><th>Categoria</th><th>Conta</th>
+          <th class="right">Valor</th><th></th>
+        </tr></thead>
+        <tbody id="fin-trans-body">
+          <tr class="fin-empty-row"><td colspan="6">Nenhuma transação registrada ainda</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── SUBPÁGINA: CONTAS ── -->
+  <div class="fin-subpage" id="fin-sub-contas">
+    <div class="fin-contas-grid" id="fin-contas-grid">
+      <div class="fin-conta-add" onclick="abrirModalConta()">
+        <span style="font-size:22px">+</span>
+        <span>Adicionar Conta</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SUBPÁGINA: CATEGORIAS ── -->
+  <div class="fin-subpage" id="fin-sub-categorias">
+    <div class="fin-cats-grid" id="fin-cats-grid">
+      <div class="fin-cat-add-card" onclick="abrirModalCategoria()">+ Nova Categoria</div>
+    </div>
+  </div>
+
+  <!-- ── SUBPÁGINA: METAS ── -->
+  <div class="fin-subpage" id="fin-sub-metas">
+    <div class="fin-metas-grid" id="fin-metas-grid">
+      <div class="fin-meta-card-add" onclick="abrirModalMeta()">
+        <span style="font-size:24px">🎯</span>
+        <span>Nova Meta</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div><!-- /page-financas -->
+
+<!-- ═══════ MODAIS FINANÇAS ═══════ -->
+
+<!-- Modal: Nova Transação -->
+<div class="fin-modal-backdrop" id="fm-transacao-backdrop" onclick="if(event.target===this)fecharModalTransacao()">
+  <div class="fin-modal">
+    <div class="fin-modal-head">
+      <div class="fin-modal-title">Nova Transação</div>
+      <button class="fin-modal-close" onclick="fecharModalTransacao()">✕</button>
+    </div>
+    <div class="fin-modal-body">
+      <div class="fin-type-toggle">
+        <button class="fin-type-btn ganho on" id="ft-tipo-ganho" onclick="setFinTipoForm('ganho')">💰 Ganho</button>
+        <button class="fin-type-btn gasto"    id="ft-tipo-gasto" onclick="setFinTipoForm('gasto')">💸 Gasto</button>
+      </div>
+      <div class="fin-field">
+        <div class="fin-flbl">Descrição</div>
+        <input class="fin-in" id="ft-desc" placeholder="Ex: Supermercado, Salário…">
+      </div>
+      <div class="fin-form-row">
+        <div class="fin-field">
+          <div class="fin-flbl">Valor (R$)</div>
+          <input class="fin-in" id="ft-valor" type="number" min="0.01" step="0.01" placeholder="0,00">
+        </div>
+        <div class="fin-field">
+          <div class="fin-flbl">Data</div>
+          <input class="fin-in" id="ft-data" type="date">
+        </div>
+      </div>
+      <div class="fin-form-row">
+        <div class="fin-field">
+          <div class="fin-flbl">Categoria</div>
+          <select class="fin-select" id="ft-categoria"></select>
+        </div>
+        <div class="fin-field">
+          <div class="fin-flbl">Conta</div>
+          <select class="fin-select" id="ft-conta"></select>
+        </div>
+      </div>
+    </div>
+    <div class="fin-modal-footer">
+      <button class="btn btn-wire" style="flex:1" onclick="fecharModalTransacao()">Cancelar</button>
+      <button class="btn btn-lime" style="flex:1" onclick="salvarTransacao()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Nova Conta -->
+<div class="fin-modal-backdrop" id="fm-conta-backdrop" onclick="if(event.target===this)fecharModalConta()">
+  <div class="fin-modal">
+    <div class="fin-modal-head">
+      <div class="fin-modal-title">Nova Conta Bancária</div>
+      <button class="fin-modal-close" onclick="fecharModalConta()">✕</button>
+    </div>
+    <div class="fin-modal-body">
+      <div class="fin-field">
+        <div class="fin-flbl">Nome da Conta</div>
+        <input class="fin-in" id="fc-nome" placeholder="Ex: Nubank, Itaú, Carteira…">
+      </div>
+      <div class="fin-form-row">
+        <div class="fin-field">
+          <div class="fin-flbl">Tipo</div>
+          <select class="fin-select" id="fc-tipo">
+            <option value="Corrente">Conta Corrente</option>
+            <option value="Poupança">Poupança</option>
+            <option value="Carteira">Carteira / Dinheiro</option>
+            <option value="Investimento">Investimento</option>
+            <option value="Cartão">Cartão de Crédito</option>
+          </select>
+        </div>
+        <div class="fin-field">
+          <div class="fin-flbl">Saldo Inicial (R$)</div>
+          <input class="fin-in" id="fc-saldo" type="number" step="0.01" placeholder="0,00">
+        </div>
+      </div>
+      <div class="fin-field">
+        <div class="fin-flbl">Cor</div>
+        <div class="fin-color-pick" id="fc-color-pick"></div>
+      </div>
+    </div>
+    <div class="fin-modal-footer">
+      <button class="btn btn-wire" style="flex:1" onclick="fecharModalConta()">Cancelar</button>
+      <button class="btn btn-lime" style="flex:1" onclick="salvarConta()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Nova Categoria -->
+<div class="fin-modal-backdrop" id="fm-categoria-backdrop" onclick="if(event.target===this)fecharModalCategoria()">
+  <div class="fin-modal">
+    <div class="fin-modal-head">
+      <div class="fin-modal-title">Nova Categoria</div>
+      <button class="fin-modal-close" onclick="fecharModalCategoria()">✕</button>
+    </div>
+    <div class="fin-modal-body">
+      <div class="fin-field">
+        <div class="fin-flbl">Nome</div>
+        <input class="fin-in" id="fcat-nome" placeholder="Ex: Alimentação, Transporte…">
+      </div>
+      <div class="fin-field">
+        <div class="fin-flbl">Ícone</div>
+        <div class="fin-icon-pick" id="fcat-icon-pick"></div>
+      </div>
+      <div class="fin-field">
+        <div class="fin-flbl">Cor</div>
+        <div class="fin-color-pick" id="fcat-color-pick"></div>
+      </div>
+    </div>
+    <div class="fin-modal-footer">
+      <button class="btn btn-wire" style="flex:1" onclick="fecharModalCategoria()">Cancelar</button>
+      <button class="btn btn-lime" style="flex:1" onclick="salvarCategoria()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Nova Meta -->
+<div class="fin-modal-backdrop" id="fm-meta-backdrop" onclick="if(event.target===this)fecharModalMeta()">
+  <div class="fin-modal">
+    <div class="fin-modal-head">
+      <div class="fin-modal-title">Nova Meta Financeira</div>
+      <button class="fin-modal-close" onclick="fecharModalMeta()">✕</button>
+    </div>
+    <div class="fin-modal-body">
+      <div class="fin-field">
+        <div class="fin-flbl">Nome da Meta</div>
+        <input class="fin-in" id="fmeta-nome" placeholder="Ex: Viagem, Reserva de emergência…">
+      </div>
+      <div class="fin-form-row">
+        <div class="fin-field">
+          <div class="fin-flbl">Valor Alvo (R$)</div>
+          <input class="fin-in" id="fmeta-alvo" type="number" min="1" step="0.01" placeholder="0,00">
+        </div>
+        <div class="fin-field">
+          <div class="fin-flbl">Valor Atual (R$)</div>
+          <input class="fin-in" id="fmeta-atual" type="number" min="0" step="0.01" placeholder="0,00">
+        </div>
+      </div>
+      <div class="fin-form-row">
+        <div class="fin-field">
+          <div class="fin-flbl">Prazo</div>
+          <input class="fin-in" id="fmeta-prazo" type="date">
+        </div>
+        <div class="fin-field">
+          <div class="fin-flbl">Ícone</div>
+          <select class="fin-select" id="fmeta-icone">
+            <option value="🎯">🎯 Geral</option>
+            <option value="✈️">✈️ Viagem</option>
+            <option value="🏠">🏠 Casa</option>
+            <option value="🚗">🚗 Carro</option>
+            <option value="🎓">🎓 Estudos</option>
+            <option value="💍">💍 Casamento</option>
+            <option value="🛡️">🛡️ Emergência</option>
+            <option value="📱">📱 Eletrônico</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="fin-modal-footer">
+      <button class="btn btn-wire" style="flex:1" onclick="fecharModalMeta()">Cancelar</button>
+      <button class="btn btn-lime" style="flex:1" onclick="salvarMeta()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Adicionar valor à meta -->
+<div class="fin-modal-backdrop" id="fm-aporte-backdrop" onclick="if(event.target===this)fecharModalAporte()">
+  <div class="fin-modal">
+    <div class="fin-modal-head">
+      <div class="fin-modal-title" id="fa-titulo">Adicionar à Meta</div>
+      <button class="fin-modal-close" onclick="fecharModalAporte()">✕</button>
+    </div>
+    <div class="fin-modal-body">
+      <div class="fin-field">
+        <div class="fin-flbl">Valor a adicionar (R$)</div>
+        <input class="fin-in" id="fa-valor" type="number" min="0.01" step="0.01" placeholder="0,00">
+      </div>
+    </div>
+    <div class="fin-modal-footer">
+      <button class="btn btn-wire" style="flex:1" onclick="fecharModalAporte()">Cancelar</button>
+      <button class="btn btn-lime" style="flex:1" onclick="confirmarAporteMeta()">Adicionar</button>
+    </div>
+  </div>
+</div>
+
 
 <!-- ═══════ PAINEL OPERAR ═══════ -->
 <div class="op-backdrop" id="op-backdrop" onclick="fecharOperar()"></div>
@@ -5328,6 +5914,9 @@ function setPage(nome) {
     if (DIV.dados.length === 0) carregarDividendos();
     else renderDividendos();
   }
+  if (nome === "financas") {
+    renderFinancasPage();
+  }
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -5567,6 +6156,7 @@ function renderHomePage() {
   renderRankingFiis();
   if (typeof DIV !== "undefined" && DIV.dados.length > 0) renderHomeDividendosPreview();
   fetchRankingCotacoes();
+  if (typeof carregarFinancas !== "undefined") { carregarFinancas(); renderHomeFinancasPreview(); }
 }
 
 
@@ -7521,6 +8111,731 @@ function renderNotifDividendos() {
       <span class="notif-div-val priv">+${brl(d.totalEstimado)}</span>
     </div>`;
   }).join('');
+}
+
+
+
+/* ═══════════════════════════════════════════════════════
+   FINANÇAS PESSOAIS
+═══════════════════════════════════════════════════════ */
+
+const FIN_CORES = ['#4facfe','#b8ff45','#ff2d55','#ffcc00','#8a63d2','#ff6279','#79d0f8','#d4ff7a'];
+const FIN_ICONES_CAT = ['🍔','🚗','🏠','💊','🎮','👕','📚','✈️','💡','📱','🐶','🎁','💼','🛒','⚽','🎬'];
+
+const FIN = {
+  contas:       [],
+  categorias:   [],
+  transacoes:   [],
+  metas:        [],
+  tabAtual:     'visao',
+  filtroTipo:   'todos',
+  corSelConta:    FIN_CORES[0],
+  corSelCat:      FIN_CORES[0],
+  iconSelCat:     FIN_ICONES_CAT[0],
+};
+
+/* ── Categorias padrão ──────────────────────────────── */
+function finCategoriasPadrao() {
+  return [
+    { id: 'cat_alim',  nome: 'Alimentação',  icone: '🍔', cor: '#ff2d55' },
+    { id: 'cat_transp',nome: 'Transporte',   icone: '🚗', cor: '#4facfe' },
+    { id: 'cat_casa',  nome: 'Moradia',      icone: '🏠', cor: '#ffcc00' },
+    { id: 'cat_saude', nome: 'Saúde',        icone: '💊', cor: '#b8ff45' },
+    { id: 'cat_lazer', nome: 'Lazer',        icone: '🎮', cor: '#8a63d2' },
+    { id: 'cat_compra',nome: 'Compras',      icone: '🛒', cor: '#79d0f8' },
+    { id: 'cat_salario',nome:'Salário',      icone: '💼', cor: '#b8ff45' },
+    { id: 'cat_outros',nome: 'Outros',       icone: '📦', cor: '#4a6080' },
+  ];
+}
+
+/* ── Persistência ───────────────────────────────────── */
+function persistirFinancas() {
+  try {
+    localStorage.setItem('b3agent_fin_contas',     JSON.stringify(FIN.contas));
+    localStorage.setItem('b3agent_fin_categorias',  JSON.stringify(FIN.categorias));
+    localStorage.setItem('b3agent_fin_transacoes',  JSON.stringify(FIN.transacoes));
+    localStorage.setItem('b3agent_fin_metas',       JSON.stringify(FIN.metas));
+  } catch(e) {}
+}
+
+function carregarFinancas() {
+  try {
+    const c  = localStorage.getItem('b3agent_fin_contas');
+    const ct = localStorage.getItem('b3agent_fin_categorias');
+    const t  = localStorage.getItem('b3agent_fin_transacoes');
+    const m  = localStorage.getItem('b3agent_fin_metas');
+    FIN.contas     = c  ? JSON.parse(c)  : [];
+    FIN.categorias = ct ? JSON.parse(ct) : finCategoriasPadrao();
+    FIN.transacoes = t  ? JSON.parse(t)  : [];
+    FIN.metas      = m  ? JSON.parse(m)  : [];
+  } catch(e) {
+    FIN.categorias = finCategoriasPadrao();
+  }
+  if (!FIN.categorias.length) FIN.categorias = finCategoriasPadrao();
+}
+
+/* ── Helpers ────────────────────────────────────────── */
+function finGerarId(prefixo) {
+  return prefixo + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+}
+function finCatById(id) { return FIN.categorias.find(c => c.id === id); }
+function finContaById(id) { return FIN.contas.find(c => c.id === id); }
+function finHoje() { return new Date().toISOString().slice(0,10); }
+
+/* ── Saldo de uma conta (inicial + transações) ──────── */
+function finSaldoConta(contaId) {
+  const conta = finContaById(contaId);
+  if (!conta) return 0;
+  let saldo = conta.saldoInicial || 0;
+  FIN.transacoes.forEach(t => {
+    if (t.contaId !== contaId) return;
+    saldo += t.tipo === 'ganho' ? t.valor : -t.valor;
+  });
+  return saldo;
+}
+
+/* ── Setup inicial das telas ────────────────────────── */
+function setupFinancas() {
+  carregarFinancas();
+  renderColorPickers();
+  renderIconPicker();
+  $('ft-data') && ($('ft-data').value = finHoje());
+}
+
+function renderColorPickers() {
+  ['fc-color-pick','fcat-color-pick'].forEach(id => {
+    const el = $(id);
+    if (!el) return;
+    el.innerHTML = FIN_CORES.map(c =>
+      `<div class="fin-color-dot" style="background:${c}" data-color="${c}" onclick="selecionarCor('${id}','${c}',this)"></div>`
+    ).join('');
+    // Mark first as selected
+    const first = el.querySelector('.fin-color-dot');
+    if (first) first.classList.add('sel');
+  });
+}
+function selecionarCor(pickerId, cor, el) {
+  document.querySelectorAll(`#${pickerId} .fin-color-dot`).forEach(d => d.classList.remove('sel'));
+  el.classList.add('sel');
+  if (pickerId === 'fc-color-pick')   FIN.corSelConta = cor;
+  if (pickerId === 'fcat-color-pick') FIN.corSelCat   = cor;
+}
+
+function renderIconPicker() {
+  const el = $('fcat-icon-pick');
+  if (!el) return;
+  el.innerHTML = FIN_ICONES_CAT.map(ic =>
+    `<div class="fin-icon-opt" data-icon="${ic}" onclick="selecionarIcone('${ic}',this)">${ic}</div>`
+  ).join('');
+  const first = el.querySelector('.fin-icon-opt');
+  if (first) first.classList.add('sel');
+}
+function selecionarIcone(ic, el) {
+  document.querySelectorAll('#fcat-icon-pick .fin-icon-opt').forEach(d => d.classList.remove('sel'));
+  el.classList.add('sel');
+  FIN.iconSelCat = ic;
+}
+
+/* ── Tabs internas ──────────────────────────────────── */
+function setFinTab(tab) {
+  FIN.tabAtual = tab;
+  document.querySelectorAll('#fin-tabs .fin-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.fin-subpage').forEach(p => p.classList.remove('active'));
+  const target = $('fin-sub-' + tab);
+  if (target) target.classList.add('active');
+  renderFinancasTudo();
+}
+
+function setFinFiltro(f) {
+  FIN.filtroTipo = f;
+  document.querySelectorAll('#fin-filter-tipo .fin-filter-chip').forEach(b => b.classList.toggle('active', b.dataset.filtro === f));
+  renderTransacoes();
+}
+
+/* ── Render geral (chamado ao entrar na página / mudar dados) ─ */
+function renderFinancasPage() {
+  setupFinancas();
+  renderResumoFin();
+  renderContas();
+  renderCategorias();
+  renderSelects();
+  renderTransacoes();
+  renderGraficosFin();
+  renderMetas();
+}
+
+function renderFinancasTudo() {
+  renderResumoFin();
+  if (FIN.tabAtual === 'visao')      renderGraficosFin();
+  if (FIN.tabAtual === 'transacoes') renderTransacoes();
+  if (FIN.tabAtual === 'contas')     renderContas();
+  if (FIN.tabAtual === 'categorias') renderCategorias();
+  if (FIN.tabAtual === 'metas')      renderMetas();
+}
+
+/* ── Resumo no topo ─────────────────────────────────── */
+function renderResumoFin() {
+  const saldoTotal = FIN.contas.reduce((s,c) => s + finSaldoConta(c.id), 0);
+  const hoje = new Date();
+  const mesAtual = hoje.getMonth(), anoAtual = hoje.getFullYear();
+
+  const txMes = FIN.transacoes.filter(t => {
+    const d = new Date(t.data);
+    return d.getMonth() === mesAtual && d.getFullYear() === anoAtual;
+  });
+  const ganhos = txMes.filter(t => t.tipo === 'ganho').reduce((s,t) => s + t.valor, 0);
+  const gastos = txMes.filter(t => t.tipo === 'gasto').reduce((s,t) => s + t.valor, 0);
+  const resultado = ganhos - gastos;
+
+  if ($('fr-saldo'))      { $('fr-saldo').textContent = brl(saldoTotal); $('fr-saldo').className = 'fin-resumo-val priv ' + (saldoTotal>=0?'pos':'neg'); }
+  if ($('fr-contas-count')) $('fr-contas-count').textContent = FIN.contas.length + (FIN.contas.length===1?' conta':' contas');
+  if ($('fr-ganhos'))     $('fr-ganhos').textContent = brl(ganhos);
+  if ($('fr-gastos'))     $('fr-gastos').textContent = brl(gastos);
+  if ($('fr-saldo-mes'))  {
+    $('fr-saldo-mes').textContent = (resultado>=0?'+':'') + brl(resultado);
+    $('fr-saldo-mes').className = 'fin-resumo-val priv ' + (resultado>=0?'pos':'neg');
+  }
+  setTimeout(aplicarMascara, 0);
+}
+
+/* ── CONTAS ──────────────────────────────────────────── */
+function renderContas() {
+  const grid = $('fin-contas-grid');
+  if (!grid) return;
+  const addCard = '<div class="fin-conta-add" onclick="abrirModalConta()"><span style="font-size:22px">+</span><span>Adicionar Conta</span></div>';
+  const tiposIcone = { 'Corrente':'🏦','Poupança':'🐷','Carteira':'👛','Investimento':'📈','Cartão':'💳' };
+
+  grid.innerHTML = FIN.contas.map(c => {
+    const saldo = finSaldoConta(c.id);
+    return `<div class="fin-conta-card" style="--cor:${c.cor}">
+      <div class="fin-conta-top">
+        <div>
+          <div class="fin-conta-nome">${c.nome}</div>
+          <div class="fin-conta-tipo">${c.tipo}</div>
+        </div>
+        <div class="fin-conta-icon">${tiposIcone[c.tipo] || '🏦'}</div>
+      </div>
+      <div class="fin-conta-saldo priv ${saldo<0?'neg':''}">${brl(saldo)}</div>
+      <div class="fin-conta-actions">
+        <button class="fin-conta-btn danger" onclick="excluirConta('${c.id}')">🗑 Excluir</button>
+      </div>
+    </div>`;
+  }).join('') + addCard;
+  setTimeout(aplicarMascara, 0);
+}
+
+function abrirModalConta() {
+  $('fc-nome').value = '';
+  $('fc-saldo').value = '';
+  $('fc-tipo').value = 'Corrente';
+  FIN.corSelConta = FIN_CORES[0];
+  document.querySelectorAll('#fc-color-pick .fin-color-dot').forEach((d,i) => d.classList.toggle('sel', i===0));
+  $('fm-conta-backdrop').classList.add('open');
+  setTimeout(() => $('fc-nome').focus(), 100);
+}
+function fecharModalConta() { $('fm-conta-backdrop').classList.remove('open'); }
+
+function salvarConta() {
+  const nome = ($('fc-nome').value || '').trim();
+  const tipo = $('fc-tipo').value;
+  const saldoInicial = parseFloat($('fc-saldo').value) || 0;
+  if (!nome) { toast('Informe o nome da conta.', 'err'); return; }
+
+  FIN.contas.push({ id: finGerarId('conta'), nome, tipo, saldoInicial, cor: FIN.corSelConta });
+  persistirFinancas();
+  fecharModalConta();
+  renderContas();
+  renderSelects();
+  renderResumoFin();
+  toast(`✅ Conta "${nome}" adicionada!`, 'ok');
+}
+
+function excluirConta(id) {
+  const conta = finContaById(id);
+  if (!conta) return;
+  if (!confirm(`Excluir a conta "${conta.nome}"? As transações associadas serão mantidas mas desvinculadas.`)) return;
+  FIN.contas = FIN.contas.filter(c => c.id !== id);
+  FIN.transacoes.forEach(t => { if (t.contaId === id) t.contaId = null; });
+  persistirFinancas();
+  renderContas();
+  renderSelects();
+  renderTransacoes();
+  renderResumoFin();
+  toast('Conta excluída.', 'ok');
+}
+
+/* ── CATEGORIAS ──────────────────────────────────────── */
+function renderCategorias() {
+  const grid = $('fin-cats-grid');
+  if (!grid) return;
+  const addCard = '<div class="fin-cat-add-card" onclick="abrirModalCategoria()">+ Nova Categoria</div>';
+
+  const hoje = new Date();
+  grid.innerHTML = FIN.categorias.map(c => {
+    const total = FIN.transacoes
+      .filter(t => t.categoriaId === c.id && t.tipo === 'gasto')
+      .reduce((s,t) => s + t.valor, 0);
+    return `<div class="fin-cat-card">
+      <div class="fin-cat-icon">${c.icone}</div>
+      <div class="fin-cat-info">
+        <div class="fin-cat-nome">${c.nome}</div>
+        <div class="fin-cat-total priv">${brl(total)} gastos</div>
+      </div>
+      <button class="fin-cat-del" onclick="excluirCategoria('${c.id}')">🗑</button>
+    </div>`;
+  }).join('') + addCard;
+  setTimeout(aplicarMascara, 0);
+}
+
+function abrirModalCategoria() {
+  $('fcat-nome').value = '';
+  FIN.corSelCat = FIN_CORES[0];
+  FIN.iconSelCat = FIN_ICONES_CAT[0];
+  document.querySelectorAll('#fcat-color-pick .fin-color-dot').forEach((d,i) => d.classList.toggle('sel', i===0));
+  document.querySelectorAll('#fcat-icon-pick .fin-icon-opt').forEach((d,i) => d.classList.toggle('sel', i===0));
+  $('fm-categoria-backdrop').classList.add('open');
+  setTimeout(() => $('fcat-nome').focus(), 100);
+}
+function fecharModalCategoria() { $('fm-categoria-backdrop').classList.remove('open'); }
+
+function salvarCategoria() {
+  const nome = ($('fcat-nome').value || '').trim();
+  if (!nome) { toast('Informe o nome da categoria.', 'err'); return; }
+  FIN.categorias.push({ id: finGerarId('cat'), nome, icone: FIN.iconSelCat, cor: FIN.corSelCat });
+  persistirFinancas();
+  fecharModalCategoria();
+  renderCategorias();
+  renderSelects();
+  toast(`✅ Categoria "${nome}" criada!`, 'ok');
+}
+
+function excluirCategoria(id) {
+  const cat = finCatById(id);
+  if (!cat) return;
+  if (!confirm(`Excluir a categoria "${cat.nome}"?`)) return;
+  FIN.categorias = FIN.categorias.filter(c => c.id !== id);
+  FIN.transacoes.forEach(t => { if (t.categoriaId === id) t.categoriaId = null; });
+  persistirFinancas();
+  renderCategorias();
+  renderSelects();
+  renderTransacoes();
+  renderGraficosFin();
+  toast('Categoria excluída.', 'ok');
+}
+
+/* ── Selects (categoria/conta) ──────────────────────── */
+function renderSelects() {
+  const ftCat  = $('ft-categoria');
+  const ftConta= $('ft-conta');
+  const filtroConta = $('fin-filter-conta');
+
+  if (ftCat) ftCat.innerHTML = FIN.categorias.map(c => `<option value="${c.id}">${c.icone} ${c.nome}</option>`).join('');
+  if (ftConta) {
+    if (!FIN.contas.length) {
+      ftConta.innerHTML = '<option value="">Nenhuma conta cadastrada</option>';
+    } else {
+      ftConta.innerHTML = FIN.contas.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
+    }
+  }
+  if (filtroConta) {
+    filtroConta.innerHTML = '<option value="">Todas as contas</option>' +
+      FIN.contas.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
+  }
+}
+
+/* ── TRANSAÇÕES ──────────────────────────────────────── */
+function setFinTipoForm(tipo) {
+  $('ft-tipo-ganho').classList.toggle('on', tipo === 'ganho');
+  $('ft-tipo-gasto').classList.toggle('on', tipo === 'gasto');
+  $('ft-tipo-ganho').dataset.active = tipo === 'ganho' ? '1' : '';
+  $('ft-tipo-gasto').dataset.active = tipo === 'gasto' ? '1' : '';
+}
+
+function abrirModalTransacao() {
+  if (!FIN.contas.length) {
+    toast('Cadastre uma conta antes de lançar transações.', 'err');
+    setFinTab('contas');
+    return;
+  }
+  $('ft-desc').value = '';
+  $('ft-valor').value = '';
+  $('ft-data').value = finHoje();
+  setFinTipoForm('gasto');
+  $('fm-transacao-backdrop').classList.add('open');
+  setTimeout(() => $('ft-desc').focus(), 100);
+}
+function fecharModalTransacao() { $('fm-transacao-backdrop').classList.remove('open'); }
+
+function salvarTransacao() {
+  const desc  = ($('ft-desc').value || '').trim();
+  const valor = parseFloat($('ft-valor').value) || 0;
+  const data  = $('ft-data').value || finHoje();
+  const catId = $('ft-categoria').value;
+  const contaId = $('ft-conta').value;
+  const tipo  = $('ft-tipo-ganho').classList.contains('on') ? 'ganho' : 'gasto';
+
+  if (!desc)  { toast('Informe a descrição.', 'err'); return; }
+  if (valor <= 0) { toast('Informe um valor válido.', 'err'); return; }
+  if (!contaId) { toast('Selecione uma conta.', 'err'); return; }
+
+  FIN.transacoes.unshift({
+    id: finGerarId('tx'), desc, valor, data, tipo,
+    categoriaId: catId || null, contaId,
+  });
+  persistirFinancas();
+  fecharModalTransacao();
+  renderTransacoes();
+  renderResumoFin();
+  renderContas();
+  renderCategorias();
+  renderGraficosFin();
+  toast(`✅ ${tipo === 'ganho' ? 'Ganho' : 'Gasto'} registrado!`, 'ok');
+}
+
+function excluirTransacao(id) {
+  FIN.transacoes = FIN.transacoes.filter(t => t.id !== id);
+  persistirFinancas();
+  renderTransacoes();
+  renderResumoFin();
+  renderContas();
+  renderCategorias();
+  renderGraficosFin();
+  toast('Transação removida.');
+}
+
+function renderTransacoes() {
+  const body = $('fin-trans-body');
+  if (!body) return;
+
+  let lista = [...FIN.transacoes];
+  if (FIN.filtroTipo !== 'todos') lista = lista.filter(t => t.tipo === FIN.filtroTipo);
+  const contaFiltro = $('fin-filter-conta')?.value;
+  if (contaFiltro) lista = lista.filter(t => t.contaId === contaFiltro);
+
+  lista.sort((a,b) => new Date(b.data) - new Date(a.data));
+
+  if (!lista.length) {
+    body.innerHTML = '<tr class="fin-empty-row"><td colspan="6">Nenhuma transação encontrada</td></tr>';
+    return;
+  }
+
+  body.innerHTML = lista.map(t => {
+    const cat   = finCatById(t.categoriaId);
+    const conta = finContaById(t.contaId);
+    const dt    = new Date(t.data + 'T00:00:00');
+    const dtStr = dt.toLocaleDateString('pt-BR');
+    const sinal = t.tipo === 'ganho' ? '+' : '-';
+    const catChip = cat
+      ? `<span class="fin-cat-chip" style="background:${cat.cor}22;color:${cat.cor}">${cat.icone} ${cat.nome}</span>`
+      : '<span style="color:var(--body3);font-size:11px">—</span>';
+    return `<tr>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--body3);white-space:nowrap">${dtStr}</td>
+      <td><div class="fin-tx-desc">${t.desc}</div></td>
+      <td>${catChip}</td>
+      <td><div class="fin-tx-conta">${conta ? conta.nome : '—'}</div></td>
+      <td class="right"><span class="fin-tx-val ${t.tipo==='ganho'?'pos':'neg'} priv">${sinal}${brl(t.valor)}</span></td>
+      <td style="text-align:center"><button class="fin-tx-del" onclick="excluirTransacao('${t.id}')">🗑</button></td>
+    </tr>`;
+  }).join('');
+  setTimeout(aplicarMascara, 0);
+}
+
+/* ── GRÁFICOS ────────────────────────────────────────── */
+function renderGraficosFin() {
+  renderDonutGastos();
+  renderBarrasMensais();
+  renderTopCategorias();
+}
+
+/* Donut de gastos por categoria (mês atual) — SVG puro */
+function renderDonutGastos() {
+  const wrap = $('fin-donut-wrap');
+  if (!wrap) return;
+
+  const hoje = new Date();
+  const gastosMes = FIN.transacoes.filter(t => {
+    const d = new Date(t.data);
+    return t.tipo === 'gasto' && d.getMonth() === hoje.getMonth() && d.getFullYear() === hoje.getFullYear();
+  });
+
+  if (!gastosMes.length) {
+    wrap.innerHTML = '<div style="color:var(--body3);font-family:var(--sans);font-size:12px;padding:20px">Sem gastos registrados este mês</div>';
+    return;
+  }
+
+  const porCat = {};
+  gastosMes.forEach(t => {
+    const key = t.categoriaId || '_sem';
+    porCat[key] = (porCat[key] || 0) + t.valor;
+  });
+
+  const total = Object.values(porCat).reduce((a,b) => a+b, 0);
+  const entries = Object.entries(porCat).sort((a,b) => b[1]-a[1]);
+
+  // Build SVG donut
+  const R = 60, CX = 70, CY = 70, STROKE = 22;
+  const circumference = 2 * Math.PI * R;
+  let offset = 0;
+  const segs = entries.map(([catId, val]) => {
+    const cat  = catId === '_sem' ? { nome:'Sem categoria', cor:'#4a6080', icone:'❔' } : finCatById(catId) || { nome:'?', cor:'#4a6080', icone:'❔' };
+    const pct  = val / total;
+    const dash = pct * circumference;
+    const seg  = `<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="${cat.cor}" stroke-width="${STROKE}"
+      stroke-dasharray="${dash} ${circumference-dash}" stroke-dashoffset="${-offset}" transform="rotate(-90 ${CX} ${CY})" />`;
+    offset += dash;
+    return { svg: seg, cat, val, pct };
+  });
+
+  const svgHtml = `<svg width="140" height="140" viewBox="0 0 140 140">
+    ${segs.map(s => s.svg).join('')}
+    <circle cx="${CX}" cy="${CY}" r="${R-STROKE/2-2}" fill="var(--ink2)" />
+  </svg>`;
+
+  const legendHtml = segs.map(s => `
+    <div class="fin-legend-item">
+      <div class="fin-legend-dot" style="background:${s.cat.cor}"></div>
+      <div class="fin-legend-label">${s.cat.icone} ${s.cat.nome}</div>
+      <div class="fin-legend-val priv">${brl(s.val)}</div>
+    </div>`).join('');
+
+  wrap.innerHTML = `<div>${svgHtml}</div><div class="fin-donut-legend">${legendHtml}</div>`;
+  setTimeout(aplicarMascara, 0);
+}
+
+/* Barras: ganhos vs gastos últimos 6 meses */
+function renderBarrasMensais() {
+  const wrap = $('fin-bars-wrap');
+  if (!wrap) return;
+
+  const hoje = new Date();
+  const meses = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+    meses.push({ ano: d.getFullYear(), mes: d.getMonth(), label: MESES_BR[d.getMonth()] });
+  }
+
+  const dadosMeses = meses.map(m => {
+    const txs = FIN.transacoes.filter(t => {
+      const d = new Date(t.data);
+      return d.getFullYear() === m.ano && d.getMonth() === m.mes;
+    });
+    const ganho = txs.filter(t => t.tipo==='ganho').reduce((s,t) => s+t.valor, 0);
+    const gasto = txs.filter(t => t.tipo==='gasto').reduce((s,t) => s+t.valor, 0);
+    return { ...m, ganho, gasto };
+  });
+
+  const maxVal = Math.max(...dadosMeses.map(d => Math.max(d.ganho, d.gasto)), 1);
+  const temDados = dadosMeses.some(d => d.ganho > 0 || d.gasto > 0);
+
+  if (!temDados) {
+    wrap.innerHTML = '<div style="color:var(--body3);font-family:var(--sans);font-size:12px;padding:20px">Sem dados suficientes</div>';
+    return;
+  }
+
+  wrap.innerHTML = dadosMeses.map(d => {
+    const pctGanho = (d.ganho / maxVal) * 100;
+    const pctGasto = (d.gasto / maxVal) * 100;
+    return `<div class="fin-bar-row">
+      <div class="fin-bar-month">${d.label}</div>
+      <div class="fin-bar-track">
+        <div class="fin-bar-seg-ganho" style="width:${pctGanho/2}%"></div>
+        <div class="fin-bar-seg-gasto" style="width:${pctGasto/2}%"></div>
+      </div>
+      <div class="fin-bar-val priv">${brl(d.ganho - d.gasto)}</div>
+    </div>`;
+  }).join('') + `
+    <div style="display:flex;gap:14px;margin-top:6px;font-family:var(--sans);font-size:10px;color:var(--body3)">
+      <span><span style="display:inline-block;width:8px;height:8px;background:var(--lime);border-radius:2px;margin-right:4px"></span>Ganhos</span>
+      <span><span style="display:inline-block;width:8px;height:8px;background:var(--red2);border-radius:2px;margin-right:4px"></span>Gastos</span>
+    </div>`;
+  setTimeout(aplicarMascara, 0);
+}
+
+/* Top categorias (lista com barra) */
+function renderTopCategorias() {
+  const el = $('fin-top-cats');
+  if (!el) return;
+
+  const totals = {};
+  FIN.transacoes.filter(t => t.tipo === 'gasto').forEach(t => {
+    const key = t.categoriaId || '_sem';
+    totals[key] = (totals[key] || 0) + t.valor;
+  });
+
+  const entries = Object.entries(totals).sort((a,b) => b[1]-a[1]).slice(0, 8);
+  if (!entries.length) {
+    el.innerHTML = '<div style="color:var(--body3);font-family:var(--sans);font-size:12px;padding:10px 0">Nenhum gasto registrado ainda</div>';
+    return;
+  }
+  const max = entries[0][1];
+
+  el.innerHTML = entries.map(([catId, val]) => {
+    const cat = catId === '_sem' ? { nome:'Sem categoria', cor:'#4a6080', icone:'❔' } : finCatById(catId) || { nome:'?', cor:'#4a6080', icone:'❔' };
+    const pct = (val / max) * 100;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:7px 0">
+      <span style="font-size:14px;width:22px">${cat.icone}</span>
+      <span style="font-family:var(--sans);font-size:12px;color:var(--head);width:120px;flex-shrink:0">${cat.nome}</span>
+      <div style="flex:1;height:8px;background:var(--ink3);border-radius:4px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:${cat.cor};border-radius:4px"></div>
+      </div>
+      <span class="priv" style="font-family:var(--mono);font-size:11px;color:var(--head);width:80px;text-align:right">${brl(val)}</span>
+    </div>`;
+  }).join('');
+  setTimeout(aplicarMascara, 0);
+}
+
+/* ── METAS ───────────────────────────────────────────── */
+function renderMetas() {
+  const grid = $('fin-metas-grid');
+  if (!grid) return;
+  const addCard = `<div class="fin-meta-card-add" onclick="abrirModalMeta()"><span style="font-size:24px">🎯</span><span>Nova Meta</span></div>`;
+
+  grid.innerHTML = FIN.metas.map(m => {
+    const pct = Math.min(100, (m.atual / m.alvo) * 100);
+    const prazoStr = m.prazo ? new Date(m.prazo + 'T00:00:00').toLocaleDateString('pt-BR') : 'Sem prazo';
+    const concluida = m.atual >= m.alvo;
+    return `<div class="fin-meta-card">
+      <div class="fin-meta-top">
+        <div style="display:flex;gap:10px;align-items:center">
+          <span class="fin-meta-icon">${m.icone}</span>
+          <div>
+            <div class="fin-meta-nome">${m.nome}</div>
+            <div class="fin-meta-prazo">${concluida ? '🎉 Concluída!' : 'Prazo: ' + prazoStr}</div>
+          </div>
+        </div>
+        <button class="fin-meta-del" onclick="excluirMeta('${m.id}')">🗑</button>
+      </div>
+      <div class="fin-meta-valores">
+        <span class="fin-meta-atual priv">${brl(m.atual)}</span>
+        <span class="fin-meta-total priv">de ${brl(m.alvo)}</span>
+      </div>
+      <div class="fin-meta-bar"><div class="fin-meta-bar-fill" style="width:${pct}%"></div></div>
+      <div class="fin-meta-pct">${pct.toFixed(0)}%</div>
+      <div class="fin-meta-actions">
+        <button class="fin-meta-add-btn" onclick="abrirModalAporte('${m.id}')">+ Adicionar valor</button>
+      </div>
+    </div>`;
+  }).join('') + addCard;
+  setTimeout(aplicarMascara, 0);
+}
+
+function abrirModalMeta() {
+  $('fmeta-nome').value = '';
+  $('fmeta-alvo').value = '';
+  $('fmeta-atual').value = '0';
+  $('fmeta-prazo').value = '';
+  $('fmeta-icone').value = '🎯';
+  $('fm-meta-backdrop').classList.add('open');
+  setTimeout(() => $('fmeta-nome').focus(), 100);
+}
+function fecharModalMeta() { $('fm-meta-backdrop').classList.remove('open'); }
+
+function salvarMeta() {
+  const nome  = ($('fmeta-nome').value || '').trim();
+  const alvo  = parseFloat($('fmeta-alvo').value) || 0;
+  const atual = parseFloat($('fmeta-atual').value) || 0;
+  const prazo = $('fmeta-prazo').value || null;
+  const icone = $('fmeta-icone').value;
+
+  if (!nome) { toast('Informe o nome da meta.', 'err'); return; }
+  if (alvo <= 0) { toast('Informe um valor alvo válido.', 'err'); return; }
+
+  FIN.metas.push({ id: finGerarId('meta'), nome, alvo, atual, prazo, icone });
+  persistirFinancas();
+  fecharModalMeta();
+  renderMetas();
+  toast(`🎯 Meta "${nome}" criada!`, 'ok');
+}
+
+function excluirMeta(id) {
+  const meta = FIN.metas.find(m => m.id === id);
+  if (!meta) return;
+  if (!confirm(`Excluir a meta "${meta.nome}"?`)) return;
+  FIN.metas = FIN.metas.filter(m => m.id !== id);
+  persistirFinancas();
+  renderMetas();
+  toast('Meta excluída.');
+}
+
+let _metaAporteId = null;
+function abrirModalAporte(metaId) {
+  _metaAporteId = metaId;
+  const meta = FIN.metas.find(m => m.id === metaId);
+  if (!meta) return;
+  $('fa-titulo').textContent = `Adicionar à "${meta.nome}"`;
+  $('fa-valor').value = '';
+  $('fm-aporte-backdrop').classList.add('open');
+  setTimeout(() => $('fa-valor').focus(), 100);
+}
+function fecharModalAporte() { $('fm-aporte-backdrop').classList.remove('open'); _metaAporteId = null; }
+
+function confirmarAporteMeta() {
+  const valor = parseFloat($('fa-valor').value) || 0;
+  if (valor <= 0) { toast('Informe um valor válido.', 'err'); return; }
+  const meta = FIN.metas.find(m => m.id === _metaAporteId);
+  if (!meta) return;
+  meta.atual += valor;
+  persistirFinancas();
+  fecharModalAporte();
+  renderMetas();
+  toast(`✅ ${brl(valor)} adicionado à meta "${meta.nome}"!`, 'ok');
+  if (meta.atual >= meta.alvo) toast(`🎉 Meta "${meta.nome}" concluída!`, 'ok');
+}
+
+/* ── Preview na Home ────────────────────────────────── */
+function renderHomeFinancasPreview() {
+  const el = $('home-fin-preview');
+  if (!el) return;
+
+  if (!FIN.contas.length && !FIN.transacoes.length) {
+    el.innerHTML = `<div class="fin-preview-body">
+      <div style="text-align:center;padding:14px 8px;color:var(--body3);font-family:var(--sans);font-size:12px">
+        Comece cadastrando uma conta bancária
+      </div>
+      <button class="btn btn-wire" style="width:100%;padding:7px;font-size:11px" onclick="setPage('financas')">Configurar Finanças →</button>
+    </div>`;
+    return;
+  }
+
+  const saldoTotal = FIN.contas.reduce((s,c) => s + finSaldoConta(c.id), 0);
+  const hoje = new Date();
+  const txMes = FIN.transacoes.filter(t => {
+    const d = new Date(t.data);
+    return d.getMonth() === hoje.getMonth() && d.getFullYear() === hoje.getFullYear();
+  });
+  const ganhos = txMes.filter(t=>t.tipo==='ganho').reduce((s,t)=>s+t.valor,0);
+  const gastos = txMes.filter(t=>t.tipo==='gasto').reduce((s,t)=>s+t.valor,0);
+
+  const recentes = [...FIN.transacoes].sort((a,b) => new Date(b.data)-new Date(a.data)).slice(0,3);
+
+  el.innerHTML = `
+    <div class="fin-preview-resumo">
+      <div class="fin-preview-cell">
+        <div class="fin-preview-lbl">Saldo</div>
+        <div class="fin-preview-val priv ${saldoTotal>=0?'pos':'neg'}">${brl(saldoTotal)}</div>
+      </div>
+      <div class="fin-preview-cell">
+        <div class="fin-preview-lbl">Ganhos (mês)</div>
+        <div class="fin-preview-val pos priv">${brl(ganhos)}</div>
+      </div>
+      <div class="fin-preview-cell">
+        <div class="fin-preview-lbl">Gastos (mês)</div>
+        <div class="fin-preview-val neg priv">${brl(gastos)}</div>
+      </div>
+    </div>
+    <div class="fin-preview-body">
+      ${recentes.length ? recentes.map(t => {
+        const cat = finCatById(t.categoriaId);
+        return `<div class="fin-preview-tx">
+          <span style="font-family:var(--sans);color:var(--head)">${cat ? cat.icone : '•'} ${t.desc}</span>
+          <span class="priv" style="font-family:var(--mono);color:${t.tipo==='ganho'?'var(--lime)':'var(--red2)'}">${t.tipo==='ganho'?'+':'-'}${brl(t.valor)}</span>
+        </div>`;
+      }).join('') : '<div class="notif-empty">Nenhuma transação ainda</div>'}
+    </div>
+    <div style="padding:8px 16px;border-top:1px solid var(--wire)">
+      <button class="btn btn-wire" style="width:100%;padding:7px;font-size:11px" onclick="setPage('financas')">Ver Finanças Completas →</button>
+    </div>`;
+  setTimeout(aplicarMascara, 0);
 }
 
 
