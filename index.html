@@ -2875,6 +2875,23 @@ tbody tr:hover td:last-child::after {
   .fin-preview-resumo { grid-template-columns: 1fr; }
 }
 
+
+/* ── Ranking collapsible ─────────────────────────────── */
+.ranking-collapse-btn {
+  background: transparent; border: 1px solid var(--wire2);
+  color: var(--body2); font-family: var(--sans); font-size: 10px;
+  font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  padding: 5px 12px; border-radius: 4px; cursor: pointer;
+  transition: all .14s; display: flex; align-items: center; gap: 5px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.ranking-collapse-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+.ranking-body {
+  overflow: hidden;
+  transition: max-height .35s cubic-bezier(.4,0,.2,1), opacity .25s ease;
+  max-height: 800px; opacity: 1;
+}
+.ranking-body.collapsed { max-height: 0 !important; opacity: 0; }
 </style>
 </head>
 <body>
@@ -2996,7 +3013,7 @@ tbody tr:hover td:last-child::after {
   <button class="page-tab active" id="tab-home"       onclick="setPage('home')">🏠 Visão Geral</button>
   <button class="page-tab"        id="tab-carteira"   onclick="setPage('carteira')">💼 Minha Carteira</button>
   <button class="page-tab"        id="tab-dividendos" onclick="setPage('dividendos')">📅 Dividendos</button>
-  <button class="page-tab"        id="tab-financas"   onclick="setPage('financas')">💰 Finanças</button>
+  <button class="page-tab"        id="tab-financas"   onclick="setPage('financas')">👤 Pessoal</button>
 </nav>
 
 <!-- ═══════ HOME PAGE ═══════ -->
@@ -3072,9 +3089,11 @@ tbody tr:hover td:last-child::after {
       <div class="home-section-block">
         <div class="home-section-hdr">
           <div class="home-section-title">🏆 Ranking de Ações B3</div>
+          <button class="ranking-collapse-btn" id="btn-collapse-acoes" onclick="toggleRanking('acoes')"><span id="collapse-icon-acoes">▲</span> Minimizar</button>
         </div>
 
         <!-- Tabs dos rankings -->
+        <div class="ranking-body" id="ranking-body-acoes">
         <div class="ranking-tabs" id="ranking-tabs-acoes">
           <button class="ranking-tab active" data-tab="dividendos" onclick="setRankingTab('acoes','dividendos')">💰 Maiores Dividendos</button>
           <button class="ranking-tab" data-tab="mktcap" onclick="setRankingTab('acoes','mktcap')">📊 Maior Valor de Mercado</button>
@@ -3086,16 +3105,18 @@ tbody tr:hover td:last-child::after {
           <div id="ranking-acoes-body">
             <div class="ranking-loading"><span class="spin"></span> Carregando ranking…</div>
           </div>
-        </div>
-      </div>
+                </div><!-- /ranking-body-acoes -->
+              </div>
 
       <!-- ── Rankings de Fundos ── -->
       <div class="home-section-block">
         <div class="home-section-hdr">
-          <div class="home-section-title">🏢 Ranking de Fundos Imobiliários (FIIs)</div>
+          <div class="home-section-title">🏢 Ranking de FIIs</div>
+          <button class="ranking-collapse-btn" id="btn-collapse-fiis" onclick="toggleRanking('fiis')"><span id="collapse-icon-fiis">▲</span> Minimizar</button>
         </div>
 
         <!-- Tabs dos rankings FII -->
+        <div class="ranking-body" id="ranking-body-fiis">
         <div class="ranking-tabs" id="ranking-tabs-fiis">
           <button class="ranking-tab active" data-tab="dividendos" onclick="setRankingTab('fiis','dividendos')">💰 Maior Dividend Yield</button>
           <button class="ranking-tab" data-tab="resgate" onclick="setRankingTab('fiis','resgate')">⏱ Prazo de Resgate</button>
@@ -3108,13 +3129,14 @@ tbody tr:hover td:last-child::after {
             <div class="ranking-loading"><span class="spin"></span> Carregando ranking…</div>
           </div>
         </div>
+        </div><!-- /ranking-body-fiis -->
       </div>
 
 
       <!-- ── Finanças Pessoais (preview) ── -->
       <div class="home-section-block">
         <div class="home-section-hdr">
-          <div class="home-section-title">💰 Finanças Pessoais</div>
+          <div class="home-section-title">👤 Pessoal</div>
           <button class="btn btn-wire" style="padding:5px 12px;font-size:10px" onclick="setPage('financas')">Abrir →</button>
         </div>
         <div class="fin-preview-card" id="home-fin-preview">
@@ -3361,8 +3383,8 @@ tbody tr:hover td:last-child::after {
 
   <div class="fin-header">
     <div>
-      <div class="fin-title">💰 Finanças Pessoais</div>
-      <div class="fin-subtitle">Gerencie contas, gastos, ganhos e metas financeiras</div>
+      <div class="fin-title">👤 Pessoal</div>
+      <div class="fin-subtitle">Contas, gastos, ganhos e metas financeiras</div>
     </div>
     <div class="fin-header-actions">
       <button class="btn btn-lime" style="padding:8px 16px;font-size:11px" onclick="abrirModalTransacao()">+ Nova Transação</button>
@@ -8838,6 +8860,19 @@ function renderHomeFinancasPreview() {
   setTimeout(aplicarMascara, 0);
 }
 
+
+
+/* ── Collapsible Rankings ───────────────────────────── */
+const _rankingCollapsed = {};
+function toggleRanking(key) {
+  const body = $('ranking-body-' + key);
+  const btn  = $('btn-collapse-' + key);
+  if (!body) return;
+  _rankingCollapsed[key] = !_rankingCollapsed[key];
+  const collapsed = _rankingCollapsed[key];
+  body.classList.toggle('collapsed', collapsed);
+  if (btn) btn.innerHTML = '<span>' + (collapsed ? '▼' : '▲') + '</span> ' + (collapsed ? 'Expandir' : 'Minimizar');
+}
 
 </script>
 </body>
