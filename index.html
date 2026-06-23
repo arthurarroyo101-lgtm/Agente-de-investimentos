@@ -2892,6 +2892,17 @@ tbody tr:hover td:last-child::after {
   max-height: 800px; opacity: 1;
 }
 .ranking-body.collapsed { max-height: 0 !important; opacity: 0; }
+
+/* ── File:// Banner ─────────────────────────────────── */
+.file-banner {
+  background: rgba(255,204,0,.12); border-bottom: 1px solid rgba(255,204,0,.3);
+  padding: 8px 20px; display: flex; align-items: center; gap: 12px;
+  font-family: var(--sans); font-size: 11px; color: var(--amber);
+  position: sticky; top: 52px; z-index: 480;
+}
+.file-banner strong { font-weight: 800; }
+.file-banner a { color: var(--cyan); text-decoration: underline; cursor: pointer; }
+.file-banner-close { margin-left: auto; cursor: pointer; font-size: 14px; color: var(--amber); background: transparent; border: none; }
 </style>
 </head>
 <body>
@@ -3007,6 +3018,15 @@ tbody tr:hover td:last-child::after {
 
 <!-- ═══════ COUNTDOWN BAR ═══════ -->
 <div class="countdown-bar"><div class="countdown-fill" id="cdown" style="width:100%"></div></div>
+
+<!-- ═══════ FILE:// BANNER ═══════ -->
+<div class="file-banner" id="file-banner" style="display:none">
+  ⚠ <strong>Modo local (file://):</strong> cotações e dividendos não carregam por restrição do browser.
+  Para dados em tempo real, use um servidor local:
+  <code style="background:rgba(0,0,0,.3);padding:2px 6px;border-radius:3px;font-family:var(--mono)">python3 -m http.server 8080</code>
+  → <a onclick="toast('Abra http://localhost:8080 no navegador','ok')">localhost:8080</a>
+  <button class="file-banner-close" onclick="$('file-banner').style.display='none'">✕</button>
+</div>
 
 <!-- ═══════ NAVEGAÇÃO ═══════ -->
 <nav class="page-nav">
@@ -4378,11 +4398,23 @@ function renderTopo(apl, atu, pnl) {
 }
 
 function renderAcoes(rows) {
+  // If no rows passed, build from static carteira with no prices
   if (!rows || !rows.length) {
-    $("acoes-body").innerHTML = `<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--body3)">
-      <span class="skel" style="width:180px;height:14px"></span>
-    </td></tr>`;
-    return;
+    rows = CARTEIRA.map(ativo => {
+      const c = ST.cotacoes[ativo.ticker] || {};
+      const preco = c.regularMarketPrice;
+      const pm = ativo.valorAplicado / ativo.cotas;
+      const valorAtu  = preco ? preco * ativo.cotas : null;
+      const pnl       = valorAtu != null ? valorAtu - ativo.valorAplicado : null;
+      const varCompra = preco ? ((preco - pm) / pm) * 100 : null;
+      const varDia    = c.regularMarketChangePercent ?? null;
+      const isAlert   = varCompra != null && varCompra <= -CFG.ALERTA_PCT;
+      return { ativo, preco, pm, varCompra, varDia, valorAtu, pnl, isAlert };
+    });
+    if (!rows.length) {
+      $("acoes-body").innerHTML = `<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--body3)">Nenhum ativo na carteira</td></tr>`;
+      return;
+    }
   }
   $("acoes-body").innerHTML = rows.map(({ativo, preco, pm, varCompra, varDia, valorAtu, pnl, isAlert}) => `
     <tr class="${isAlert ? 'alert-row' : ''}" onclick="abrirAtivoDetalhe('${ativo.ticker}')" style="cursor:pointer">
@@ -5892,6 +5924,23 @@ $id("btn-privacy").addEventListener("click", () => {
 // Aplica estado inicial após carregamento
 syncBtnPrivacy();
 
+let FIN_CORES = ['#4facfe','#b8ff45','#ff2d55','#ffcc00','#8a63d2','#ff6279','#79d0f8','#d4ff7a'];
+let FIN_ICONES_CAT = ['🍔','🚗','🏠','💊','🎮','👕','📚','✈️','💡','📱','🐶','🎁','💼','🛒','⚽','🎬'];
+
+let FIN = {
+  contas:       [],
+  categorias:   [],
+  transacoes:   [],
+  metas:        [],
+  tabAtual:     'visao',
+  filtroTipo:   'todos',
+  corSelConta:    FIN_CORES[0],
+  corSelCat:      FIN_CORES[0],
+  iconSelCat:     FIN_ICONES_CAT[0],
+};
+
+let _rankingAcoesTab = 'dividendos';
+let _rankingFiisTab  = 'dividendos';
 /* ── BOOT ───────────────────────────────────────────── */
 // Limpa cache desatualizado (versão da carteira mudou)
 (function() {
@@ -5903,6 +5952,7 @@ syncBtnPrivacy();
   }
 })();
 carregarDadosSalvos();
+carregarFinancas();
 sincronizarAvatar();
 _log("Agente B3 iniciado.", "OK");
 _log(`Carteira: ${CARTEIRA.map(a => a.ticker).join(", ")}`, "INFO");
@@ -5928,15 +5978,32 @@ function setPage(nome) {
   if (tabEl)  tabEl.classList.add("active");
   if (nome === "home") renderHomePage();
   if (nome === "carteira") {
-    // Refresh portfolio data when switching to carteira tab
-    if (!ST.ultimoCheck) atualizarPortfolio();
-    else { renderAcoes([]); setTimeout(atualizarPortfolio, 100); }
+    // Always render immediately with whatever data we have, then try to update
+    const rows = CARTEIRA.map(ativo => {
+      const c = ST.cotacoes[ativo.ticker] || {};
+      const preco = c.regularMarketPrice;
+      const pm = ativo.valorAplicado / ativo.cotas;
+      let varCompra = null, varDia = null, valorAtu = null, pnl = null, isAlert = false;
+      if (preco) {
+        valorAtu  = preco * ativo.cotas;
+        pnl       = valorAtu - ativo.valorAplicado;
+        varCompra = ((preco - pm) / pm) * 100;
+        varDia    = c.regularMarketChangePercent ?? 0;
+        isAlert   = varCompra <= -CFG.ALERTA_PCT;
+      }
+      return { ativo, preco, pm, varCompra, varDia, valorAtu, pnl, isAlert };
+    });
+    renderAcoes(rows);
+    renderFundos();
+    // Try to refresh prices in background
+    setTimeout(atualizarPortfolio, 200);
   }
   if (nome === "dividendos") {
     if (DIV.dados.length === 0) carregarDividendos();
     else renderDividendos();
   }
   if (nome === "financas") {
+    carregarFinancas();
     renderFinancasPage();
   }
 }
@@ -6776,8 +6843,6 @@ function homeSearchFechar() {
 ═══════════════════════════════════════════════════════ */
 
 // State
-let _rankingAcoesTab = 'dividendos';
-let _rankingFiisTab  = 'dividendos';
 
 /* ── Dados curados dos rankings ─────────────────────── */
 
@@ -7564,7 +7629,7 @@ function renderDividendos() {
    GRÁFICO DE LINHAS — VARIAÇÃO DE ATIVOS
 ═══════════════════════════════════════════════════════ */
 
-const CHART_STATE = {
+let CHART_STATE = {
   ticker:  null,
   periodo: '1d',
   dados:   [],
@@ -7572,7 +7637,7 @@ const CHART_STATE = {
   ctx:     null,
 };
 
-const PERIODOS = [
+let PERIODOS = [
   { key:'1d',  label:'1D',  range:'1d',  interval:'5m'  },
   { key:'5d',  label:'5D',  range:'5d',  interval:'15m' },
   { key:'1mo', label:'1M',  range:'1mo', interval:'1d'  },
@@ -8140,21 +8205,6 @@ function renderNotifDividendos() {
 /* ═══════════════════════════════════════════════════════
    FINANÇAS PESSOAIS
 ═══════════════════════════════════════════════════════ */
-
-const FIN_CORES = ['#4facfe','#b8ff45','#ff2d55','#ffcc00','#8a63d2','#ff6279','#79d0f8','#d4ff7a'];
-const FIN_ICONES_CAT = ['🍔','🚗','🏠','💊','🎮','👕','📚','✈️','💡','📱','🐶','🎁','💼','🛒','⚽','🎬'];
-
-const FIN = {
-  contas:       [],
-  categorias:   [],
-  transacoes:   [],
-  metas:        [],
-  tabAtual:     'visao',
-  filtroTipo:   'todos',
-  corSelConta:    FIN_CORES[0],
-  corSelCat:      FIN_CORES[0],
-  iconSelCat:     FIN_ICONES_CAT[0],
-};
 
 /* ── Categorias padrão ──────────────────────────────── */
 function finCategoriasPadrao() {
@@ -8863,7 +8913,7 @@ function renderHomeFinancasPreview() {
 
 
 /* ── Collapsible Rankings ───────────────────────────── */
-const _rankingCollapsed = {};
+let _rankingCollapsed = {};
 function toggleRanking(key) {
   const body = $('ranking-body-' + key);
   const btn  = $('btn-collapse-' + key);
@@ -8873,6 +8923,15 @@ function toggleRanking(key) {
   body.classList.toggle('collapsed', collapsed);
   if (btn) btn.innerHTML = '<span>' + (collapsed ? '▼' : '▲') + '</span> ' + (collapsed ? 'Expandir' : 'Minimizar');
 }
+
+
+/* ── Detectar file:// e mostrar banner ──────────────── */
+(function() {
+  if (window.location.protocol === 'file:') {
+    const banner = document.getElementById('file-banner');
+    if (banner) banner.style.display = 'flex';
+  }
+})();
 
 </script>
 </body>
