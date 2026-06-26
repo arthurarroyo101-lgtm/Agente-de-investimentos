@@ -2903,6 +2903,20 @@ tbody tr:hover td:last-child::after {
 .file-banner strong { font-weight: 800; }
 .file-banner a { color: var(--cyan); text-decoration: underline; cursor: pointer; }
 .file-banner-close { margin-left: auto; cursor: pointer; font-size: 14px; color: var(--amber); background: transparent; border: none; }
+
+/* ── Home portfólio resumo strip ──────────────────── */
+.home-resumo-strip {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 1px; background: var(--wire);
+  border-radius: 8px; overflow: hidden; margin-bottom: 14px;
+}
+.home-resumo-cell { background: var(--ink2); padding: 14px 16px; }
+.home-resumo-lbl { font-family: var(--sans); font-size: 9px; font-weight: 800;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--body3); margin-bottom: 5px; }
+.home-resumo-val { font-family: var(--mono); font-size: 18px; font-weight: 700;
+  color: var(--head); letter-spacing: -.02em; }
+.home-cart-cards-grid { display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 10px; }
 </style>
 </head>
 <body>
@@ -3074,7 +3088,7 @@ tbody tr:hover td:last-child::after {
     <!-- Coluna principal -->
     <div class="home-main-col">
 
-      <!-- ── Barra de Pesquisa de Ativos ── -->
+<!-- ── Barra de Pesquisa de Ativos ── -->
       <div class="home-section-block">
         <div class="home-section-hdr">
           <div class="home-section-title">🔍 Pesquisar Ativo</div>
@@ -3105,7 +3119,36 @@ tbody tr:hover td:last-child::after {
         <div id="home-search-result" style="display:none"></div>
       </div>
 
-      <!-- ── Rankings de Ações ── -->
+            <!-- ── Portfólio Resumo ── -->
+      <div class="home-section-block">
+        <div class="home-section-hdr">
+          <div class="home-section-title">📊 Meu Portfólio</div>
+          <button class="btn btn-wire" style="padding:5px 12px;font-size:10px" onclick="setPage('carteira')">Ver carteira →</button>
+        </div>
+        <!-- Resumo numérico -->
+        <div class="home-resumo-strip">
+          <div class="home-resumo-cell">
+            <div class="home-resumo-lbl">Total Aplicado</div>
+            <div class="home-resumo-val priv" id="hcr-apl">—</div>
+          </div>
+          <div class="home-resumo-cell">
+            <div class="home-resumo-lbl">Valor Atual</div>
+            <div class="home-resumo-val priv" id="hcr-atu">—</div>
+          </div>
+          <div class="home-resumo-cell">
+            <div class="home-resumo-lbl">Resultado</div>
+            <div class="home-resumo-val priv" id="hcr-pnl">—</div>
+          </div>
+        </div>
+        <!-- Cards dos ativos -->
+        <div class="home-cart-cards-grid" id="home-cart-cards">
+          <div style="color:var(--body3);font-family:var(--sans);font-size:12px;padding:14px;grid-column:1/-1">
+            <span class="skel" style="width:200px;height:13px"></span>
+          </div>
+        </div>
+      </div>
+
+<!-- ── Rankings de Ações ── -->
       <div class="home-section-block">
         <div class="home-section-hdr">
           <div class="home-section-title">🏆 Ranking de Ações B3</div>
@@ -3150,6 +3193,7 @@ tbody tr:hover td:last-child::after {
           </div>
         </div>
         </div><!-- /ranking-body-fiis -->
+      </div>
       </div>
 
 
@@ -7433,7 +7477,8 @@ async function carregarDividendos(forcar = false) {
 
   DIV.carregando = false;
   DIV.ultimaAtu  = new Date();
-  if (atBtn) { atBtn.disabled = false; atBtn.textContent = '↻ Atualizar'; }
+  const atBtnFin = $('div-atualizar-btn');
+  if (atBtnFin) { atBtnFin.disabled = false; atBtnFin.textContent = '↻ Atualizar'; }
   if (typeof renderNotifDividendos !== "undefined" && $("notif-panel")?.classList.contains("open")) renderNotifDividendos();
   const upd = $('div-upd');
   if (upd) upd.textContent = 'Atualizado ' + DIV.ultimaAtu.toLocaleTimeString('pt-BR');
