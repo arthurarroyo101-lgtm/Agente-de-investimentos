@@ -2975,6 +2975,90 @@ tbody tr:hover td:last-child::after {
 
 @media (max-width: 700px) { .div-stats-bar { grid-template-columns: 1fr 1fr; } .div-table { font-size: 11px; } }
 
+
+/* ── Modal Depósito ─────────────────────────────────── */
+.dep-modal-backdrop {
+  position: fixed; inset: 0; background: rgba(6,8,15,.75);
+  backdrop-filter: blur(4px); z-index: 900;
+  display: none; align-items: center; justify-content: center; padding: 20px;
+}
+.dep-modal-backdrop.open { display: flex; }
+.dep-modal {
+  background: var(--ink2); border: 1px solid var(--wire2);
+  border-radius: 12px; width: 100%; max-width: 440px;
+  box-shadow: 0 24px 64px rgba(0,0,0,.6);
+  animation: slideDown .2s cubic-bezier(.34,1.56,.64,1);
+  overflow: hidden;
+}
+.dep-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-bottom: 1px solid var(--wire);
+  background: var(--ink3);
+}
+.dep-title { font-family: var(--sans); font-size: 15px; font-weight: 800;
+  letter-spacing: .04em; color: var(--head); }
+.dep-close { background: transparent; border: none; color: var(--body2);
+  font-size: 16px; cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+.dep-close:hover { color: var(--head); background: rgba(255,255,255,.06); }
+.dep-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.dep-arrow {
+  display: flex; align-items: center; justify-content: center;
+  gap: 14px; padding: 12px 0;
+}
+.dep-conta-box {
+  flex: 1; background: var(--ink3); border: 1px solid var(--wire);
+  border-radius: 8px; padding: 12px 14px; min-width: 0;
+}
+.dep-conta-label { font-family: var(--sans); font-size: 9px; font-weight: 800;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--body3); margin-bottom: 4px; }
+.dep-conta-nome { font-family: var(--sans); font-size: 13px; font-weight: 700;
+  color: var(--head); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dep-conta-saldo { font-family: var(--mono); font-size: 11px; color: var(--body3); margin-top: 2px; }
+.dep-arrow-icon { font-size: 20px; color: var(--lime); flex-shrink: 0; }
+.dep-field { display: flex; flex-direction: column; gap: 6px; }
+.dep-label { font-family: var(--sans); font-size: 9px; font-weight: 800;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--body3); }
+.dep-select, .dep-input {
+  background: var(--ink3); border: 1px solid var(--wire);
+  color: var(--head); font-family: var(--sans); font-size: 13px;
+  padding: 10px 14px; border-radius: 6px; width: 100%;
+  transition: border-color .15s;
+}
+.dep-select:focus, .dep-input:focus { outline: none; border-color: var(--lime); }
+.dep-amount-wrap { position: relative; }
+.dep-currency { position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  font-family: var(--mono); font-size: 13px; color: var(--body3); pointer-events: none; }
+.dep-input.amount { padding-left: 38px; font-size: 18px; font-weight: 700;
+  font-family: var(--mono); }
+.dep-input.amount:focus { border-color: var(--lime);
+  box-shadow: 0 0 0 2px rgba(184,255,69,.1); }
+.dep-saldo-aviso { font-family: var(--mono); font-size: 10px;
+  color: var(--body3); text-align: right; }
+.dep-saldo-aviso.warn { color: var(--amber); }
+.dep-saldo-aviso.ok   { color: var(--lime); }
+.dep-footer { display: flex; gap: 10px; padding: 0 20px 20px; }
+.dep-btn-cancel { flex: 1; padding: 11px; font-family: var(--sans); font-size: 12px;
+  font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  background: transparent; border: 1px solid var(--wire2); color: var(--body2);
+  border-radius: 6px; cursor: pointer; transition: all .14s; }
+.dep-btn-cancel:hover { border-color: var(--body); color: var(--head); }
+.dep-btn-confirm { flex: 2; padding: 11px; font-family: var(--sans); font-size: 13px;
+  font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  background: var(--lime); color: var(--ink); border: none;
+  border-radius: 6px; cursor: pointer; transition: all .15s; }
+.dep-btn-confirm:hover { background: var(--lime2); box-shadow: 0 0 20px rgba(184,255,69,.3); }
+.dep-btn-confirm:disabled { opacity: .35; cursor: not-allowed; box-shadow: none; }
+
+/* Botão depósito na topbar e na página carteira */
+.btn-deposito {
+  font-family: var(--sans); font-size: 12px; font-weight: 800;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: 7px 16px; border-radius: 4px; border: none; cursor: pointer;
+  background: linear-gradient(135deg, var(--lime), #79d0a0);
+  color: var(--ink); transition: all .15s; white-space: nowrap;
+  display: flex; align-items: center; gap: 6px;
+}
+.btn-deposito:hover { box-shadow: 0 0 18px rgba(184,255,69,.4); transform: translateY(-1px); }
 </style>
 </head>
 <body>
@@ -3016,6 +3100,7 @@ tbody tr:hover td:last-child::after {
 
   <div class="topbar-actions">
     <button class="chat-btn" id="btn-chat">🤖 Assistente</button>
+    <button class="btn-deposito" onclick="abrirDeposito()" title="Transferir para investimentos">💸 Depósito</button>
     <button class="btn-privacy" id="btn-privacy"><span id="privacy-icon">👁</span><span id="privacy-lbl">Ocultar</span></button>
     <button class="btn btn-wire" id="btn-check">⚡ Verificar</button>
     <button class="btn btn-lime" id="btn-monitor" style="display:none">▶ Iniciar</button>
@@ -3356,7 +3441,10 @@ tbody tr:hover td:last-child::after {
     <div class="panel">
       <div class="panel-head">
         <div class="panel-title">Ações</div>
-        <div class="panel-badge" id="acoes-upd">—</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="panel-badge" id="acoes-upd">—</div>
+          <button class="btn-deposito" onclick="abrirDeposito()" style="padding:5px 12px;font-size:10px">💸 Depositar</button>
+        </div>
       </div>
       <div class="tbl-wrap">
         <table>
@@ -4215,6 +4303,85 @@ tbody tr:hover td:last-child::after {
     </button>
   </div>
 
+</div>
+
+
+<!-- ═══════ MODAL DEPÓSITO ═══════ -->
+<div class="dep-modal-backdrop" id="dep-backdrop" onclick="if(event.target===this)fecharDeposito()">
+  <div class="dep-modal">
+    <div class="dep-header">
+      <div class="dep-title">💸 Transferir para Investimentos</div>
+      <button class="dep-close" onclick="fecharDeposito()">✕</button>
+    </div>
+    <div class="dep-body">
+
+      <!-- Origem → Destino -->
+      <div class="dep-arrow">
+        <div class="dep-conta-box">
+          <div class="dep-conta-label">De (conta pessoal)</div>
+          <div class="dep-conta-nome" id="dep-origem-nome">—</div>
+          <div class="dep-conta-saldo priv" id="dep-origem-saldo">Saldo: —</div>
+        </div>
+        <div class="dep-arrow-icon">→</div>
+        <div class="dep-conta-box" style="border-color:rgba(184,255,69,.3)">
+          <div class="dep-conta-label">Para (investimentos)</div>
+          <div class="dep-conta-nome" id="dep-destino-nome">—</div>
+          <div class="dep-conta-saldo" id="dep-destino-info" style="color:var(--lime)">Rico · XP</div>
+        </div>
+      </div>
+
+      <!-- Seleção de conta origem -->
+      <div class="dep-field">
+        <div class="dep-label">Conta de Origem</div>
+        <select class="dep-select" id="dep-conta-sel" onchange="atualizarOrigemDep()">
+          <option value="">Selecione uma conta…</option>
+        </select>
+      </div>
+
+      <!-- Destino -->
+      <div class="dep-field">
+        <div class="dep-label">Destino</div>
+        <select class="dep-select" id="dep-destino-sel" onchange="atualizarDestinoDep()">
+          <option value="rico">💼 Conta Rico (XP) — Investimentos</option>
+          <option value="fundo_trend">📈 Trend DI — Renda Fixa</option>
+          <option value="fundo_atenas">📊 Absolute Atenas — Multimercado</option>
+          <option value="novo_fundo">➕ Novo fundo…</option>
+        </select>
+      </div>
+
+      <!-- Valor -->
+      <div class="dep-field">
+        <div class="dep-label">Valor do Depósito</div>
+        <div class="dep-amount-wrap">
+          <span class="dep-currency">R$</span>
+          <input class="dep-input amount" id="dep-valor" type="number"
+            min="1" step="0.01" placeholder="0,00"
+            oninput="validarDepDeposito()">
+        </div>
+        <div class="dep-saldo-aviso" id="dep-saldo-aviso">Selecione uma conta</div>
+      </div>
+
+      <!-- Novo fundo (aparece se destino = novo_fundo) -->
+      <div class="dep-field" id="dep-novo-fundo-wrap" style="display:none">
+        <div class="dep-label">Nome do Fundo</div>
+        <input class="dep-input" id="dep-novo-fundo-nome" placeholder="Ex: Trend Inflação, Kinea…">
+        <div class="dep-label" style="margin-top:8px">Tipo</div>
+        <select class="dep-select" id="dep-novo-fundo-tipo">
+          <option value="Renda Fixa">Renda Fixa</option>
+          <option value="Multimercado">Multimercado</option>
+          <option value="FII">FII</option>
+          <option value="Internacional">Internacional</option>
+        </select>
+      </div>
+
+    </div>
+    <div class="dep-footer">
+      <button class="dep-btn-cancel" onclick="fecharDeposito()">Cancelar</button>
+      <button class="dep-btn-confirm" id="dep-btn-ok" onclick="confirmarDeposito()" disabled>
+        💸 Transferir
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- ═══════ TICKER TAPE ═══════ -->
@@ -8889,6 +9056,177 @@ function toggleRanking(key) {
     if (banner) banner.style.display = 'flex';
   }
 })();
+
+
+/* ═══════════════════════════════════════════════════════
+   DEPÓSITO — Transferência Conta Pessoal → Investimentos
+═══════════════════════════════════════════════════════ */
+
+function abrirDeposito() {
+  carregarFinancas();
+  popularContasDep();
+  atualizarOrigemDep();
+  atualizarDestinoDep();
+  $('dep-valor').value = '';
+  $('dep-saldo-aviso').textContent = 'Selecione uma conta';
+  $('dep-saldo-aviso').className = 'dep-saldo-aviso';
+  $('dep-btn-ok').disabled = true;
+  $('dep-backdrop').classList.add('open');
+  setTimeout(() => $('dep-valor').focus(), 200);
+}
+
+function fecharDeposito() {
+  $('dep-backdrop').classList.remove('open');
+}
+
+function popularContasDep() {
+  const sel = $('dep-conta-sel');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Selecione uma conta…</option>';
+  FIN.contas.forEach(c => {
+    const saldo = finSaldoConta(c.id);
+    const opt   = document.createElement('option');
+    opt.value   = c.id;
+    opt.textContent = `${c.nome} — ${brl(saldo)}`;
+    if (saldo <= 0) opt.disabled = true;
+    sel.appendChild(opt);
+  });
+  if (!FIN.contas.length) {
+    const opt = document.createElement('option');
+    opt.disabled = true;
+    opt.textContent = 'Nenhuma conta cadastrada em Pessoal';
+    sel.appendChild(opt);
+  }
+}
+
+function atualizarOrigemDep() {
+  const sel    = $('dep-conta-sel');
+  const contaId= sel?.value;
+  const conta  = FIN.contas.find(c => c.id === contaId);
+  const nomeEl = $('dep-origem-nome');
+  const saldoEl= $('dep-origem-saldo');
+  if (conta) {
+    const saldo = finSaldoConta(conta.id);
+    if (nomeEl) nomeEl.textContent = conta.nome;
+    if (saldoEl) saldoEl.textContent = 'Saldo disponível: ' + brl(saldo);
+  } else {
+    if (nomeEl) nomeEl.textContent = '—';
+    if (saldoEl) saldoEl.textContent = 'Selecione uma conta';
+  }
+  validarDepDeposito();
+}
+
+function atualizarDestinoDep() {
+  const dest   = $('dep-destino-sel')?.value;
+  const nomeEl = $('dep-destino-nome');
+  const novoWrap = $('dep-novo-fundo-wrap');
+
+  const mapa = {
+    'rico':         'Conta Rico (XP) — Investimentos',
+    'fundo_trend':  'Trend DI — Renda Fixa',
+    'fundo_atenas': 'Absolute Atenas — Multimercado',
+    'novo_fundo':   'Novo fundo…',
+  };
+  if (nomeEl) nomeEl.textContent = mapa[dest] || '—';
+  if (novoWrap) novoWrap.style.display = dest === 'novo_fundo' ? 'flex' : 'none';
+  if (novoWrap) novoWrap.style.flexDirection = 'column';
+  if (novoWrap) novoWrap.style.gap = '6px';
+  validarDepDeposito();
+}
+
+function validarDepDeposito() {
+  const contaId = $('dep-conta-sel')?.value;
+  const valor   = parseFloat($('dep-valor')?.value) || 0;
+  const dest    = $('dep-destino-sel')?.value;
+  const btn     = $('dep-btn-ok');
+  const aviso   = $('dep-saldo-aviso');
+  const conta   = FIN.contas.find(c => c.id === contaId);
+
+  if (!conta) {
+    if (aviso) { aviso.textContent = 'Selecione uma conta de origem'; aviso.className = 'dep-saldo-aviso'; }
+    if (btn) btn.disabled = true; return;
+  }
+
+  const saldo = finSaldoConta(conta.id);
+  if (valor <= 0) {
+    if (aviso) { aviso.textContent = `Saldo disponível: ${brl(saldo)}`; aviso.className = 'dep-saldo-aviso ok'; }
+    if (btn) btn.disabled = true; return;
+  }
+  if (valor > saldo) {
+    if (aviso) { aviso.textContent = `⚠ Saldo insuficiente — disponível: ${brl(saldo)}`; aviso.className = 'dep-saldo-aviso warn'; }
+    if (btn) btn.disabled = true; return;
+  }
+  if (dest === 'novo_fundo' && !($('dep-novo-fundo-nome')?.value || '').trim()) {
+    if (aviso) { aviso.textContent = 'Informe o nome do novo fundo'; aviso.className = 'dep-saldo-aviso warn'; }
+    if (btn) btn.disabled = true; return;
+  }
+
+  const restante = saldo - valor;
+  if (aviso) { aviso.textContent = `✓ Saldo após transferência: ${brl(restante)}`; aviso.className = 'dep-saldo-aviso ok'; }
+  if (btn) btn.disabled = false;
+}
+
+function confirmarDeposito() {
+  const contaId = $('dep-conta-sel')?.value;
+  const valor   = parseFloat($('dep-valor')?.value) || 0;
+  const dest    = $('dep-destino-sel')?.value;
+  const conta   = FIN.contas.find(c => c.id === contaId);
+
+  if (!conta || valor <= 0) return;
+  const saldo = finSaldoConta(conta.id);
+  if (valor > saldo) { toast('Saldo insuficiente.', 'err'); return; }
+
+  // 1. Debitar da conta pessoal (lançar transação de saída)
+  FIN.transacoes.unshift({
+    id:          finGerarId('tx'),
+    desc:        'Transferência para investimentos',
+    valor,
+    data:        finHoje(),
+    tipo:        'gasto',
+    categoriaId: null,
+    contaId:     conta.id,
+    _deposito:   true,
+  });
+
+  // 2. Creditar no destino de investimentos
+  if (dest === 'rico') {
+    // Apenas registra — conta Rico não é uma conta FIN
+    _log(`DEPÓSITO: ${brl(valor)} transferido de "${conta.nome}" → Conta Rico (XP).`, 'OK');
+  } else if (dest === 'fundo_trend') {
+    const idx = FUNDOS.findIndex(f => f.nome.toLowerCase().includes('trend'));
+    if (idx >= 0) { FUNDOS[idx].valorAplicado += valor; FUNDOS[idx].valorAtual = (FUNDOS[idx].valorAtual || FUNDOS[idx].valorAplicado) + valor; }
+    else FUNDOS.push({ nome:'Trend DI', valorAplicado: valor, valorAtual: valor, tipo:'Renda Fixa' });
+    _log(`DEPÓSITO: ${brl(valor)} aportado em Trend DI.`, 'OK');
+    persistirDados();
+    renderFundos();
+  } else if (dest === 'fundo_atenas') {
+    const idx = FUNDOS.findIndex(f => f.nome.toLowerCase().includes('atenas'));
+    if (idx >= 0) { FUNDOS[idx].valorAplicado += valor; FUNDOS[idx].valorAtual = (FUNDOS[idx].valorAtual || FUNDOS[idx].valorAplicado) + valor; }
+    else FUNDOS.push({ nome:'Absolute Atenas', valorAplicado: valor, valorAtual: valor, tipo:'Multimercado' });
+    _log(`DEPÓSITO: ${brl(valor)} aportado em Absolute Atenas.`, 'OK');
+    persistirDados();
+    renderFundos();
+  } else if (dest === 'novo_fundo') {
+    const nome = ($('dep-novo-fundo-nome')?.value || '').trim();
+    const tipo = $('dep-novo-fundo-tipo')?.value || 'Renda Fixa';
+    const idx  = FUNDOS.findIndex(f => f.nome.toLowerCase() === nome.toLowerCase());
+    if (idx >= 0) { FUNDOS[idx].valorAplicado += valor; FUNDOS[idx].valorAtual = (FUNDOS[idx].valorAtual || FUNDOS[idx].valorAplicado) + valor; }
+    else FUNDOS.push({ nome, valorAplicado: valor, valorAtual: valor, tipo });
+    _log(`DEPÓSITO: ${brl(valor)} aportado em "${nome}" (${tipo}).`, 'OK');
+    persistirDados();
+    renderFundos();
+  }
+
+  // 3. Persiste e atualiza UI
+  persistirFinancas();
+  fecharDeposito();
+  toast(`✅ ${brl(valor)} transferido para investimentos!`, 'ok');
+
+  // Atualiza a visão da carteira se estiver aberta
+  if ($('page-carteira')?.classList.contains('active')) atualizarPortfolio();
+  if ($('page-financas')?.classList.contains('active')) { renderContas(); renderTransacoes(); renderResumoFin(); renderGraficosFin(); }
+  renderHomeFinancasPreview?.();
+}
 
 </script>
 </body>
