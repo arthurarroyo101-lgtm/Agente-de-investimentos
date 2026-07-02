@@ -3262,36 +3262,7 @@ tbody tr:hover td:last-child::after {
         <div id="home-search-result" style="display:none"></div>
       </div>
 
-            <!-- ── Portfólio Resumo ── -->
-      <div class="home-section-block">
-        <div class="home-section-hdr">
-          <div class="home-section-title">📊 Meu Portfólio</div>
-          <button class="btn btn-wire" style="padding:5px 12px;font-size:10px" onclick="setPage('carteira')">Ver carteira →</button>
-        </div>
-        <!-- Resumo numérico -->
-        <div class="home-resumo-strip">
-          <div class="home-resumo-cell">
-            <div class="home-resumo-lbl">Total Aplicado</div>
-            <div class="home-resumo-val priv" id="hcr-apl">—</div>
-          </div>
-          <div class="home-resumo-cell">
-            <div class="home-resumo-lbl">Valor Atual</div>
-            <div class="home-resumo-val priv" id="hcr-atu">—</div>
-          </div>
-          <div class="home-resumo-cell">
-            <div class="home-resumo-lbl">Resultado</div>
-            <div class="home-resumo-val priv" id="hcr-pnl">—</div>
-          </div>
-        </div>
-        <!-- Cards dos ativos -->
-        <div class="home-cart-cards-grid" id="home-cart-cards">
-          <div style="color:var(--body3);font-family:var(--sans);font-size:12px;padding:14px;grid-column:1/-1">
-            <span class="skel" style="width:200px;height:13px"></span>
-          </div>
-        </div>
-      </div>
-
-<!-- ── Rankings de Ações ── -->
+      <!-- ── Rankings de Ações ── -->
       <div class="home-section-block">
         <div class="home-section-hdr">
           <div class="home-section-title">🏆 Ranking de Ações B3</div>
@@ -4235,6 +4206,40 @@ tbody tr:hover td:last-child::after {
       </div>
     </div>
 
+
+    <!-- ── Meu Portfólio ── -->
+    <div class="profile-section">
+      <div class="profile-section-title">📊 Meu Portfólio</div>
+    </div>
+
+    <!-- Resumo numérico -->
+    <div class="profile-stats" style="margin-bottom:0">
+      <div class="profile-stat">
+        <div class="profile-stat-lbl">Total Aplicado</div>
+        <div class="profile-stat-val priv" id="hcr-apl">—</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-lbl">Valor Atual</div>
+        <div class="profile-stat-val priv" id="hcr-atu">—</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-lbl">Resultado</div>
+        <div class="profile-stat-val priv" id="hcr-pnl">—</div>
+      </div>
+    </div>
+
+    <!-- Cards dos ativos (grid compacto) -->
+    <div style="padding:0 24px 4px">
+      <div class="home-cart-cards-grid" id="home-cart-cards" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:10px"></div>
+    </div>
+
+    <!-- Fundos compactos -->
+    <div style="padding:0 24px 20px">
+      <div style="font-family:var(--sans);font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--body3);margin:12px 0 8px">Fundos de Investimento</div>
+      <div id="pf-fundos-list"></div>
+      <button class="btn btn-wire" style="width:100%;padding:7px;font-size:10px;margin-top:10px" onclick="fecharPerfil();setPage('carteira')">Ver Carteira Completa →</button>
+    </div>
+
   </div><!-- /profile-body -->
 
   <!-- Footer com botão salvar -->
@@ -4808,6 +4813,7 @@ function checarAlerta(ativo, preco, queda) {
   };
 
   ST.alertas.push(alerta);
+  persistirDados();
   if (typeof renderNotifBadge !== "undefined") renderNotifBadge();
   _log(`GATILHO: ${ativo.ticker} caiu ${queda.toFixed(2)}% vs. preço médio! Sug: ${cotasSug} cotas.`, "ALERTA");
   toast(`⚠ ${ativo.ticker}: queda de ${queda.toFixed(2)}%`, "err");
@@ -4828,6 +4834,7 @@ async function confirmar(id, confirmado) {
     _log(`Compra cancelada: ${a.ticker}.`, "AVISO");
     toast(`❌ Operação cancelada: ${a.ticker}.`);
   }
+  persistirDados();
   renderAlertas();
 }
 
@@ -5679,6 +5686,7 @@ function persistirDados() {
     localStorage.setItem("b3agent_carteira",  JSON.stringify(CARTEIRA));
     localStorage.setItem("b3agent_fundos",    JSON.stringify(FUNDOS));
     localStorage.setItem("b3agent_historico", JSON.stringify(OP.historico));
+    localStorage.setItem("b3agent_alertas",   JSON.stringify(ST.alertas));
   } catch(e) {}
 }
 
@@ -5687,9 +5695,16 @@ function carregarDadosSalvos() {
     const c = localStorage.getItem("b3agent_carteira");
     const f = localStorage.getItem("b3agent_fundos");
     const h = localStorage.getItem("b3agent_historico");
+    const a = localStorage.getItem("b3agent_alertas");
     if (c) { const p = JSON.parse(c); CARTEIRA.length = 0; p.forEach(a => CARTEIRA.push(a)); }
     if (f) { const p = JSON.parse(f); FUNDOS.length   = 0; p.forEach(x => FUNDOS.push(x)); }
     if (h) { OP.historico = JSON.parse(h); }
+    if (a) {
+      const alertasSalvos = JSON.parse(a);
+      ST.alertas = alertasSalvos;
+      // Rebuild disparados set from loaded alertas
+      alertasSalvos.forEach(al => ST.disparados.add(al.id));
+    }
   } catch(e) {}
 }
 
@@ -6050,6 +6065,7 @@ function abrirPerfil() {
 
   atualizarStatsPerfil();
   sincronizarAvatar();
+  renderHomeCarteiraCards();
   setTimeout(aplicarMascara, 50);
 
   $("profile-panel").classList.add("open");
@@ -6433,6 +6449,36 @@ function renderHomeCarteiraCards() {
 
   grid.innerHTML = acoesHTML + fundosHTML;
   setTimeout(aplicarMascara, 0);
+
+  // Render fundos list in profile panel
+  const pfFundos = $('pf-fundos-list');
+  if (pfFundos) {
+    if (!FUNDOS.length) {
+      pfFundos.innerHTML = '<div style="color:var(--body3);font-family:var(--sans);font-size:11px">Nenhum fundo cadastrado</div>';
+    } else {
+      pfFundos.innerHTML = FUNDOS.map(f => {
+        const atu  = f.valorAtual ?? f.valorAplicado;
+        const pnl  = atu - f.valorAplicado;
+        const pct  = f.valorAplicado ? (pnl / f.valorAplicado * 100) : 0;
+        const cor  = pnl >= 0 ? 'var(--lime)' : 'var(--red2)';
+        const s    = pnl >= 0 ? '+' : '';
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--ink3);border:1px solid var(--wire);border-radius:6px;margin-bottom:6px">
+          <div>
+            <div style="font-family:var(--sans);font-size:12px;font-weight:700;color:var(--head)">${f.nome}</div>
+            <div style="font-family:var(--sans);font-size:9px;color:var(--body3);text-transform:uppercase;letter-spacing:.1em">${f.tipo}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--cyan)" class="priv">${brl(atu)}</div>
+            <div style="font-family:var(--mono);font-size:10px;color:${cor}">${s}${pct.toFixed(2)}%</div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    setTimeout(aplicarMascara, 0);
+  }
+  // Update profile stats
+  if (typeof atualizarStatsPerfil === 'function') atualizarStatsPerfil();
+
 }
 
 /* ── Alertas sidebar ───────────────────────────────── */
