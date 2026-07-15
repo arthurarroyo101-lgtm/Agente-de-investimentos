@@ -1719,6 +1719,105 @@ tbody tr:hover td:last-child::after {
   color: var(--body3); font-family: var(--mono); font-size: 11px;
 }
 
+/* ═══════════════════════════════════════════════════════
+   DIVIDENDOS — CALENDÁRIO
+═══════════════════════════════════════════════════════ */
+.div-wrap {
+  max-width: 1440px; margin: 0 auto;
+  padding: 20px 20px 40px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+
+.div-resumo {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 1px; background: var(--wire);
+  border-radius: 8px; overflow: hidden;
+}
+.div-resumo-cell { background: var(--ink2); padding: 18px 16px; position: relative; overflow: hidden; }
+.div-resumo-cell::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--lime), transparent);
+}
+.drc-label { font-family: var(--sans); font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--body3); margin-bottom: 6px; }
+.drc-val   { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--head); letter-spacing: -.02em; }
+.drc-sub   { font-family: var(--mono); font-size: 10px; color: var(--body2); margin-top: 4px; }
+
+.div-grid-layout {
+  display: grid; grid-template-columns: 1fr 360px;
+  gap: 20px; align-items: start;
+}
+@media (max-width: 1100px) { .div-grid-layout { grid-template-columns: 1fr; } .div-resumo { grid-template-columns: repeat(2,1fr); } }
+
+.div-cal-panel { background: var(--ink2); border: 1px solid var(--wire); border-radius: 8px; overflow: hidden; }
+.div-cal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid var(--wire);
+  background: rgba(27,37,64,.4);
+}
+.div-cal-title { font-family: var(--sans); font-size: 14px; font-weight: 800; letter-spacing: .06em; color: var(--head); text-transform: uppercase; }
+.div-cal-nav { display: flex; align-items: center; gap: 8px; }
+.div-cal-nav-btn {
+  background: transparent; border: 1px solid var(--wire2); color: var(--body);
+  width: 30px; height: 30px; border-radius: 4px; cursor: pointer;
+  font-size: 14px; transition: all .14s; display: flex; align-items: center; justify-content: center;
+}
+.div-cal-nav-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+
+.div-cal-body { padding: 16px 18px; }
+.div-cal-weekdays {
+  display: grid; grid-template-columns: repeat(7,1fr);
+  gap: 4px; margin-bottom: 6px;
+}
+.div-cal-wd {
+  font-family: var(--sans); font-size: 9px; font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--body3); text-align: center; padding: 4px 0;
+}
+.div-cal-days {
+  display: grid; grid-template-columns: repeat(7,1fr);
+  gap: 4px;
+}
+.div-cal-day {
+  min-height: 68px; background: var(--ink3); border: 1px solid var(--wire);
+  border-radius: 5px; padding: 5px 6px; position: relative;
+  transition: all .14s; cursor: default;
+}
+.div-cal-day.empty { background: transparent; border-color: transparent; }
+.div-cal-day.today { border-color: var(--cyan); }
+.div-cal-day.has-div { border-color: rgba(184,255,69,.35); background: rgba(184,255,69,.04); cursor: pointer; }
+.div-cal-day.has-div:hover { background: rgba(184,255,69,.09); }
+.div-cal-daynum { font-family: var(--mono); font-size: 10px; color: var(--body2); }
+.div-cal-day.today .div-cal-daynum { color: var(--cyan); font-weight: 700; }
+.div-cal-badges { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 4px; }
+.div-cal-badge {
+  font-family: var(--sans); font-size: 8px; font-weight: 800; letter-spacing: .04em;
+  padding: 1px 4px; border-radius: 2px; background: rgba(184,255,69,.16); color: var(--lime);
+}
+
+.div-legend { display: flex; align-items: center; gap: 14px; padding: 10px 18px; border-top: 1px solid var(--wire); font-family: var(--mono); font-size: 10px; color: var(--body3); flex-wrap: wrap; }
+.div-legend-item { display: flex; align-items: center; gap: 5px; }
+.div-legend-dot { width: 8px; height: 8px; border-radius: 2px; background: rgba(184,255,69,.5); }
+
+.div-list-panel { background: var(--ink2); border: 1px solid var(--wire); border-radius: 8px; overflow: hidden; }
+.div-list-head { padding: 12px 18px; border-bottom: 1px solid var(--wire); font-family: var(--sans); font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); background: rgba(27,37,64,.4); }
+.div-list-scroll { max-height: 620px; overflow-y: auto; }
+.div-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 18px; border-bottom: 1px solid rgba(27,37,64,.6);
+}
+.div-item:last-child { border-bottom: none; }
+.div-item-tk { font-family: var(--sans); font-size: 14px; font-weight: 800; color: var(--head); min-width: 54px; }
+.div-item-info { flex: 1; }
+.div-item-tipo { font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--body3); }
+.div-item-datas { font-family: var(--mono); font-size: 10px; color: var(--body2); margin-top: 2px; }
+.div-item-val { text-align: right; }
+.div-item-vps { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--lime); }
+.div-item-total { font-family: var(--mono); font-size: 10px; color: var(--body2); margin-top: 2px; }
+.div-item-status { font-family: var(--sans); font-size: 8px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 2px 6px; border-radius: 8px; margin-top: 3px; display: inline-block; }
+.div-item-status.pago { background: rgba(184,255,69,.14); color: var(--lime); }
+.div-item-status.futuro { background: rgba(79,172,254,.14); color: var(--blue); }
+
+.div-empty { text-align: center; padding: 36px 20px; color: var(--body3); font-family: var(--sans); font-size: 13px; font-weight: 600; letter-spacing: .06em; }
+
 </style>
 </head>
 <body>
@@ -1775,6 +1874,7 @@ tbody tr:hover td:last-child::after {
 <nav class="page-nav">
   <button class="page-tab active" id="tab-home"     onclick="setPage('home')">🏠 Visão Geral</button>
   <button class="page-tab"        id="tab-carteira" onclick="setPage('carteira')">💼 Minha Carteira</button>
+  <button class="page-tab"        id="tab-dividendos" onclick="setPage('dividendos')">💰 Dividendos</button>
 </nav>
 
 <!-- ═══════ HOME PAGE ═══════ -->
@@ -1973,6 +2073,54 @@ tbody tr:hover td:last-child::after {
   </div>
 </div>
 </div><!-- /page-carteira -->
+
+<!-- ═══════ DIVIDENDOS ═══════ -->
+<div id="page-dividendos" class="page">
+<div class="div-wrap">
+
+  <div class="div-resumo">
+    <div class="div-resumo-cell"><div class="drc-label">Recebido no Ano</div><div class="drc-val priv" id="dr-ano"><span class="skel" style="width:100px"></span></div></div>
+    <div class="div-resumo-cell"><div class="drc-label">Recebido no Mês</div><div class="drc-val priv" id="dr-mes"><span class="skel" style="width:90px"></span></div></div>
+    <div class="div-resumo-cell"><div class="drc-label">Próximo Pagamento</div><div class="drc-val priv" id="dr-prox"><span class="skel" style="width:110px"></span></div><div class="drc-sub" id="dr-prox-sub"></div></div>
+    <div class="div-resumo-cell"><div class="drc-label">Dividend Yield (12m)</div><div class="drc-val" id="dr-dy"><span class="skel" style="width:60px"></span></div></div>
+  </div>
+
+  <div class="div-grid-layout">
+    <div class="div-cal-panel">
+      <div class="div-cal-head">
+        <div class="div-cal-title" id="div-cal-titulo">—</div>
+        <div class="div-cal-nav">
+          <button class="div-cal-nav-btn" onclick="navMesDividendo(-1)">‹</button>
+          <button class="btn btn-wire" style="padding:5px 12px;font-size:10px" onclick="irParaHojeDividendo()">Hoje</button>
+          <button class="div-cal-nav-btn" onclick="navMesDividendo(1)">›</button>
+          <button class="btn btn-wire" style="padding:5px 12px;font-size:10px" onclick="fetchDividendos(true)">↻ Atualizar</button>
+        </div>
+      </div>
+      <div class="div-cal-body">
+        <div class="div-cal-weekdays">
+          <div class="div-cal-wd">Dom</div><div class="div-cal-wd">Seg</div><div class="div-cal-wd">Ter</div>
+          <div class="div-cal-wd">Qua</div><div class="div-cal-wd">Qui</div><div class="div-cal-wd">Sex</div><div class="div-cal-wd">Sáb</div>
+        </div>
+        <div class="div-cal-days" id="div-cal-days">
+          <div class="b3-loading" style="grid-column:1/-1"><span class="spin"></span>&nbsp; Carregando calendário…</div>
+        </div>
+      </div>
+      <div class="div-legend">
+        <div class="div-legend-item"><span class="div-legend-dot"></span> Dia com pagamento de dividendo/JCP</div>
+        <span id="div-fonte-lbl" style="color:var(--body3)">Fonte: Yahoo Finance / brapi.dev</span>
+      </div>
+    </div>
+
+    <div class="div-list-panel">
+      <div class="div-list-head">Histórico &amp; Próximos Pagamentos</div>
+      <div class="div-list-scroll" id="div-list-body">
+        <div class="div-empty">Carregando dividendos…</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div><!-- /page-dividendos -->
 
 <!-- ═══════ PAINEL OPERAR ═══════ -->
 <div class="op-backdrop" id="op-backdrop" onclick="fecharOperar()"></div>
@@ -4130,6 +4278,10 @@ function setPage(nome) {
   $("page-" + nome).classList.add("active");
   $("tab-"  + nome).classList.add("active");
   if (nome === "home") renderHomePage();
+  if (nome === "dividendos") {
+    if (!_divLoaded) { _divLoaded = true; fetchDividendos(); }
+    else { renderCalendarioDividendos(); renderListaDividendos(); renderResumoDividendos(); }
+  }
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -4416,6 +4568,258 @@ async function abrirAtivoB3(ticker, nome) {
     await new Promise(r => setTimeout(r, 80)); // aguarda painel abrir
     buscarAtivo();
   }
+}
+
+/* ═══════════════════════════════════════════════════════
+   CALENDÁRIO DE DIVIDENDOS
+═══════════════════════════════════════════════════════ */
+
+// Fallback estático — usado quando as APIs não respondem (ex: origem file://)
+// Valores aproximados de histórico recente por cota, apenas para não deixar a tela vazia.
+const DIVIDENDOS_FALLBACK = {
+  CXSE3: [
+    { tipo: "Dividendo", dataCom: "2025-11-14", dataPag: "2025-11-28", valor: 0.42 },
+    { tipo: "JCP",       dataCom: "2025-08-13", dataPag: "2025-08-27", valor: 0.31 },
+    { tipo: "Dividendo", dataCom: "2025-05-14", dataPag: "2025-05-28", valor: 0.38 },
+  ],
+  TAEE4: [
+    { tipo: "JCP",       dataCom: "2025-11-20", dataPag: "2025-12-10", valor: 0.55 },
+    { tipo: "Dividendo", dataCom: "2025-08-19", dataPag: "2025-09-05", valor: 0.61 },
+    { tipo: "JCP",       dataCom: "2025-05-20", dataPag: "2025-06-06", valor: 0.49 },
+  ],
+  BBAS3: [
+    { tipo: "JCP",       dataCom: "2025-11-28", dataPag: "2025-12-15", valor: 0.35 },
+    { tipo: "Dividendo", dataCom: "2025-08-29", dataPag: "2025-09-15", valor: 0.41 },
+    { tipo: "JCP",       dataCom: "2025-05-30", dataPag: "2025-06-16", valor: 0.29 },
+  ],
+};
+
+const DIV = {
+  eventos:  [],   // [{ticker, tipo, dataCom, dataPag, valor}]
+  mesAtual: new Date().getMonth(),
+  anoAtual: new Date().getFullYear(),
+};
+let _divLoaded = false;
+
+/* ── Busca via Yahoo Finance (eventos de dividendo) com fallback brapi.dev ── */
+async function fetchDividendosTicker(ticker) {
+  // 1) Yahoo Finance — chart API com events=div
+  try {
+    const symbol = ticker + ".SA";
+    const url = `${CFG.YF_BASE}/${symbol}?range=2y&interval=1mo&events=div`;
+    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error("T")), 12000));
+    const req = fetch(url).then(r => { if (!r.ok) throw new Error("status"); return r.json(); });
+    const data = await Promise.race([req, timeout]);
+    const divs = data?.chart?.result?.[0]?.events?.dividends;
+    if (divs && Object.keys(divs).length) {
+      return Object.values(divs).map(d => {
+        const dt = new Date(d.date * 1000);
+        const iso = dt.toISOString().split("T")[0];
+        return { ticker, tipo: "Dividendo", dataCom: iso, dataPag: iso, valor: d.amount };
+      });
+    }
+  } catch(e) { /* segue para o fallback */ }
+
+  // 2) brapi.dev — nativamente com CORS, sem proxy
+  try {
+    const url = `https://brapi.dev/api/quote/${ticker}?dividends=true&range=2y`;
+    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error("T")), 10000));
+    const req = fetch(url).then(r => { if (!r.ok) throw new Error("status"); return r.json(); });
+    const data = await Promise.race([req, timeout]);
+    const divs = data?.results?.[0]?.dividendsData?.cashDividends;
+    if (divs && divs.length) {
+      return divs.map(d => ({
+        ticker,
+        tipo:    (d.label || "Dividendo"),
+        dataCom: d.approvedOn ? d.approvedOn.split("T")[0] : (d.paymentDate || "").split("T")[0],
+        dataPag: d.paymentDate ? d.paymentDate.split("T")[0] : "",
+        valor:   d.rate,
+      }));
+    }
+  } catch(e) { /* segue para o fallback estático */ }
+
+  // 3) Fallback estático embutido (garante funcionamento em file:// / offline)
+  if (DIVIDENDOS_FALLBACK[ticker]) {
+    return DIVIDENDOS_FALLBACK[ticker].map(d => ({ ticker, tipo: d.tipo, dataCom: d.dataCom, dataPag: d.dataPag, valor: d.valor }));
+  }
+  return [];
+}
+
+async function fetchDividendos(forcar = false) {
+  if (forcar) { $("div-fonte-lbl").textContent = "Atualizando…"; }
+  const tickers = CARTEIRA.map(a => a.ticker);
+  const todos = [];
+  let usouFallback = false;
+
+  for (const ticker of tickers) {
+    const antes = todos.length;
+    const evs = await fetchDividendosTicker(ticker);
+    if (DIVIDENDOS_FALLBACK[ticker] && evs.length && evs[0].dataCom === DIVIDENDOS_FALLBACK[ticker][0].dataCom
+        && evs[0].valor === DIVIDENDOS_FALLBACK[ticker][0].valor) {
+      usouFallback = true;
+    }
+    todos.push(...evs);
+  }
+
+  todos.sort((a,b) => new Date(b.dataPag || b.dataCom) - new Date(a.dataPag || a.dataCom));
+  DIV.eventos = todos;
+
+  $("div-fonte-lbl").textContent = usouFallback
+    ? "Fonte: dados históricos locais (sem conexão com Yahoo/brapi)"
+    : "Fonte: Yahoo Finance / brapi.dev";
+
+  _log(`Dividendos carregados: ${todos.length} eventos de ${tickers.length} ativo(s).`, "OK");
+
+  renderCalendarioDividendos();
+  renderListaDividendos();
+  renderResumoDividendos();
+}
+
+/* ── Calendário mensal ─────────────────────────────── */
+function navMesDividendo(delta) {
+  DIV.mesAtual += delta;
+  if (DIV.mesAtual < 0)  { DIV.mesAtual = 11; DIV.anoAtual--; }
+  if (DIV.mesAtual > 11) { DIV.mesAtual = 0;  DIV.anoAtual++; }
+  renderCalendarioDividendos();
+}
+
+function irParaHojeDividendo() {
+  const hoje = new Date();
+  DIV.mesAtual = hoje.getMonth();
+  DIV.anoAtual = hoje.getFullYear();
+  renderCalendarioDividendos();
+}
+
+const MESES_PT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+
+function renderCalendarioDividendos() {
+  $("div-cal-titulo").textContent = `${MESES_PT[DIV.mesAtual]} ${DIV.anoAtual}`;
+
+  // Mapa dia -> lista de tickers com pagamento (usa dataPag; se vazio, usa dataCom)
+  const porDia = {};
+  DIV.eventos.forEach(ev => {
+    const dataRef = ev.dataPag || ev.dataCom;
+    if (!dataRef) return;
+    const dt = new Date(dataRef + "T00:00:00");
+    if (dt.getMonth() === DIV.mesAtual && dt.getFullYear() === DIV.anoAtual) {
+      const dia = dt.getDate();
+      (porDia[dia] = porDia[dia] || []).push(ev);
+    }
+  });
+
+  const primeiroDia   = new Date(DIV.anoAtual, DIV.mesAtual, 1).getDay();
+  const diasNoMes     = new Date(DIV.anoAtual, DIV.mesAtual + 1, 0).getDate();
+  const hoje           = new Date();
+  const isMesAtualReal = hoje.getMonth() === DIV.mesAtual && hoje.getFullYear() === DIV.anoAtual;
+
+  let html = "";
+  for (let i = 0; i < primeiroDia; i++) html += `<div class="div-cal-day empty"></div>`;
+
+  for (let dia = 1; dia <= diasNoMes; dia++) {
+    const evs      = porDia[dia] || [];
+    const isToday  = isMesAtualReal && hoje.getDate() === dia;
+    const cls      = ["div-cal-day", evs.length ? "has-div" : "", isToday ? "today" : ""].filter(Boolean).join(" ");
+    const badges   = evs.map(ev => `<span class="div-cal-badge">${ev.ticker}</span>`).join("");
+    html += `<div class="${cls}" ${evs.length ? `onclick="mostrarDividendosNoDia(${DIV.anoAtual},${DIV.mesAtual},${dia})"` : ""}>
+      <div class="div-cal-daynum">${dia}</div>
+      <div class="div-cal-badges">${badges}</div>
+    </div>`;
+  }
+
+  $("div-cal-days").innerHTML = html;
+}
+
+function mostrarDividendosNoDia(ano, mes, dia) {
+  const dataStr = `${ano}-${String(mes+1).padStart(2,"0")}-${String(dia).padStart(2,"0")}`;
+  const evs = DIV.eventos.filter(ev => (ev.dataPag || ev.dataCom) === dataStr);
+  if (!evs.length) return;
+  const msg = evs.map(ev => `${ev.ticker} · ${ev.tipo} · R$\u00a0${(+ev.valor).toFixed(4)}/cota`).join("\n");
+  toast(`📅 ${dia}/${mes+1}: ${evs.map(e=>e.ticker).join(", ")}`, "ok");
+  _log(`Dividendos em ${dataStr}: ${msg.replace(/\n/g," | ")}`, "INFO");
+}
+
+/* ── Lista lateral ───────────────────────────────────── */
+function renderListaDividendos() {
+  const el = $("div-list-body");
+  if (!DIV.eventos.length) {
+    el.innerHTML = '<div class="div-empty">Nenhum dividendo encontrado para os ativos da carteira</div>';
+    return;
+  }
+
+  const hojeISO = new Date().toISOString().split("T")[0];
+
+  el.innerHTML = DIV.eventos.map(ev => {
+    const ativo   = CARTEIRA.find(a => a.ticker === ev.ticker);
+    const cotas   = ativo ? ativo.cotas : 0;
+    const total   = cotas * (+ev.valor || 0);
+    const dataRef = ev.dataPag || ev.dataCom;
+    const futuro  = dataRef > hojeISO;
+    const dataFmt = dataRef ? new Date(dataRef + "T00:00:00").toLocaleDateString("pt-BR") : "—";
+    const comFmt  = ev.dataCom ? new Date(ev.dataCom + "T00:00:00").toLocaleDateString("pt-BR") : "—";
+    return `<div class="div-item">
+      <div class="div-item-tk">${ev.ticker}</div>
+      <div class="div-item-info">
+        <div class="div-item-tipo">${ev.tipo}</div>
+        <div class="div-item-datas">Com: ${comFmt} · Pag: ${dataFmt}</div>
+        <span class="div-item-status ${futuro ? "futuro" : "pago"}">${futuro ? "A pagar" : "Pago"}</span>
+      </div>
+      <div class="div-item-val">
+        <div class="div-item-vps">R$\u00a0${(+ev.valor || 0).toFixed(4)}</div>
+        <div class="div-item-total priv">${cotas ? brl(total) : "—"}</div>
+      </div>
+    </div>`;
+  }).join("");
+  setTimeout(aplicarMascara, 0);
+}
+
+/* ── Resumo (recebido no ano/mês, próximo pagamento, DY) ── */
+function renderResumoDividendos() {
+  const hoje    = new Date();
+  const anoAtu  = hoje.getFullYear();
+  const mesAtu  = hoje.getMonth();
+  const hojeISO = hoje.toISOString().split("T")[0];
+
+  let recebidoAno = 0, recebidoMes = 0, ultimos12m = 0;
+  const doze = new Date(); doze.setFullYear(doze.getFullYear() - 1);
+
+  DIV.eventos.forEach(ev => {
+    const ativo = CARTEIRA.find(a => a.ticker === ev.ticker);
+    if (!ativo) return;
+    const dataRef = ev.dataPag || ev.dataCom;
+    if (!dataRef || dataRef > hojeISO) return; // só já pagos
+    const dt = new Date(dataRef + "T00:00:00");
+    const total = ativo.cotas * (+ev.valor || 0);
+    if (dt.getFullYear() === anoAtu) recebidoAno += total;
+    if (dt.getFullYear() === anoAtu && dt.getMonth() === mesAtu) recebidoMes += total;
+    if (dt >= doze) ultimos12m += total;
+  });
+
+  $("dr-ano").textContent = brl(recebidoAno);
+  $("dr-mes").textContent = brl(recebidoMes);
+
+  // Próximo pagamento futuro
+  const futuros = DIV.eventos
+    .filter(ev => (ev.dataPag || ev.dataCom) > hojeISO)
+    .sort((a,b) => new Date(a.dataPag || a.dataCom) - new Date(b.dataPag || b.dataCom));
+  if (futuros.length) {
+    const prox = futuros[0];
+    $("dr-prox").textContent = prox.ticker;
+    const dataFmt = new Date((prox.dataPag || prox.dataCom) + "T00:00:00").toLocaleDateString("pt-BR");
+    $("dr-prox-sub").textContent = `${prox.tipo} · ${dataFmt}`;
+  } else {
+    $("dr-prox").textContent = "—";
+    $("dr-prox-sub").textContent = "Nenhum programado";
+  }
+
+  // Dividend yield aproximado (12m recebido / valor atual investido em ações)
+  const valorAtuAcoes = CARTEIRA.reduce((s,a) => {
+    const p = ST.cotacoes[a.ticker]?.regularMarketPrice;
+    return s + (p ? p * a.cotas : a.valorAplicado);
+  }, 0);
+  const dy = valorAtuAcoes > 0 ? (ultimos12m / valorAtuAcoes) * 100 : 0;
+  $("dr-dy").textContent = dy.toFixed(2) + "%";
+
+  setTimeout(aplicarMascara, 0);
 }
 
 </script>
