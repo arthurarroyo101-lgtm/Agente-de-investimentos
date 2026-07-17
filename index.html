@@ -1346,6 +1346,79 @@ tbody tr:hover td:last-child::after {
   transform: scale(1.06);
 }
 
+/* ═══════════════════════════════════════════════════════
+   SINO DE NOTIFICAÇÕES
+═══════════════════════════════════════════════════════ */
+.notif-wrap { position: relative; }
+.notif-btn {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: transparent; border: 1px solid var(--wire2);
+  color: var(--body); cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; transition: all .15s; position: relative;
+}
+.notif-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+.notif-btn.tem-alerta { border-color: rgba(255,45,85,.5); animation: pls 2s ease-in-out infinite; }
+.notif-badge {
+  position: absolute; top: -4px; right: -4px;
+  background: var(--red); color: #fff;
+  font-family: var(--sans); font-size: 9px; font-weight: 800;
+  min-width: 16px; height: 16px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 3px; border: 2px solid var(--ink);
+}
+.notif-badge.hide { display: none; }
+
+.notif-dropdown {
+  position: absolute; top: 46px; right: 0;
+  width: 340px; max-height: 440px;
+  background: var(--ink2); border: 1px solid var(--wire2);
+  border-radius: 8px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,.55);
+  z-index: 650; opacity: 0; transform: translateY(-6px) scale(.98);
+  pointer-events: none; transition: all .18s cubic-bezier(.34,1.56,.64,1);
+  display: flex; flex-direction: column;
+}
+.notif-dropdown.open { opacity: 1; transform: none; pointer-events: auto; }
+
+.notif-head {
+  padding: 12px 16px; border-bottom: 1px solid var(--wire);
+  background: rgba(27,37,64,.4);
+  font-family: var(--sans); font-size: 11px; font-weight: 800;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--blue);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.notif-scroll { overflow-y: auto; max-height: 380px; }
+
+.notif-section-lbl {
+  font-family: var(--sans); font-size: 9px; font-weight: 800;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--body3);
+  padding: 10px 16px 4px;
+}
+.notif-item {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 10px 16px; border-bottom: 1px solid rgba(27,37,64,.6);
+  cursor: pointer; transition: background .12s;
+}
+.notif-item:hover { background: rgba(79,172,254,.05); }
+.notif-item:last-child { border-bottom: none; }
+.notif-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.notif-body { flex: 1; min-width: 0; }
+.notif-title { font-family: var(--sans); font-size: 12px; font-weight: 700; color: var(--head); }
+.notif-sub   { font-family: var(--mono); font-size: 10px; color: var(--body2); margin-top: 2px; }
+.notif-time  { font-family: var(--mono); font-size: 9px; color: var(--body3); margin-top: 3px; }
+
+.notif-empty {
+  text-align: center; padding: 30px 20px; color: var(--body3);
+  font-family: var(--sans); font-size: 12px; font-weight: 600;
+}
+
+.notif-backdrop {
+  position: fixed; inset: 0; z-index: 640; display: none;
+}
+.notif-backdrop.open { display: block; }
+
+
 /* Profile panel — slide from right, full height */
 .profile-panel {
   position: fixed;
@@ -1863,6 +1936,17 @@ tbody tr:hover td:last-child::after {
     <button class="btn btn-wire" id="btn-check">⚡ Verificar</button>
     <button class="btn btn-wire" id="btn-operar" style="letter-spacing:.06em">🔍 Buscar Ativo</button>
     <button class="btn btn-lime" id="btn-monitor" style="display:none">▶ Iniciar</button>
+    <div class="notif-wrap">
+      <button class="notif-btn" id="notif-btn" title="Notificações" onclick="toggleNotif()">
+        🔔<span class="notif-badge hide" id="notif-badge">0</span>
+      </button>
+      <div class="notif-dropdown" id="notif-dropdown">
+        <div class="notif-head"><span>Notificações</span><span id="notif-head-count" style="color:var(--body3);font-weight:600;text-transform:none;letter-spacing:0"></span></div>
+        <div class="notif-scroll" id="notif-scroll">
+          <div class="notif-empty">Nenhuma notificação</div>
+        </div>
+      </div>
+    </div>
     <div class="topbar-avatar" id="btn-profile" title="Meu Perfil" onclick="abrirPerfil()">?</div>
   </div>
 </header>
@@ -2509,6 +2593,8 @@ tbody tr:hover td:last-child::after {
 <!-- ═══════ TOAST ═══════ -->
 <div id="toast"></div>
 
+<div class="notif-backdrop" id="notif-backdrop" onclick="fecharNotif()"></div>
+
 <!-- ═══════════════════════════════════════════════════════
      JAVASCRIPT
 ═══════════════════════════════════════════════════════ -->
@@ -2549,6 +2635,35 @@ const ST = {
   cdownLeft:        CFG.INTERVALO_SEG,
   cotacoes:         {},
 };
+
+/* ── DIVIDENDOS: estado + fallback estático ──────────
+   Declarado aqui (cedo no script) para evitar erro de
+   TDZ, já que o boot inicial chama renderNotif(), que
+   lê DIV.eventos antes do restante do arquivo carregar. */
+const DIVIDENDOS_FALLBACK = {
+  CXSE3: [
+    { tipo: "Dividendo", dataCom: "2025-11-14", dataPag: "2025-11-28", valor: 0.42 },
+    { tipo: "JCP",       dataCom: "2025-08-13", dataPag: "2025-08-27", valor: 0.31 },
+    { tipo: "Dividendo", dataCom: "2025-05-14", dataPag: "2025-05-28", valor: 0.38 },
+  ],
+  TAEE4: [
+    { tipo: "JCP",       dataCom: "2025-11-20", dataPag: "2025-12-10", valor: 0.55 },
+    { tipo: "Dividendo", dataCom: "2025-08-19", dataPag: "2025-09-05", valor: 0.61 },
+    { tipo: "JCP",       dataCom: "2025-05-20", dataPag: "2025-06-06", valor: 0.49 },
+  ],
+  BBAS3: [
+    { tipo: "JCP",       dataCom: "2025-11-28", dataPag: "2025-12-15", valor: 0.35 },
+    { tipo: "Dividendo", dataCom: "2025-08-29", dataPag: "2025-09-15", valor: 0.41 },
+    { tipo: "JCP",       dataCom: "2025-05-30", dataPag: "2025-06-16", valor: 0.29 },
+  ],
+};
+
+const DIV = {
+  eventos:  [],   // [{ticker, tipo, dataCom, dataPag, valor}]
+  mesAtual: new Date().getMonth(),
+  anoAtual: new Date().getFullYear(),
+};
+let _divLoaded = false;
 
 /* ── UTIL ──────────────────────────────────────────── */
 const brl = v => v == null ? "—" :
@@ -2891,6 +3006,7 @@ function checarAlerta(ativo, preco, queda) {
   toast(`⚠ ${ativo.ticker}: queda de ${queda.toFixed(2)}%`, "err");
   notificarDiscord(alerta);
   renderAlertas();
+  if (typeof renderNotif === "function") renderNotif();
 }
 
 async function confirmar(id, confirmado) {
@@ -2907,6 +3023,7 @@ async function confirmar(id, confirmado) {
     toast(`❌ Operação cancelada: ${a.ticker}.`);
   }
   renderAlertas();
+  if (typeof renderNotif === "function") renderNotif();
 }
 
 /* ── DISCORD ──────────────────────────────────────── */
@@ -4264,10 +4381,12 @@ _log(`Fundos: ${FUNDOS.map(f => f.nome).join(", ")}`, "INFO");
 _log(`Gatilho: -${CFG.ALERTA_PCT}% sobre preço médio de compra.`, "INFO");
 renderFundos();
 renderAlertas();
+  if (typeof renderNotif === "function") renderNotif();
 setTimeout(atualizarPortfolio, 400);
 setTimeout(aplicarMascara, 500);
 setTimeout(fetchMercado, 600);
 setTimeout(renderHomePage, 450);
+setTimeout(() => { if (!_divLoaded) { _divLoaded = true; fetchDividendos(); } }, 700);
 
 /* ═══════════════════════════════════════════════════════
    SISTEMA DE PÁGINAS
@@ -4572,34 +4691,9 @@ async function abrirAtivoB3(ticker, nome) {
 
 /* ═══════════════════════════════════════════════════════
    CALENDÁRIO DE DIVIDENDOS
+   (estado DIV/DIVIDENDOS_FALLBACK/_divLoaded declarado
+   no topo do script, junto com ST, para evitar TDZ)
 ═══════════════════════════════════════════════════════ */
-
-// Fallback estático — usado quando as APIs não respondem (ex: origem file://)
-// Valores aproximados de histórico recente por cota, apenas para não deixar a tela vazia.
-const DIVIDENDOS_FALLBACK = {
-  CXSE3: [
-    { tipo: "Dividendo", dataCom: "2025-11-14", dataPag: "2025-11-28", valor: 0.42 },
-    { tipo: "JCP",       dataCom: "2025-08-13", dataPag: "2025-08-27", valor: 0.31 },
-    { tipo: "Dividendo", dataCom: "2025-05-14", dataPag: "2025-05-28", valor: 0.38 },
-  ],
-  TAEE4: [
-    { tipo: "JCP",       dataCom: "2025-11-20", dataPag: "2025-12-10", valor: 0.55 },
-    { tipo: "Dividendo", dataCom: "2025-08-19", dataPag: "2025-09-05", valor: 0.61 },
-    { tipo: "JCP",       dataCom: "2025-05-20", dataPag: "2025-06-06", valor: 0.49 },
-  ],
-  BBAS3: [
-    { tipo: "JCP",       dataCom: "2025-11-28", dataPag: "2025-12-15", valor: 0.35 },
-    { tipo: "Dividendo", dataCom: "2025-08-29", dataPag: "2025-09-15", valor: 0.41 },
-    { tipo: "JCP",       dataCom: "2025-05-30", dataPag: "2025-06-16", valor: 0.29 },
-  ],
-};
-
-const DIV = {
-  eventos:  [],   // [{ticker, tipo, dataCom, dataPag, valor}]
-  mesAtual: new Date().getMonth(),
-  anoAtual: new Date().getFullYear(),
-};
-let _divLoaded = false;
 
 /* ── Busca via Yahoo Finance (eventos de dividendo) com fallback brapi.dev ── */
 async function fetchDividendosTicker(ticker) {
@@ -4673,6 +4767,7 @@ async function fetchDividendos(forcar = false) {
   renderCalendarioDividendos();
   renderListaDividendos();
   renderResumoDividendos();
+  if (typeof renderNotif === "function") renderNotif();
 }
 
 /* ── Calendário mensal ─────────────────────────────── */
@@ -4819,6 +4914,88 @@ function renderResumoDividendos() {
   const dy = valorAtuAcoes > 0 ? (ultimos12m / valorAtuAcoes) * 100 : 0;
   $("dr-dy").textContent = dy.toFixed(2) + "%";
 
+  setTimeout(aplicarMascara, 0);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SINO DE NOTIFICAÇÕES
+═══════════════════════════════════════════════════════ */
+let _notifOpen = false;
+
+function toggleNotif() {
+  _notifOpen ? fecharNotif() : abrirNotif();
+}
+
+function abrirNotif() {
+  renderNotif();
+  $("notif-dropdown").classList.add("open");
+  $("notif-backdrop").classList.add("open");
+  _notifOpen = true;
+}
+
+function fecharNotif() {
+  $("notif-dropdown").classList.remove("open");
+  $("notif-backdrop").classList.remove("open");
+  _notifOpen = false;
+}
+
+function getDividendosHoje() {
+  const hojeISO = new Date().toISOString().split("T")[0];
+  return (DIV.eventos || []).filter(ev => (ev.dataPag || ev.dataCom) === hojeISO);
+}
+
+function renderNotif() {
+  const alertasPend = ST.alertas.filter(a => a.status === "pendente");
+  const divsHoje    = getDividendosHoje();
+  const total = alertasPend.length + divsHoje.length;
+
+  // Badge no sino
+  const badge = $("notif-badge");
+  const btn   = $("notif-btn");
+  badge.textContent = total;
+  badge.classList.toggle("hide", total === 0);
+  btn.classList.toggle("tem-alerta", alertasPend.length > 0);
+  $("notif-head-count").textContent = total > 0 ? `${total} nova${total>1?"s":""}` : "";
+
+  const el = $("notif-scroll");
+  if (!total) {
+    el.innerHTML = '<div class="notif-empty">✅ Nenhuma notificação no momento</div>';
+    return;
+  }
+
+  let html = "";
+
+  if (alertasPend.length) {
+    html += `<div class="notif-section-lbl">⚠ Alertas de Queda</div>`;
+    html += [...alertasPend].reverse().map(a => `
+      <div class="notif-item" onclick="fecharNotif();setPage('carteira')">
+        <div class="notif-icon">🔴</div>
+        <div class="notif-body">
+          <div class="notif-title">${a.ticker} caiu <span class="priv">${pct(a.quedaPct)}</span></div>
+          <div class="notif-sub">Preço médio <span class="priv">R$\u00a0${a.precoMedio.toFixed(2)}</span> · Atual <span class="priv">R$\u00a0${a.precoAtual.toFixed(2)}</span></div>
+          <div class="notif-time">${new Date(a.horario).toLocaleTimeString("pt-BR")}</div>
+        </div>
+      </div>`).join("");
+  }
+
+  if (divsHoje.length) {
+    html += `<div class="notif-section-lbl">💰 Dividendos de Hoje</div>`;
+    html += divsHoje.map(ev => {
+      const ativo = CARTEIRA.find(a => a.ticker === ev.ticker);
+      const total = ativo ? ativo.cotas * (+ev.valor || 0) : null;
+      return `
+      <div class="notif-item" onclick="fecharNotif();setPage('dividendos')">
+        <div class="notif-icon">💰</div>
+        <div class="notif-body">
+          <div class="notif-title">${ev.ticker} · ${ev.tipo} paga hoje</div>
+          <div class="notif-sub">R$\u00a0${(+ev.valor || 0).toFixed(4)}/cota${total != null ? ` · <span class="priv">${brl(total)}</span> total` : ""}</div>
+          <div class="notif-time">Pagamento em ${new Date((ev.dataPag||ev.dataCom)+"T00:00:00").toLocaleDateString("pt-BR")}</div>
+        </div>
+      </div>`;
+    }).join("");
+  }
+
+  el.innerHTML = html;
   setTimeout(aplicarMascara, 0);
 }
 
