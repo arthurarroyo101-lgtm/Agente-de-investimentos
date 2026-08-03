@@ -2570,6 +2570,15 @@ tbody tr:hover td:last-child::after {
       </div>
     </div>
 
+    <!-- Conta -->
+    <div class="profile-section" style="padding-bottom:24px">
+      <div class="profile-section-title">🔐 Conta</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-wire" style="width:100%;padding:10px" onclick="mudarDeConta()">🔄 Mudar de Conta</button>
+        <button class="profile-danger-btn" onclick="sairDaConta()">🚪 Sair da Conta</button>
+      </div>
+    </div>
+
   </div><!-- /profile-body -->
 
   <!-- Footer com botão salvar -->
@@ -4319,6 +4328,30 @@ function resetarPerfil() {
   fecharPerfil();
 }
 
+/* ── Sair / Trocar de conta ──────────────────────────
+   App 100% client-side: "sair"/"mudar" limpam os dados
+   de identidade e credenciais salvos neste navegador
+   (perfil e chave de API). Carteira, fundos e histórico
+   de operações NÃO são apagados. ─────────────────────── */
+function sairDaConta() {
+  if (!confirm("Sair da conta?\n\nSeu perfil (nome, avatar, gatilho, webhook, chave de API) será removido deste navegador. Carteira e histórico continuam salvos.")) return;
+  localStorage.removeItem("b3agent_perfil");
+  localStorage.removeItem("b3agent_apikey");
+  toast("👋 Sessão encerrada.", "ok");
+  _log("Usuário saiu da conta — perfil local removido.", "AVISO");
+  setTimeout(() => location.reload(), 700);
+}
+
+function mudarDeConta() {
+  if (!confirm("Mudar de conta?\n\nO perfil atual será removido deste navegador e a tela de configuração de perfil abrirá para você entrar com uma nova conta. Carteira e histórico continuam salvos.")) return;
+  localStorage.removeItem("b3agent_perfil");
+  localStorage.removeItem("b3agent_apikey");
+  sessionStorage.setItem("b3agent_abrir_perfil_apos_reload", "1");
+  toast("🔄 Trocando de conta…", "ok");
+  _log("Usuário solicitou troca de conta — perfil local removido.", "AVISO");
+  setTimeout(() => location.reload(), 700);
+}
+
 /* ── PRIVACIDADE ─────────────────────────────────── */
 let _privacyAtivo = localStorage.getItem("b3agent_privacy") === "1";
 
@@ -4387,6 +4420,12 @@ setTimeout(aplicarMascara, 500);
 setTimeout(fetchMercado, 600);
 setTimeout(renderHomePage, 450);
 setTimeout(() => { if (!_divLoaded) { _divLoaded = true; fetchDividendos(); } }, 700);
+
+// Reabre o perfil automaticamente após "Mudar de Conta" (reload)
+if (sessionStorage.getItem("b3agent_abrir_perfil_apos_reload")) {
+  sessionStorage.removeItem("b3agent_abrir_perfil_apos_reload");
+  setTimeout(() => { abrirPerfil(); toast("👤 Configure sua nova conta.", "ok"); }, 800);
+}
 
 /* ═══════════════════════════════════════════════════════
    SISTEMA DE PÁGINAS
