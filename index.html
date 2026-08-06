@@ -544,6 +544,7 @@ tbody tr.alert-row td:first-child {
   .op-panel { width: 100%; border-left: none; }
   .op-backdrop { display: none; }
   .op-asset-grid { grid-template-columns: 1fr 1fr; }
+  .notif-dropdown { width: calc(100vw - 20px); right: 10px !important; }
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -1370,7 +1371,7 @@ tbody tr:hover td:last-child::after {
 .notif-badge.hide { display: none; }
 
 .notif-dropdown {
-  position: absolute; top: 46px; right: 0;
+  position: fixed; top: 60px; right: 20px;
   width: 340px; max-height: 440px;
   background: var(--ink2); border: 1px solid var(--wire2);
   border-radius: 8px; overflow: hidden;
@@ -4911,10 +4912,27 @@ function toggleNotif() {
 
 function abrirNotif() {
   renderNotif();
+  posicionarNotifDropdown();
   $("notif-dropdown").classList.add("open");
   $("notif-backdrop").classList.add("open");
   _notifOpen = true;
 }
+
+function posicionarNotifDropdown() {
+  const btn = $("notif-btn");
+  const dd  = $("notif-dropdown");
+  if (!btn || !dd) return;
+  const rect = btn.getBoundingClientRect();
+  const margem = 10;
+  let right = window.innerWidth - rect.right;
+  right = Math.max(margem, right - 8); // pequeno recuo para alinhar melhor com o sino
+  const maxRight = window.innerWidth - 340 - margem;
+  if (right > maxRight) right = Math.max(margem, maxRight);
+  dd.style.top   = (rect.bottom + 8) + "px";
+  dd.style.right = right + "px";
+}
+
+window.addEventListener("resize", () => { if (_notifOpen) posicionarNotifDropdown(); });
 
 function fecharNotif() {
   $("notif-dropdown").classList.remove("open");
