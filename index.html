@@ -1996,19 +1996,15 @@ tbody tr:hover td:last-child::after {
     <div class="home-col-r">
       <div class="home-side-card">
         <div class="home-side-head" style="display:flex;align-items:center;justify-content:space-between">
-          <span>🔴 Alertas <span id="home-alert-cnt" style="display:none;margin-left:6px;background:var(--red);color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;vertical-align:middle"></span></span>
-        </div>
-        <div id="home-alertas-body" style="padding:8px 0;max-height:220px;overflow-y:auto"><div style="text-align:center;padding:24px 16px;color:var(--body3);font-family:var(--sans);font-size:12px">✅ Nenhum alerta</div></div>
-      </div>
-      <div class="home-side-card">
-        <div class="home-side-head" style="display:flex;align-items:center;justify-content:space-between">
           <span>⚡ Agente</span>
           <button class="btn btn-wire" style="padding:2px 9px;font-size:9px" onclick="abrirPerfilAgente()">⚙ Editar</button>
         </div>
         <div style="padding:14px 16px;font-family:var(--mono);font-size:11px;color:var(--body2);line-height:2">
           <div>Status <span id="home-mon-status" style="color:var(--red2)">● parado</span></div>
           <div>Último check <span id="home-last-check" class="priv" style="color:var(--head)">—</span></div>
+          <div>Alertas pendentes <span id="home-alert-cnt" style="color:var(--head)">0</span></div>
           <div style="margin-top:10px"><button class="btn btn-lime" style="width:100%;padding:8px" id="home-btn-mon">▶ Iniciar Monitoramento</button></div>
+          <div style="margin-top:6px"><button class="btn btn-wire" style="width:100%;padding:6px;font-size:10px" onclick="toggleNotif()">🔔 Ver Notificações</button></div>
         </div>
       </div>
     </div>
@@ -2120,24 +2116,13 @@ tbody tr:hover td:last-child::after {
   <!-- ── RIGHT ── -->
   <div class="col-r">
 
-    <!-- ALERTAS -->
-    <div class="panel">
-      <div class="panel-head">
-        <div class="panel-title">
-          Alertas
-          <span id="alert-badge" style="display:none;margin-left:8px;background:var(--red);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-family:var(--mono);font-weight:700;vertical-align:middle"></span>
-        </div>
-        <div class="panel-badge">gatilho: <span id="gatilho-lbl">—</span>%</div>
-      </div>
-      <div class="alertas-scroll" id="alertas-body">
-        <div class="no-alert"><div class="no-alert-icon">✅</div>Nenhum alerta ativo</div>
-      </div>
-    </div>
-
     <!-- STATUS / INFO -->
     <div class="panel">
       <div class="panel-head">
-        <div class="panel-title">Status do Agente</div>
+        <div class="panel-title">
+          Status do Agente
+          <span id="alert-badge" style="display:none;margin-left:8px;background:var(--red);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-family:var(--mono);font-weight:700;vertical-align:middle"></span>
+        </div>
         <button class="btn btn-wire" style="padding:3px 10px;font-size:10px" onclick="abrirPerfilAgente()">⚙ Editar Agente</button>
       </div>
       <div class="info-block" id="info-block">
@@ -2148,8 +2133,15 @@ tbody tr:hover td:last-child::after {
         </div>
         <div>Último check <span id="last-check" class="priv" style="color:var(--head)">—</span></div>
         <div>Próximo check <span id="next-check" class="priv" style="color:var(--head)">—</span></div>
+        <div style="margin-top:8px">
+          Gatilho de queda <span style="color:var(--head)"><span id="gatilho-lbl">—</span>%</span>
+        </div>
+        <div>Alertas pendentes <span id="agente-alert-cnt" style="color:var(--head)">0</span></div>
         <div style="margin-top:10px">
           <button class="btn btn-lime" style="width:100%;padding:8px" id="btn-mon-main">▶ Iniciar Monitoramento</button>
+        </div>
+        <div style="margin-top:6px">
+          <button class="btn btn-wire" style="width:100%;padding:6px;font-size:10px" onclick="toggleNotif()">🔔 Ver Notificações</button>
         </div>
       </div>
     </div>
@@ -2945,48 +2937,19 @@ function renderAlertas() {
   const badge = $("alert-badge");
   const pend  = ST.alertas.filter(a => a.status === "pendente");
 
-  badge.textContent    = pend.length;
-  badge.style.display  = pend.length > 0 ? "inline-block" : "none";
-  $("gatilho-lbl").textContent = CFG.ALERTA_PCT;
+  if (badge) {
+    badge.textContent   = pend.length;
+    badge.style.display = pend.length > 0 ? "inline-block" : "none";
+  }
+  if ($("gatilho-lbl")) $("gatilho-lbl").textContent = CFG.ALERTA_PCT;
+  if ($("agente-alert-cnt")) $("agente-alert-cnt").textContent = pend.length;
+  if ($("home-alert-cnt")) $("home-alert-cnt").textContent = pend.length;
+
   $("dot").className = pend.length > 0 ? "status-dot alert"
     : ST.monitorando ? "status-dot live" : "status-dot";
 
-  const el = $("alertas-body");
-  if (!ST.alertas.length) {
-    el.innerHTML = `<div class="no-alert"><div class="no-alert-icon">✅</div>Nenhum alerta ativo</div>`;
-    return;
-  }
-
-  el.innerHTML = [...ST.alertas].reverse().map(a => {
-    const isPend = a.status === "pendente";
-    const isConf = a.status === "confirmado";
-    const hora   = new Date(a.horario).toLocaleTimeString("pt-BR");
-
-    return `<div class="alerta-item ${!isPend ? a.status : ""}">
-      <div class="alerta-top">
-        <div>
-          <div class="alerta-tkr ${isConf ? "ok" : ""}">
-            ${isConf ? "✅" : a.status==="cancelado" ? "❌" : "⚠"} ${a.ticker} <span class="priv">${pct(a.quedaPct)}</span>
-          </div>
-          <div class="alerta-nm">${a.nome}</div>
-        </div>
-        <div class="alerta-hr">${hora}</div>
-      </div>
-      <div class="alerta-grid">
-        <div>Preço médio <b class="priv">R$&nbsp;${a.precoMedio.toFixed(2)}</b></div>
-        <div>Preço atual <b class="priv">R$&nbsp;${a.precoAtual.toFixed(2)}</b></div>
-        <div>Cotas sug. <b class="priv">${a.cotasSug}</b></div>
-        <div>Custo est. <b class="priv">${brl(a.custoEst)}</b></div>
-      </div>
-      ${isPend
-        ? `<div class="alerta-btns">
-            <button class="btn btn-green" style="flex:1;padding:8px;font-size:11px" onclick="confirmar('${a.id}',true)">✅ Confirmar</button>
-            <button class="btn btn-red"   style="flex:1;padding:8px;font-size:11px" onclick="confirmar('${a.id}',false)">✗ Cancelar</button>
-           </div>`
-        : `<div class="alerta-resolved">${isConf ? "✅ COMPRA CONFIRMADA" : "❌ CANCELADO"}</div>`
-      }
-    </div>`;
-  }).join("");
+  // A lista detalhada de alertas vive exclusivamente no sino de notificações
+  if (typeof renderNotif === "function") renderNotif();
 }
 
 /* ── ALERTAS ──────────────────────────────────────── */
@@ -3015,7 +2978,6 @@ function checarAlerta(ativo, preco, queda) {
   toast(`⚠ ${ativo.ticker}: queda de ${queda.toFixed(2)}%`, "err");
   notificarDiscord(alerta);
   renderAlertas();
-  if (typeof renderNotif === "function") renderNotif();
 }
 
 async function confirmar(id, confirmado) {
@@ -3032,7 +2994,6 @@ async function confirmar(id, confirmado) {
     toast(`❌ Operação cancelada: ${a.ticker}.`);
   }
   renderAlertas();
-  if (typeof renderNotif === "function") renderNotif();
 }
 
 /* ── DISCORD ──────────────────────────────────────── */
@@ -4414,7 +4375,6 @@ _log(`Fundos: ${FUNDOS.map(f => f.nome).join(", ")}`, "INFO");
 _log(`Gatilho: -${CFG.ALERTA_PCT}% sobre preço médio de compra.`, "INFO");
 renderFundos();
 renderAlertas();
-  if (typeof renderNotif === "function") renderNotif();
 setTimeout(atualizarPortfolio, 400);
 setTimeout(aplicarMascara, 500);
 setTimeout(fetchMercado, 600);
@@ -4554,23 +4514,7 @@ function renderHomeFundos() {
 
 function renderHomeAlertas() {
   const pend = ST.alertas.filter(a => a.status === "pendente");
-  $("home-alert-cnt").textContent    = pend.length;
-  $("home-alert-cnt").style.display  = pend.length > 0 ? "inline-block" : "none";
-  const body = $("home-alertas-body");
-  if (!ST.alertas.length) {
-    body.innerHTML = '<div style="text-align:center;padding:24px 16px;color:var(--body3);font-family:var(--sans);font-size:12px">✅ Nenhum alerta</div>';
-    return;
-  }
-  body.innerHTML = [...ST.alertas].reverse().slice(0,6).map(a => {
-    const isPend = a.status === "pendente";
-    const cor  = isPend ? "var(--red2)" : a.status === "confirmado" ? "var(--lime)" : "var(--body3)";
-    const icon = isPend ? "⚠" : a.status === "confirmado" ? "✅" : "❌";
-    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid rgba(27,37,64,.5);font-size:11px">
-      <span style="font-family:var(--sans);font-weight:700;color:${cor}">${icon} ${a.ticker}</span>
-      <span style="font-family:var(--mono);color:var(--red2)">${a.quedaPct.toFixed(2)}%</span>
-      <span style="font-family:var(--mono);color:var(--body3)">${new Date(a.horario).toLocaleTimeString("pt-BR")}</span>
-    </div>`;
-  }).join("");
+  if ($("home-alert-cnt")) $("home-alert-cnt").textContent = pend.length;
 }
 
 function syncHomeStatus() {
@@ -4985,6 +4929,7 @@ function getDividendosHoje() {
 
 function renderNotif() {
   const alertasPend = ST.alertas.filter(a => a.status === "pendente");
+  const alertasResolvidos = ST.alertas.filter(a => a.status !== "pendente").slice(-5).reverse();
   const divsHoje    = getDividendosHoje();
   const total = alertasPend.length + divsHoje.length;
 
@@ -4997,7 +4942,7 @@ function renderNotif() {
   $("notif-head-count").textContent = total > 0 ? `${total} nova${total>1?"s":""}` : "";
 
   const el = $("notif-scroll");
-  if (!total) {
+  if (!total && !alertasResolvidos.length) {
     el.innerHTML = '<div class="notif-empty">✅ Nenhuma notificação no momento</div>';
     return;
   }
@@ -5007,12 +4952,17 @@ function renderNotif() {
   if (alertasPend.length) {
     html += `<div class="notif-section-lbl">⚠ Alertas de Queda</div>`;
     html += [...alertasPend].reverse().map(a => `
-      <div class="notif-item" onclick="fecharNotif();setPage('carteira')">
+      <div class="notif-item" style="cursor:default">
         <div class="notif-icon">🔴</div>
         <div class="notif-body">
           <div class="notif-title">${a.ticker} caiu <span class="priv">${pct(a.quedaPct)}</span></div>
-          <div class="notif-sub">Preço médio <span class="priv">R$\u00a0${a.precoMedio.toFixed(2)}</span> · Atual <span class="priv">R$\u00a0${a.precoAtual.toFixed(2)}</span></div>
+          <div class="notif-sub">PM <span class="priv">R$\u00a0${a.precoMedio.toFixed(2)}</span> · Atual <span class="priv">R$\u00a0${a.precoAtual.toFixed(2)}</span></div>
+          <div class="notif-sub">Sug: <span class="priv">${a.cotasSug} cotas</span> (≈ <span class="priv">${brl(a.custoEst)}</span>)</div>
           <div class="notif-time">${new Date(a.horario).toLocaleTimeString("pt-BR")}</div>
+          <div style="display:flex;gap:6px;margin-top:8px">
+            <button class="btn btn-green" style="flex:1;padding:6px;font-size:10px" onclick="confirmar('${a.id}',true)">✅ Confirmar</button>
+            <button class="btn btn-red"   style="flex:1;padding:6px;font-size:10px" onclick="confirmar('${a.id}',false)">✗ Cancelar</button>
+          </div>
         </div>
       </div>`).join("");
   }
@@ -5021,20 +4971,32 @@ function renderNotif() {
     html += `<div class="notif-section-lbl">💰 Dividendos de Hoje</div>`;
     html += divsHoje.map(ev => {
       const ativo = CARTEIRA.find(a => a.ticker === ev.ticker);
-      const total = ativo ? ativo.cotas * (+ev.valor || 0) : null;
+      const totalEv = ativo ? ativo.cotas * (+ev.valor || 0) : null;
       return `
       <div class="notif-item" onclick="fecharNotif();setPage('dividendos')">
         <div class="notif-icon">💰</div>
         <div class="notif-body">
           <div class="notif-title">${ev.ticker} · ${ev.tipo} paga hoje</div>
-          <div class="notif-sub">R$\u00a0${(+ev.valor || 0).toFixed(4)}/cota${total != null ? ` · <span class="priv">${brl(total)}</span> total` : ""}</div>
+          <div class="notif-sub">R$\u00a0${(+ev.valor || 0).toFixed(4)}/cota${totalEv != null ? ` · <span class="priv">${brl(totalEv)}</span> total` : ""}</div>
           <div class="notif-time">Pagamento em ${new Date((ev.dataPag||ev.dataCom)+"T00:00:00").toLocaleDateString("pt-BR")}</div>
         </div>
       </div>`;
     }).join("");
   }
 
-  el.innerHTML = html;
+  if (alertasResolvidos.length) {
+    html += `<div class="notif-section-lbl">Histórico recente</div>`;
+    html += alertasResolvidos.map(a => `
+      <div class="notif-item" style="cursor:default;opacity:.55">
+        <div class="notif-icon">${a.status === "confirmado" ? "✅" : "❌"}</div>
+        <div class="notif-body">
+          <div class="notif-title">${a.ticker} — ${a.status === "confirmado" ? "compra confirmada" : "cancelado"}</div>
+          <div class="notif-time">${new Date(a.horario).toLocaleTimeString("pt-BR")}</div>
+        </div>
+      </div>`).join("");
+  }
+
+  el.innerHTML = html || '<div class="notif-empty">✅ Nenhuma notificação no momento</div>';
   setTimeout(aplicarMascara, 0);
 }
 
