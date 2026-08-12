@@ -151,7 +151,16 @@ body::before {
   margin-left: auto;
   display: flex; align-items: center; gap: 8px;
   padding: 0 18px;
+  min-width: 0;
 }
+.topbar-actions-scroll {
+  display: flex; align-items: center; gap: 8px;
+  overflow-x: auto; overflow-y: hidden;
+  scrollbar-width: none; -ms-overflow-style: none;
+  min-width: 0;
+}
+.topbar-actions-scroll::-webkit-scrollbar { display: none; }
+.topbar-actions-pin { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
 /* ═══════════════════════════════════════════════════════
    BUTTONS
@@ -191,7 +200,7 @@ body::before {
   max-width: 1440px; margin: 0 auto;
   padding: 20px 20px;
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr;
   gap: 14px;
 }
 .col-l, .col-r { display: flex; flex-direction: column; gap: 14px; }
@@ -1372,7 +1381,7 @@ tbody tr:hover td:last-child::after {
 
 .notif-dropdown {
   position: fixed; top: 60px; right: 20px;
-  width: 340px; max-height: 440px;
+  width: 340px; max-height: 80vh;
   background: var(--ink2); border: 1px solid var(--wire2);
   border-radius: 8px; overflow: hidden;
   box-shadow: 0 20px 60px rgba(0,0,0,.55);
@@ -1389,7 +1398,20 @@ tbody tr:hover td:last-child::after {
   letter-spacing: .14em; text-transform: uppercase; color: var(--blue);
   display: flex; align-items: center; justify-content: space-between;
 }
-.notif-scroll { overflow-y: auto; max-height: 380px; }
+.notif-agent-section {
+  padding: 12px 16px; border-bottom: 1px solid var(--wire);
+  background: rgba(27,37,64,.25); flex-shrink: 0;
+}
+.notif-agent-title {
+  font-family: var(--sans); font-size: 10px; font-weight: 800;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--blue);
+  margin-bottom: 8px;
+}
+.notif-agent-body {
+  font-family: var(--mono); font-size: 11px; color: var(--body2); line-height: 1.9;
+}
+.notif-agent-btns { display: flex; gap: 6px; margin-top: 8px; }
+.notif-scroll { overflow-y: auto; max-height: 300px; }
 
 .notif-section-lbl {
   font-family: var(--sans); font-size: 9px; font-weight: 800;
@@ -1659,7 +1681,7 @@ tbody tr:hover td:last-child::after {
 .mercado-var   { font-family: var(--mono); font-size: 11px; margin-top: 2px; }
 
 .home-grid {
-  display: grid; grid-template-columns: 1fr 320px;
+  display: grid; grid-template-columns: 1fr;
   gap: 20px; align-items: start;
 }
 .home-col-l, .home-col-r { display: flex; flex-direction: column; gap: 20px; }
@@ -1932,23 +1954,47 @@ tbody tr:hover td:last-child::after {
   </div>
 
   <div class="topbar-actions">
-    <button class="chat-btn" id="btn-chat">🤖 Assistente</button>
-    <button class="btn-privacy" id="btn-privacy"><span id="privacy-icon">👁</span><span id="privacy-lbl">Ocultar</span></button>
-    <button class="btn btn-wire" id="btn-check">⚡ Verificar</button>
-    <button class="btn btn-wire" id="btn-operar" style="letter-spacing:.06em">🔍 Buscar Ativo</button>
-    <button class="btn btn-lime" id="btn-monitor" style="display:none">▶ Iniciar</button>
-    <div class="notif-wrap">
-      <button class="notif-btn" id="notif-btn" title="Notificações" onclick="toggleNotif()">
-        🔔<span class="notif-badge hide" id="notif-badge">0</span>
-      </button>
-      <div class="notif-dropdown" id="notif-dropdown">
-        <div class="notif-head"><span>Notificações</span><span id="notif-head-count" style="color:var(--body3);font-weight:600;text-transform:none;letter-spacing:0"></span></div>
-        <div class="notif-scroll" id="notif-scroll">
-          <div class="notif-empty">Nenhuma notificação</div>
+    <div class="topbar-actions-scroll">
+      <button class="chat-btn" id="btn-chat">🤖 Assistente</button>
+      <button class="btn-privacy" id="btn-privacy"><span id="privacy-icon">👁</span><span id="privacy-lbl">Ocultar</span></button>
+      <button class="btn btn-wire" id="btn-check">⚡ Verificar</button>
+      <button class="btn btn-wire" id="btn-operar" style="letter-spacing:.06em">🔍 Buscar Ativo</button>
+      <button class="btn btn-lime" id="btn-monitor" style="display:none">▶ Iniciar</button>
+    </div>
+    <div class="topbar-actions-pin">
+      <div class="notif-wrap">
+        <button class="notif-btn" id="notif-btn" title="Notificações" onclick="toggleNotif()">
+          🔔<span class="notif-badge hide" id="notif-badge">0</span>
+        </button>
+        <div class="notif-dropdown" id="notif-dropdown">
+          <div class="notif-head"><span>Notificações</span><span id="notif-head-count" style="color:var(--body3);font-weight:600;text-transform:none;letter-spacing:0"></span></div>
+
+          <div class="notif-agent-section" id="notif-agent-section">
+            <div class="notif-agent-title">
+              🤖 Agente de Monitoramento
+              <span id="alert-badge" style="display:none;margin-left:6px;background:var(--red);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-family:var(--mono);font-weight:700;vertical-align:middle"></span>
+            </div>
+            <div class="notif-agent-body">
+              <div>API <span style="color:var(--body)">Yahoo Finance</span> · Broker <span style="color:var(--body)">Rico (XP)</span></div>
+              <div style="margin-top:6px">Monitoramento <span id="mon-status" class="uptime-err">● parado</span></div>
+              <div>Último check <span id="last-check" class="priv" style="color:var(--head)">—</span></div>
+              <div>Próximo check <span id="next-check" class="priv" style="color:var(--head)">—</span></div>
+              <div style="margin-top:6px">Gatilho de queda <span style="color:var(--head)"><span id="gatilho-lbl">—</span>%</span></div>
+              <div>Alertas pendentes <span id="agente-alert-cnt" style="color:var(--head)">0</span></div>
+              <div class="notif-agent-btns">
+                <button class="btn btn-lime" style="flex:1;padding:7px;font-size:11px" id="btn-mon-main">▶ Iniciar Monitoramento</button>
+                <button class="btn btn-wire" style="padding:7px 10px;font-size:11px" onclick="abrirPerfilAgente()" title="Editar Agente">⚙</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="notif-scroll" id="notif-scroll">
+            <div class="notif-empty">Nenhuma notificação</div>
+          </div>
         </div>
       </div>
+      <div class="topbar-avatar" id="btn-profile" title="Meu Perfil" onclick="abrirPerfil()">?</div>
     </div>
-    <div class="topbar-avatar" id="btn-profile" title="Meu Perfil" onclick="abrirPerfil()">?</div>
   </div>
 </header>
 
@@ -1992,21 +2038,6 @@ tbody tr:hover td:last-child::after {
       <div>
         <div class="home-section-title">💼 Fundos de Investimento</div>
         <div class="fundos-home-grid" id="home-fundos-grid"><div class="fundo-card-home"><span class="skel" style="width:120px;height:14px"></span></div><div class="fundo-card-home"><span class="skel" style="width:120px;height:14px"></span></div></div>
-      </div>
-    </div>
-    <div class="home-col-r">
-      <div class="home-side-card">
-        <div class="home-side-head" style="display:flex;align-items:center;justify-content:space-between">
-          <span>⚡ Agente</span>
-          <button class="btn btn-wire" style="padding:2px 9px;font-size:9px" onclick="abrirPerfilAgente()">⚙ Editar</button>
-        </div>
-        <div style="padding:14px 16px;font-family:var(--mono);font-size:11px;color:var(--body2);line-height:2">
-          <div>Status <span id="home-mon-status" style="color:var(--red2)">● parado</span></div>
-          <div>Último check <span id="home-last-check" class="priv" style="color:var(--head)">—</span></div>
-          <div>Alertas pendentes <span id="home-alert-cnt" style="color:var(--head)">0</span></div>
-          <div style="margin-top:10px"><button class="btn btn-lime" style="width:100%;padding:8px" id="home-btn-mon">▶ Iniciar Monitoramento</button></div>
-          <div style="margin-top:6px"><button class="btn btn-wire" style="width:100%;padding:6px;font-size:10px" onclick="toggleNotif()">🔔 Ver Notificações</button></div>
-        </div>
       </div>
     </div>
   </div>
@@ -2114,40 +2145,6 @@ tbody tr:hover td:last-child::after {
 
   </div>
 
-  <!-- ── RIGHT ── -->
-  <div class="col-r">
-
-    <!-- STATUS / INFO -->
-    <div class="panel">
-      <div class="panel-head">
-        <div class="panel-title">
-          Status do Agente
-          <span id="alert-badge" style="display:none;margin-left:8px;background:var(--red);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-family:var(--mono);font-weight:700;vertical-align:middle"></span>
-        </div>
-        <button class="btn btn-wire" style="padding:3px 10px;font-size:10px" onclick="abrirPerfilAgente()">⚙ Editar Agente</button>
-      </div>
-      <div class="info-block" id="info-block">
-        <div>API <span style="color:var(--body)">Yahoo Finance</span></div>
-        <div>Broker <span style="color:var(--body)">Rico (XP)</span></div>
-        <div style="margin-top:8px">
-          Monitoramento <span id="mon-status" class="uptime-err">● parado</span>
-        </div>
-        <div>Último check <span id="last-check" class="priv" style="color:var(--head)">—</span></div>
-        <div>Próximo check <span id="next-check" class="priv" style="color:var(--head)">—</span></div>
-        <div style="margin-top:8px">
-          Gatilho de queda <span style="color:var(--head)"><span id="gatilho-lbl">—</span>%</span>
-        </div>
-        <div>Alertas pendentes <span id="agente-alert-cnt" style="color:var(--head)">0</span></div>
-        <div style="margin-top:10px">
-          <button class="btn btn-lime" style="width:100%;padding:8px" id="btn-mon-main">▶ Iniciar Monitoramento</button>
-        </div>
-        <div style="margin-top:6px">
-          <button class="btn btn-wire" style="width:100%;padding:6px;font-size:10px" onclick="toggleNotif()">🔔 Ver Notificações</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
 </div>
 </div><!-- /page-carteira -->
 
@@ -4545,11 +4542,6 @@ function renderHomePage() {
   if (!_b3Loaded) { _b3Loaded = true; fetchB3Precos(); }
   else renderB3Grid();
 }
-
-document.getElementById("home-btn-mon").addEventListener("click", function() {
-  if (ST.monitorando) pararMonitoramento(); else iniciarMonitoramento();
-  syncHomeStatus();
-});
 
 
 /* ═══════════════════════════════════════════════════════
