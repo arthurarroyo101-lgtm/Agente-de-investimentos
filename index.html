@@ -203,7 +203,7 @@ body::before {
   grid-template-columns: 1fr;
   gap: 14px;
 }
-.col-l, .col-r { display: flex; flex-direction: column; gap: 14px; }
+.col-l, .col-r { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 
 /* ═══════════════════════════════════════════════════════
    PANELS
@@ -213,6 +213,7 @@ body::before {
   border: 1px solid var(--wire);
   border-radius: var(--r);
   overflow: hidden;
+  min-width: 0;
   animation: fadeIn .3s ease both;
 }
 @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
@@ -453,7 +454,7 @@ tbody tr.alert-row td:first-child {
 .log-row:hover { background: rgba(255,255,255,.015); }
 .log-hr   { color: var(--body3); white-space: nowrap; flex-shrink: 0; }
 .log-tp   { width: 48px; flex-shrink: 0; font-weight: 700; letter-spacing: .04em; font-size: 10px; }
-.log-msg  { color: var(--body2); flex: 1; word-break: break-word; }
+.log-msg  { color: var(--body2); flex: 1; min-width: 0; word-break: break-word; }
 .log-INFO   .log-tp { color: var(--blue); }
 .log-OK     .log-tp { color: var(--lime); }
 .log-ALERTA .log-tp { color: var(--red); }
@@ -536,25 +537,6 @@ tbody tr.alert-row td:first-child {
 ::-webkit-scrollbar-thumb { background: var(--wire2); border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--dim); }
 
-/* ═══════════════════════════════════════════════════════
-   RESPONSIVO
-═══════════════════════════════════════════════════════ */
-@media (max-width: 1100px) {
-  .main { grid-template-columns: 1fr; }
-  .resumo-strip { grid-template-columns: repeat(2,1fr); }
-}
-@media (max-width: 620px) {
-  .resumo-strip { grid-template-columns: 1fr 1fr; }
-  .topbar-info  { display: none; }
-  .main { padding: 12px 10px; }
-  .r-num { font-size: 18px; }
-  table { font-size: 11px; }
-  td, th { padding: 10px 10px !important; }
-  .op-panel { width: 100%; border-left: none; }
-  .op-backdrop { display: none; }
-  .op-asset-grid { grid-template-columns: 1fr 1fr; }
-  .notif-dropdown { width: calc(100vw - 20px); right: 10px !important; }
-}
 
 /* ═══════════════════════════════════════════════════════
    PAINEL OPERAR — slide-in de página inteira
@@ -566,7 +548,7 @@ tbody tr.alert-row td:first-child {
   background: var(--ink);
   border-left: 1px solid var(--wire2);
   display: flex; flex-direction: column;
-  z-index: 400;
+  z-index: 550;
   transform: translateX(100%);
   transition: transform .28s cubic-bezier(.4,0,.2,1);
   box-shadow: -24px 0 60px rgba(0,0,0,.5);
@@ -577,7 +559,7 @@ tbody tr.alert-row td:first-child {
 /* backdrop shimmer when panel open */
 .op-backdrop {
   position: fixed; inset: 54px 480px 28px 0;
-  z-index: 399;
+  z-index: 545;
   pointer-events: none; opacity: 0;
   background: rgba(6,8,15,.45);
   transition: opacity .28s;
@@ -804,7 +786,7 @@ tbody tr.alert-row td:first-child {
 .op-hist-badge.C { background: rgba(184,255,69,.12); color: var(--lime); }
 .op-hist-badge.V { background: rgba(255,45,85,.12);  color: var(--red); }
 .op-hist-tk { font-family: var(--sans); font-weight: 800; color: var(--head); flex-shrink: 0; min-width: 48px; }
-.op-hist-det { color: var(--body2); flex: 1; font-family: var(--mono); }
+.op-hist-det { color: var(--body2); flex: 1; min-width: 0; font-family: var(--mono); }
 .op-hist-time { color: var(--body3); font-family: var(--mono); flex-shrink: 0; font-size: 10px; }
 .op-hist-empty { color: var(--body3); font-size: 11px; text-align: center; padding: 12px 0; }
 
@@ -845,6 +827,7 @@ body { padding-bottom: 30px; }
 }
 .op-search-in {
   flex: 1;
+  min-width: 0;
   background: var(--ink2); border: 1px solid var(--wire2);
   color: var(--head); font-family: var(--mono);
   font-size: 15px; font-weight: 700; letter-spacing: .1em;
@@ -1158,7 +1141,7 @@ tbody tr:hover td:last-child::after {
   background: var(--ink);
   border-right: 1px solid var(--wire2);
   display: flex; flex-direction: column;
-  z-index: 400;
+  z-index: 550;
   transform: translateX(-100%);
   transition: transform .28s cubic-bezier(.4,0,.2,1);
   box-shadow: 24px 0 60px rgba(0,0,0,.5);
@@ -1168,7 +1151,7 @@ tbody tr:hover td:last-child::after {
 
 .chat-backdrop {
   position: fixed; inset: 54px 0 28px 440px;
-  z-index: 399; pointer-events: none; opacity: 0;
+  z-index: 545; pointer-events: none; opacity: 0;
   background: rgba(6,8,15,.45); transition: opacity .28s;
 }
 .chat-backdrop.open { opacity: 1; pointer-events: auto; }
@@ -1186,7 +1169,7 @@ tbody tr:hover td:last-child::after {
   display: flex; align-items: center; justify-content: center;
   font-size: 16px;
 }
-.chat-ph-info { flex: 1; }
+.chat-ph-info { flex: 1; min-width: 0; }
 .chat-ph-name {
   font-family: var(--sans); font-size: 14px; font-weight: 800;
   letter-spacing: .04em; color: var(--head);
@@ -1309,7 +1292,7 @@ tbody tr:hover td:last-child::after {
   background: var(--ink2);
 }
 .chat-in {
-  flex: 1; background: var(--ink3); border: 1px solid var(--wire);
+  flex: 1; min-width: 0; background: var(--ink3); border: 1px solid var(--wire);
   color: var(--head); font-family: var(--sans); font-size: 13px;
   padding: 10px 14px; border-radius: 20px; resize: none;
   max-height: 100px; overflow-y: auto; line-height: 1.4;
@@ -1684,7 +1667,7 @@ tbody tr:hover td:last-child::after {
   display: grid; grid-template-columns: 1fr;
   gap: 20px; align-items: start;
 }
-.home-col-l, .home-col-r { display: flex; flex-direction: column; gap: 20px; }
+.home-col-l, .home-col-r { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
 
 .home-resumo {
   display: grid; grid-template-columns: repeat(4,1fr);
@@ -1902,7 +1885,7 @@ tbody tr:hover td:last-child::after {
 }
 .div-item:last-child { border-bottom: none; }
 .div-item-tk { font-family: var(--sans); font-size: 14px; font-weight: 800; color: var(--head); min-width: 54px; }
-.div-item-info { flex: 1; }
+.div-item-info { flex: 1; min-width: 0; }
 .div-item-tipo { font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--body3); }
 .div-item-datas { font-family: var(--mono); font-size: 10px; color: var(--body2); margin-top: 2px; }
 .div-item-val { text-align: right; }
@@ -1913,6 +1896,148 @@ tbody tr:hover td:last-child::after {
 .div-item-status.futuro { background: rgba(79,172,254,.14); color: var(--blue); }
 
 .div-empty { text-align: center; padding: 36px 20px; color: var(--body3); font-family: var(--sans); font-size: 13px; font-weight: 600; letter-spacing: .06em; }
+
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVO
+═══════════════════════════════════════════════════════ */
+@media (max-width: 1100px) {
+  .main { grid-template-columns: 1fr; }
+  .resumo-strip { grid-template-columns: repeat(2,1fr); }
+}
+
+/* Tablet: painéis laterais ainda cabem, mas full width fica melhor */
+@media (max-width: 860px) {
+  .chat-panel, .profile-panel { width: 100% !important; }
+  .chat-backdrop, .profile-backdrop { display: none; }
+  .op-detail-grid { grid-template-columns: repeat(3,1fr); }
+}
+
+@media (max-width: 620px) {
+  html { font-size: 13px; }
+  body { padding-bottom: 26px; }
+
+  /* Topbar enxuta */
+  .topbar { height: 50px; }
+  .topbar-brand { padding: 0 10px; gap: 8px; border-right: none; }
+  .brand-mark { width: 24px; height: 24px; }
+  .brand-name { font-size: 13px; }
+  .brand-sub  { display: none; }
+  .topbar-info  { display: none; }
+  .topbar-status { padding: 0 8px; gap: 6px; border-right: none; margin-left: 0 !important; }
+  .status-text { display: none; }
+  .topbar-actions { padding: 0 8px; gap: 6px; }
+  .topbar-actions-scroll { gap: 6px; }
+  .chat-btn, .btn { padding: 7px 11px; font-size: 11px; }
+  .btn-privacy { padding: 7px 10px; font-size: 11px; }
+  .topbar-avatar { width: 30px; height: 30px; font-size: 12px; }
+  .notif-btn { width: 30px; height: 30px; }
+  .countdown-bar { height: 2px; }
+
+  /* Botões da topbar viram apenas ícone quando o espaço é curto —
+     evita texto cortado dentro da faixa com scroll horizontal */
+  .btn-label { display: none; }
+  .topbar-actions-scroll .btn,
+  .topbar-actions-scroll .chat-btn,
+  .topbar-actions-scroll .btn-privacy {
+    padding: 8px 10px; gap: 0;
+  }
+
+  /* Navegação de páginas com scroll horizontal se necessário */
+  .page-nav {
+    top: 50px; padding: 0 10px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; -ms-overflow-style: none;
+  }
+  .page-nav::-webkit-scrollbar { display: none; }
+  .page-tab { padding: 0 12px; font-size: 11px; white-space: nowrap; flex-shrink: 0; }
+
+  .main, .home-wrap, .div-wrap { padding: 12px 10px 30px; }
+  .resumo-strip { grid-template-columns: 1fr 1fr; }
+  .r-cell { padding: 14px 14px 12px; }
+  .r-num { font-size: 17px; }
+  .home-resumo { grid-template-columns: 1fr 1fr; }
+  .hrc-val { font-size: 16px; }
+  .mercado-strip { grid-template-columns: 1fr 1fr; }
+  .mercado-cell { padding: 12px 14px; }
+  .mercado-val { font-size: 15px; }
+  .ativos-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .ativo-card { padding: 12px; }
+  .fundos-home-grid { grid-template-columns: 1fr; }
+
+  /* Tabela de ações: reduz colunas para caber na tela sem scroll */
+  table { font-size: 11px; }
+  td, th { padding: 10px 8px !important; }
+  thead th:nth-child(2), tbody td:nth-child(2),
+  thead th:nth-child(3), tbody td:nth-child(3) { display: none; }
+  .tkr-lbl { font-size: 13px; }
+
+  /* Painéis full-screen no mobile */
+  .op-panel, .chat-panel, .profile-panel {
+    width: 100% !important; border-left: none !important; border-right: none !important;
+  }
+  .op-backdrop { display: none; }
+  .op-ph, .chat-ph { padding: 12px 14px; }
+  .op-body { padding: 14px 14px 0; }
+  .op-hist-section { padding: 14px; }
+  .op-asset-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .op-asset-card { padding: 10px 12px; }
+  .op-detail-grid { grid-template-columns: repeat(2,1fr); }
+  .op-detail-tk { font-size: 18px; }
+  .op-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .op-fin { font-size: 16px; padding: 10px 12px; }
+  .op-summary-val { font-size: 20px; }
+  .chat-msgs { padding: 12px 0; }
+  .chat-bubble { max-width: 86%; font-size: 12.5px; }
+  .chat-input-wrap { padding: 10px 12px; }
+
+  /* Perfil */
+  .profile-ph { padding: 16px 14px; }
+  .profile-section { padding: 16px 14px 0; }
+  .profile-in-row { grid-template-columns: 1fr; gap: 0; }
+  .profile-stats { margin: 0 14px 16px; }
+  .profile-footer { padding: 12px 14px 16px; }
+
+  /* Impede o zoom automático do iOS ao focar inputs (mínimo 16px) */
+  input, textarea, select { font-size: 16px; }
+  .op-search-in { font-size: 16px; }
+  .op-novo-in { font-size: 16px; }
+  .b3-search-in { font-size: 16px; }
+  .profile-cfg-in, .cfg-in { font-size: 15px; width: 72px; padding: 7px 8px; }
+
+  /* Notificações — dropdown ocupa quase toda a largura */
+  .notif-dropdown {
+    width: calc(100vw - 20px);
+    max-width: calc(100vw - 20px);
+    left: 10px !important;
+    right: auto !important;
+  }
+
+  /* B3 — grade de ativos e busca */
+  .b3-toolbar { gap: 8px; }
+  .b3-search-in { flex: 1; width: auto; min-width: 0; }
+  .b3-grid { grid-template-columns: repeat(auto-fill, minmax(105px,1fr)); gap: 6px; }
+  .b3-mini { padding: 8px 10px; }
+
+  /* Calendário de dividendos */
+  .div-cal-head { flex-wrap: wrap; gap: 8px; }
+  .div-cal-nav { gap: 6px; }
+  .div-cal-nav-btn { width: 26px; height: 26px; font-size: 12px; }
+  .div-cal-day { min-height: 48px; padding: 3px 4px; }
+  .div-cal-badge { font-size: 7px; padding: 1px 3px; }
+  .div-cal-title { font-size: 12px; }
+  .div-legend { padding: 8px 12px; font-size: 9px; gap: 8px; }
+  .div-item { padding: 10px 12px; gap: 8px; }
+}
+
+@media (max-width: 400px) {
+  .op-asset-grid { grid-template-columns: 1fr; }
+  .op-detail-grid { grid-template-columns: 1fr 1fr; }
+  .profile-stats { grid-template-columns: 1fr; }
+  .ativos-grid { grid-template-columns: 1fr; }
+  .b3-grid { grid-template-columns: repeat(auto-fill, minmax(92px,1fr)); }
+  thead th:nth-child(4), tbody td:nth-child(4),
+  thead th:nth-child(6), tbody td:nth-child(6) { display: none; }
+}
 
 </style>
 </head>
@@ -1955,48 +2080,52 @@ tbody tr:hover td:last-child::after {
 
   <div class="topbar-actions">
     <div class="topbar-actions-scroll">
-      <button class="chat-btn" id="btn-chat">🤖 Assistente</button>
-      <button class="btn-privacy" id="btn-privacy"><span id="privacy-icon">👁</span><span id="privacy-lbl">Ocultar</span></button>
-      <button class="btn btn-wire" id="btn-check">⚡ Verificar</button>
-      <button class="btn btn-wire" id="btn-operar" style="letter-spacing:.06em">🔍 Buscar Ativo</button>
-      <button class="btn btn-lime" id="btn-monitor" style="display:none">▶ Iniciar</button>
+      <button class="chat-btn" id="btn-chat">🤖 <span class="btn-label">Assistente</span></button>
+      <button class="btn-privacy" id="btn-privacy"><span id="privacy-icon">👁</span><span id="privacy-lbl" class="btn-label">Ocultar</span></button>
+      <button class="btn btn-wire" id="btn-check">⚡ <span class="btn-label">Verificar</span></button>
+      <button class="btn btn-wire" id="btn-operar" style="letter-spacing:.06em">🔍 <span class="btn-label">Buscar Ativo</span></button>
+      <button class="btn btn-lime" id="btn-monitor" style="display:none">▶ <span class="btn-label">Iniciar</span></button>
     </div>
     <div class="topbar-actions-pin">
       <div class="notif-wrap">
         <button class="notif-btn" id="notif-btn" title="Notificações" onclick="toggleNotif()">
           🔔<span class="notif-badge hide" id="notif-badge">0</span>
         </button>
-        <div class="notif-dropdown" id="notif-dropdown">
-          <div class="notif-head"><span>Notificações</span><span id="notif-head-count" style="color:var(--body3);font-weight:600;text-transform:none;letter-spacing:0"></span></div>
-
-          <div class="notif-agent-section" id="notif-agent-section">
-            <div class="notif-agent-title">
-              🤖 Agente de Monitoramento
-              <span id="alert-badge" style="display:none;margin-left:6px;background:var(--red);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-family:var(--mono);font-weight:700;vertical-align:middle"></span>
-            </div>
-            <div class="notif-agent-body">
-              <div>API <span style="color:var(--body)">Yahoo Finance</span> · Broker <span style="color:var(--body)">Rico (XP)</span></div>
-              <div style="margin-top:6px">Monitoramento <span id="mon-status" class="uptime-err">● parado</span></div>
-              <div>Último check <span id="last-check" class="priv" style="color:var(--head)">—</span></div>
-              <div>Próximo check <span id="next-check" class="priv" style="color:var(--head)">—</span></div>
-              <div style="margin-top:6px">Gatilho de queda <span style="color:var(--head)"><span id="gatilho-lbl">—</span>%</span></div>
-              <div>Alertas pendentes <span id="agente-alert-cnt" style="color:var(--head)">0</span></div>
-              <div class="notif-agent-btns">
-                <button class="btn btn-lime" style="flex:1;padding:7px;font-size:11px" id="btn-mon-main">▶ Iniciar Monitoramento</button>
-                <button class="btn btn-wire" style="padding:7px 10px;font-size:11px" onclick="abrirPerfilAgente()" title="Editar Agente">⚙</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="notif-scroll" id="notif-scroll">
-            <div class="notif-empty">Nenhuma notificação</div>
-          </div>
-        </div>
       </div>
       <div class="topbar-avatar" id="btn-profile" title="Meu Perfil" onclick="abrirPerfil()">?</div>
     </div>
   </div>
 </header>
+
+<!-- Dropdown de notificações vive fora da topbar para não ser cortado
+     pelo overflow:hidden + backdrop-filter da .topbar (que criam um
+     containing block para position:fixed) -->
+<div class="notif-dropdown" id="notif-dropdown">
+  <div class="notif-head"><span>Notificações</span><span id="notif-head-count" style="color:var(--body3);font-weight:600;text-transform:none;letter-spacing:0"></span></div>
+
+  <div class="notif-agent-section" id="notif-agent-section">
+    <div class="notif-agent-title">
+      🤖 Agente de Monitoramento
+      <span id="alert-badge" style="display:none;margin-left:6px;background:var(--red);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-family:var(--mono);font-weight:700;vertical-align:middle"></span>
+    </div>
+    <div class="notif-agent-body">
+      <div>API <span style="color:var(--body)">Yahoo Finance</span> · Broker <span style="color:var(--body)">Rico (XP)</span></div>
+      <div style="margin-top:6px">Monitoramento <span id="mon-status" class="uptime-err">● parado</span></div>
+      <div>Último check <span id="last-check" class="priv" style="color:var(--head)">—</span></div>
+      <div>Próximo check <span id="next-check" class="priv" style="color:var(--head)">—</span></div>
+      <div style="margin-top:6px">Gatilho de queda <span style="color:var(--head)"><span id="gatilho-lbl">—</span>%</span></div>
+      <div>Alertas pendentes <span id="agente-alert-cnt" style="color:var(--head)">0</span></div>
+      <div class="notif-agent-btns">
+        <button class="btn btn-lime" style="flex:1;padding:7px;font-size:11px" id="btn-mon-main">▶ Iniciar Monitoramento</button>
+        <button class="btn btn-wire" style="padding:7px 10px;font-size:11px" onclick="abrirPerfilAgente()" title="Editar Agente">⚙</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="notif-scroll" id="notif-scroll">
+    <div class="notif-empty">Nenhuma notificação</div>
+  </div>
+</div>
 
 <!-- ═══════ COUNTDOWN BAR ═══════ -->
 <div class="countdown-bar"><div class="countdown-fill" id="cdown" style="width:100%"></div></div>
@@ -2047,7 +2176,7 @@ tbody tr:hover td:last-child::after {
   <div>
     <div class="home-section-title">🏛 Principais Ações da B3</div>
     <div class="b3-toolbar">
-      <input class="b3-search-in" id="b3-search" placeholder="Filtrar ticker ou nome…"
+      <input class="b3-search-in" id="b3-search" placeholder="Filtrar…"
         oninput="filtrarB3(this.value)">
       <button class="btn btn-wire" style="padding:6px 14px;font-size:11px"
         onclick="fetchB3Precos()">↻ Atualizar</button>
@@ -2167,7 +2296,7 @@ tbody tr:hover td:last-child::after {
           <button class="div-cal-nav-btn" onclick="navMesDividendo(-1)">‹</button>
           <button class="btn btn-wire" style="padding:5px 12px;font-size:10px" onclick="irParaHojeDividendo()">Hoje</button>
           <button class="div-cal-nav-btn" onclick="navMesDividendo(1)">›</button>
-          <button class="btn btn-wire" style="padding:5px 12px;font-size:10px" onclick="fetchDividendos(true)">↻ Atualizar</button>
+          <button class="btn btn-wire" style="padding:5px 12px;font-size:10px" onclick="fetchDividendos(true)">↻ <span class="btn-label">Atualizar</span></button>
         </div>
       </div>
       <div class="div-cal-body">
@@ -2681,6 +2810,30 @@ const chip = (v, isAlert=false) => {
 const timeStr = d => d ? new Date(d).toLocaleTimeString("pt-BR") : "—";
 const dateKey = () => new Date().toISOString().split("T")[0];
 
+/* ── Trava de scroll do fundo (painéis full-screen no mobile) ─── */
+let _scrollLockCount = 0;
+let _scrollLockY = 0;
+function travarScrollFundo() {
+  _scrollLockCount++;
+  if (_scrollLockCount > 1) return;
+  _scrollLockY = window.scrollY || window.pageYOffset || 0;
+  document.body.style.position = "fixed";
+  document.body.style.top   = `-${_scrollLockY}px`;
+  document.body.style.left  = "0";
+  document.body.style.right = "0";
+  document.body.style.width = "100%";
+}
+function destravarScrollFundo() {
+  _scrollLockCount = Math.max(0, _scrollLockCount - 1);
+  if (_scrollLockCount > 0) return;
+  document.body.style.position = "";
+  document.body.style.top   = "";
+  document.body.style.left  = "";
+  document.body.style.right = "";
+  document.body.style.width = "";
+  window.scrollTo(0, _scrollLockY);
+}
+
 function toast(msg, type = "info") {
   const el = document.getElementById("toast");
   el.textContent = msg;
@@ -3045,7 +3198,7 @@ function iniciarMonitoramento() {
 
   document.getElementById("btn-mon-main").textContent = "⏹ Parar Monitoramento";
   document.getElementById("btn-mon-main").className   = "btn btn-red";
-  document.getElementById("btn-monitor").textContent  = "⏹ Parar";
+  document.getElementById("btn-monitor").innerHTML    = '⏹ <span class="btn-label">Parar</span>';
   $("mon-status").textContent = "● ativo";
   $("mon-status").className   = "uptime-ok";
 
@@ -3064,7 +3217,7 @@ function pararMonitoramento() {
 
   document.getElementById("btn-mon-main").textContent = "▶ Iniciar Monitoramento";
   document.getElementById("btn-mon-main").className   = "btn btn-lime";
-  document.getElementById("btn-monitor").textContent  = "▶ Iniciar";
+  document.getElementById("btn-monitor").innerHTML    = '▶ <span class="btn-label">Iniciar</span>';
   $("mon-status").textContent = "● parado";
   $("mon-status").className   = "uptime-err";
   $("next-check").textContent = "—";
@@ -3121,14 +3274,14 @@ function limparLog() {
 $id("btn-check").addEventListener("click", async () => {
   const btn = $id("btn-check");
   btn.disabled = true;
-  btn.textContent = "⏳ Verificando…";
+  btn.innerHTML = '⏳ <span class="btn-label">Verificando…</span>';
   try {
     await atualizarPortfolio();
     const alertas = ST.alertas.filter(a => a.status === "pendente").length;
     toast(alertas > 0 ? `⚠ ${alertas} alerta(s) ativo(s)!` : "✅ Tudo OK — nenhum alerta.", alertas > 0 ? "err" : "ok");
   } finally {
     btn.disabled = false;
-    btn.textContent = "⚡ Verificar";
+    btn.innerHTML = '⚡ <span class="btn-label">Verificar</span>';
   }
 });
 $id("btn-mon-main").addEventListener("click", () => {
@@ -3178,6 +3331,7 @@ function abrirOperar() {
   syncTabs();
   $("op-panel").classList.add("open");
   $("op-backdrop").classList.add("open");
+  travarScrollFundo();
 }
 
 function fecharOperar() {
@@ -3192,6 +3346,7 @@ function fecharOperar() {
   $("nav-noticias").classList.remove("active");
   $("op-panel").classList.remove("open");
   $("op-backdrop").classList.remove("open");
+  destravarScrollFundo();
 }
 
 /* ── Tabs Compra / Venda ────────────────────────────── */
@@ -3561,6 +3716,7 @@ function abrirAtivoDetalhe(ticker) {
   syncTabs();
   $("op-panel").classList.add("open");
   $("op-backdrop").classList.add("open");
+  travarScrollFundo();
 
   // Preenche step2 diretamente
   selecionarAtivo(ticker);
@@ -3890,6 +4046,7 @@ function limparChave() {
 function abrirChat() {
   $("chat-panel").classList.add("open");
   $("chat-backdrop").classList.add("open");
+  travarScrollFundo();
   if (getChave()) {
     iniciarChat();
   } else {
@@ -3902,6 +4059,7 @@ function abrirChat() {
 function fecharChat() {
   $("chat-panel").classList.remove("open");
   $("chat-backdrop").classList.remove("open");
+  destravarScrollFundo();
 }
 
 function iniciarChat() {
@@ -4216,11 +4374,13 @@ function abrirPerfil() {
 
   $("profile-panel").classList.add("open");
   $("profile-backdrop").classList.add("open");
+  travarScrollFundo();
 }
 
 function fecharPerfil() {
   $("profile-panel").classList.remove("open");
   $("profile-backdrop").classList.remove("open");
+  destravarScrollFundo();
 }
 
 /* ── Abre o perfil já focado na seção de monitoramento ── */
